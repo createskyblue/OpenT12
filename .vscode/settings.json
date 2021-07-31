@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.m": "matlab",
+        "menu.h": "c",
+        "draw_api.h": "c"
+    }
+}
