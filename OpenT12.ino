@@ -1,17 +1,8 @@
 /////////////////////////////////////////////////////////////////
-#include <Arduino.h>
-#include <Ticker.h>
-#include <U8g2lib.h>
-#include "Type.h"
-#include "Rotary.h"
-
+#include "Menu.h"
+#include "OpenT12.h"
 /////////////////////////////////////////////////////////////////
-
-
 #define BEEP_PIN    14
-
-#define RotaryCoolTime 3
-uint32_t RotaryCoolTimeTimer = 0;
 /////////////////////////////////////////////////////////////////
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 /////////////////////////////////////////////////////////////////
@@ -37,12 +28,13 @@ void setup() {
 
     //初始化中断
     //ESPRotaryLoop.attach_ms(10, ESPRotaryInterrupt);
+    Next_Menu();
 
 }
 
 char buffer[50];
 void loop() {
-
+    Menu_Control();
     if (millis() - DispFlashTimer > 33) {
         //tone(14, 1000);
 

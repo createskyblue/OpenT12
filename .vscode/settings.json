@@ -2,6 +2,8 @@
     "files.associations": {
         "*.m": "matlab",
         "menu.h": "c",
-        "draw_api.h": "c"
+        "draw_api.h": "c",
+        "locale": "cpp",
+        "typeinfo": "cpp"
     }
 }
