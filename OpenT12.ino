@@ -19,6 +19,8 @@ void setup() {
     Disp.setFontDirection(0);
     Disp.setFontPosTop();
     Disp.setFont(u8g2_font_wqy12_t_gb2312);
+    Disp.setDrawColor(1);
+    Disp.setFontMode(1);
 
     //初始化编码器
     sys_RotaryInit();
@@ -35,22 +37,22 @@ void setup() {
 char buffer[50];
 void loop() {
     Menu_Control();
-    if (millis() - DispFlashTimer > 33) {
-        //tone(14, 1000);
+    // if (millis() - DispFlashTimer > 33) {
+    //     //tone(14, 1000);
 
-        Disp.clearBuffer();
-        sprintf(buffer, "计数:%f", sys_Counter_Get());
-        Disp.setCursor(0, 1);
-        Disp.print(buffer);
+    //     Disp.clearBuffer();
+    //     sprintf(buffer, "计数:%f", sys_Counter_Get());
+    //     Disp.setCursor(0, 1);
+    //     Disp.print(buffer);
 
-        sprintf(buffer, "运行时间:%ld", millis());
-        Disp.setCursor(0, 13);
-        Disp.print(buffer);
+    //     sprintf(buffer, "运行时间:%ld", millis());
+    //     Disp.setCursor(0, 13);
+    //     Disp.print(buffer);
 
-        Disp.sendBuffer();
+    //     Disp.sendBuffer();
 
-        DispFlashTimer = millis();
-        noTone(14);//停止发声
-    }
+    //     DispFlashTimer = millis();
+    //     noTone(14);//停止发声
+    // }
 
 }

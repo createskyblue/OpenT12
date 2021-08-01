@@ -6,6 +6,9 @@ static double Count_min=0;
 static double Count_max=0;
 static double Count_step=0;
 
+//菜单系统角标计时器
+extern int32_t pages_Tip_Display_timer;
+
 void sys_RotaryInit(void) {
     //初始化GPIO
     pinMode(ROTARY_PIN1, INPUT_PULLUP);
@@ -41,6 +44,9 @@ void sys_Counter_SetVal(double c) {
 }
 
 void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
+    //重置菜单系统角标计时器
+    pages_Tip_Display_timer = millis();
+
     static volatile uint8_t a0, b0;
     static volatile uint8_t ab0;
     uint8_t a = digitalRead(ROTARY_PIN1);
@@ -56,14 +62,22 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
             ab0 = (a == b);
         }
     }
-    Serial.println("OK");
+    //Serial.println("OK");
 }
 
 double sys_Counter_Get(void) {
     return Count / ROTARY_TYPE;
 }
 
-//extern int32_t pages_Tip_Display_timer; //菜单系统的页码定时器，需要在按键激活的时候进行刷新
+//编码器按键按下 + 软件滤波
 bool sys_KeyProcess(void) {
-    return digitalRead(BUTTON_PIN);
+    if (!digitalRead(BUTTON_PIN)) {
+        delay(50);
+        if(!digitalRead(BUTTON_PIN)) {
+            //重置菜单系统角标计时器
+            pages_Tip_Display_timer = millis();
+            return 1;
+        }
+    }
+    return 0;
 }

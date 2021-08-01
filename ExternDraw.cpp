@@ -1,6 +1,10 @@
 #include "OpenT12.h"
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
+void Display(void) {
+    ESP.wdtFeed();
+    Disp.sendBuffer();
+}
 
 void Draw_Utf(int x,int y,char *s){
     Disp.setCursor(x,y + 1);
@@ -47,5 +51,43 @@ void Draw_Scale(int x, int y, int w, int h, int s, int v) {
 		}
 		if(s>w) s=w;
 		Disp.drawBox(v, y, w / (float)s, w);
+	}
+}
+
+/*
+	@作用：绘制数值条
+	@输入：i=值 a=值的最小值 b=值的最大值 x=左上顶点x轴坐标 y=左上顶点y轴坐标 w=宽度 h=高度 c=颜色
+*/
+void Draw_Num_Bar(int i, int a, int b, int x, int y, int w, int h, int c) {
+    Disp.setDrawColor(c);
+	Disp.drawFrame(x, y, w - 3 * 6 - 1, h);
+	Disp.drawBox(x+2, y+2, map(i, a, b, 0, w - 3 * 6 - 1 - 4), h-4);
+
+    char buffer[20];
+    sprintf(buffer,"%d",i);
+
+	Disp.drawStr(x + w - 3 * 6, y -1, buffer);
+	//进行去棱角操作:增强文字视觉焦点
+    Disp.setDrawColor(0);
+	Disp.drawPixel(x, y);
+	Disp.drawPixel(x, y + h-1);
+	Disp.drawPixel(x + w - 3 * 6-2, y);
+	Disp.drawPixel(x + w - 3 * 6-2, y + h-1);
+    Disp.setDrawColor(1);
+}
+
+//位图缩放 代码片段改自arduboy2
+void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2,int h2) {
+	float mw=(float)w2/w1;
+	float mh=(float)h2/h1;
+	uint8_t cmw=ceil(mw);
+	uint8_t cmh=ceil(mh);
+	int xi, yi, byteWidth = (w1 + 7) / 8;
+	for (yi = 0; yi < h1; yi++) {
+		for (xi = 0; xi < w1; xi++) {
+			if (pgm_read_byte(bitmap + yi * byteWidth + xi / 8) & (128 >> (xi & 7))) {
+				Disp.drawBox(x + xi*mw, y + yi*mh, cmw, cmh);
+			}
+		}
 	}
 }

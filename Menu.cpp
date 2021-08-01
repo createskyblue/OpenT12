@@ -77,10 +77,10 @@ struct Slide_Bar Slide_space[Slide_Bar_Num] = {
         uint8_t b   选择过渡动画计算函数
 */
 struct Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num] = {
-    {0,0,0,0.2,1,0}, //菜单项目滚动动画
-    {0,0,0,0.1,1,0}, //滚动条平滑动画
-    {0,0,0,0.1,1,0}, //菜单选项条长度平滑动画
-    {0,0,0,0.15,0,0}, //项目归位动画
+    {0,0,0,0.4,1,0}, //菜单项目滚动动画
+    {0,0,0,0.2,1,0}, //滚动条平滑动画
+    {0,0,0,0.2,1,0}, //菜单选项条长度平滑动画
+    {0,0,0,0.3,0,0}, //项目归位动画
 };
 
 
@@ -175,7 +175,7 @@ void System_UI() {
 // void About() {
 //     Disp.clearBuffer();
 //     Text_Reader("２０１９大学生电子设计竞赛Ｆ题纸张计数器程序：赖浩文        硬件：周孜宁        辅助：张家穗");
-//     Disp.sendBuffer();
+//     Display();
 // }
 
 
@@ -257,12 +257,23 @@ void SmoothAnimationSystem_Clean(){
     @param int b 分母
 */
 void Page_Footnotes(int a, int b) {
-    // Disp.setDrawColor(0);
-    // if (bsp_GetRunTime() < pages_Tip_Display_timer + pages_Tip_Display_Timeout) {
-    //     Set_Cursor(SCREEN_COLUMN - 8 - (Get_Dec_Deep(a) + Get_Dec_Deep(b) + 3) * 6, SCREEN_ROW - 8);
-    //     Oled_Printf("[%d/%d]", a, b);
-    // }
-    // Disp.setDrawColor(1);
+    char buffer[20];
+    uint8_t w = (Get_Dec_Deep(a) + Get_Dec_Deep(b) + 3) * 6;
+    uint8_t x = SCREEN_COLUMN - 8 - w;
+    uint8_t y = SCREEN_ROW - 12;
+
+    if (millis() < pages_Tip_Display_timer + pages_Tip_Display_Timeout) {
+        //绘制白色底色块
+        Disp.setDrawColor(1);
+        Disp.drawRBox(x + 1, y - 1, w, 13 ,1);
+        //绘制下标文字
+        Disp.setDrawColor(0);
+        Disp.setCursor(x,y + 1);
+        sprintf(buffer,"[%d/%d]", a, b);
+        Disp.print(buffer);
+    }
+    //恢复颜色设置
+    Disp.setDrawColor(1);
 }
 
 /*
@@ -281,7 +292,7 @@ void Text_Reader(char* s) {
     // int now_pow;
 
     // //重置页码角标显示时间
-    // pages_Tip_Display_timer = bsp_GetRunTime();
+    // pages_Tip_Display_timer = millis();
 
     // //初始化编码器设置
     // sys_Counter_Set(0, pages, -1, 0);
@@ -292,7 +303,7 @@ void Text_Reader(char* s) {
     //     //获取输入
     //     val_Pages = sys_Counter_Get();
     //     //只有翻页时才刷新屏幕 节省资源::这里页码超时加了100ms是为了超时后可以Display刷新一下屏幕
-    //     if (val_Pages != last_Pages || (bsp_GetRunTime() - pages_Tip_Display_timer < pages_Tip_Display_Timeout + 100)) {
+    //     if (val_Pages != last_Pages || (millis() - pages_Tip_Display_timer < pages_Tip_Display_Timeout + 100)) {
     //         last_Pages = val_Pages;
     //         Disp.clearBuffer();
 
@@ -315,7 +326,7 @@ void Text_Reader(char* s) {
     //         Draw_Scale(SCREEN_COLUMN - 5, 0, 5, SCREEN_ROW - 1, pages + 1, map(val_Pages, 0, pages, 0, SCREEN_ROW - SCREEN_ROW /2- 1));
     //         //绘制页码下标
     //         Page_Footnotes(val_Pages + 1, pages + 1);
-    //         Disp.sendBuffer();
+    //         Display();
     //     }
     // }
     // //延迟 防止短时间多次触发
@@ -370,9 +381,9 @@ void Next_Menu() {
     }
 
     if (Switch_space[SwitchSpace_SmoothAnimation]) {
-        // Disp.setDrawColor(0);
-        // Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 20 * Switch_space[SwitchSpace_SmoothAnimation]);
-        // Disp.setDrawColor(1);
+        Disp.setDrawColor(0);
+        Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 20 * Switch_space[SwitchSpace_SmoothAnimation]);
+        Disp.setDrawColor(1);
 
         //项目归位动画
         Menu_Smooth_Animation[3].last = 0;
@@ -390,7 +401,7 @@ void Next_Menu() {
 void Pop_Windows(char* s) {
     Disp.setCursor(0, 0);
     Disp.print(s);
-    Disp.sendBuffer();
+    Display();
     // //Set_Font_Size(2);
     // int w, h;
     // for (int i = 5;i > 0;i--) {
@@ -418,7 +429,7 @@ void Pop_Windows(char* s) {
     //     Disp.setDrawColor(0);
     //     Draw_Utf(x + 1 + ix, y - 1, s);
     //     Disp.setDrawColor(1);
-    //     Disp.sendBuffer();
+    //     Display();
     //     delay(20 * Switch_space[SwitchSpace_SmoothAnimation]);
     // }
     // //Set_Font_Size(1);
@@ -431,7 +442,10 @@ void Pop_Windows(char* s) {
     @param uint8_t id菜单对象id
 */
 void Run_Menu_Id(uint8_t lid, uint8_t id) {
-
+    // Serial.print("菜单系统:");
+    // Serial.print(lid);
+    // Serial.print(" + ");
+    // Serial.println(id);
     uint8_t Id;
     uint8_t real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);
     Id = Get_Menu_Id(lid, id);
@@ -465,19 +479,22 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     case 4:
         //Switch_space[Menu[Id].a]=!Switch_space[Menu[Id].a];
         sys_Counter_Set(Slide_space[Menu[Id].a].min, Slide_space[Menu[Id].a].max, Slide_space[Menu[Id].a].step, Slide_space[Menu[Id].a].x);
-        // Disp.setDrawColor(0);
-        // Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 66 * Switch_space[SwitchSpace_SmoothAnimation]);
-        // Disp.setDrawColor(1);
+        Disp.setDrawColor(0);
+        Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 66 * Switch_space[SwitchSpace_SmoothAnimation]);
+        Disp.setDrawColor(1);
 
         while (!sys_KeyProcess()) {
-            // Disp.setDrawColor(0);
-            // Disp.drawBox(SCREEN_COLUMN / 8 - 2, (SCREEN_ROW - 24) / 2 - 3, 3 * SCREEN_COLUMN / 4 + 4, 24 + 4);
-            // Disp.setDrawColor(1);
-            Disp.drawBox(SCREEN_COLUMN / 8 - 3, (SCREEN_ROW - 24) / 2 - 4, 3 * SCREEN_COLUMN / 4 + 4, 24 + 4);
+            Disp.setDrawColor(0);
+            Disp.drawBox(SCREEN_COLUMN / 8 - 2, (SCREEN_ROW - 24) / 2 - 3, 3 * SCREEN_COLUMN / 4 + 4, 24 + 4);
+            Disp.setDrawColor(1);
+
+            Disp.drawRFrame(SCREEN_COLUMN / 8 - 3, (SCREEN_ROW - 24) / 2 - 4, 3 * SCREEN_COLUMN / 4 + 4, 24 + 6 ,2);
+
             Slide_space[Menu[Id].a].x = sys_Counter_Get();
             Draw_Utf(SCREEN_COLUMN / 8, (SCREEN_ROW - 24) / 2, Menu[Id].name);
-            //Draw_Num_Bar(Slide_space[Menu[Id].a].x, Slide_space[Menu[Id].a].min, Slide_space[Menu[Id].a].max, SCREEN_COLUMN / 8, (SCREEN_ROW - 24) / 2 + CNSize + 3, 3 * SCREEN_COLUMN / 4, 7, 1);
-            Disp.sendBuffer();
+            Draw_Num_Bar(Slide_space[Menu[Id].a].x, Slide_space[Menu[Id].a].min, Slide_space[Menu[Id].a].max, SCREEN_COLUMN / 8, (SCREEN_ROW - 24) / 2 + CNSize + 3, 3 * SCREEN_COLUMN / 4, 7, 1);
+           
+            Display();
             //当前滑动条为屏幕亮度调节 需要特殊设置对屏幕亮度进行实时预览
             if (Menu[Id].function) Menu[Id].function();
         }
@@ -499,19 +516,16 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
 }
 
 void Draw_APP(int x, int y, char* bitmap) {
-    // Disp.setDrawColor(1);
-    // Disp.drawBox(x - 3, y - 3, 42 + 6, 42 + 6);
-    // Disp.setDrawColor(0);
+    Disp.setDrawColor(1);
+    Disp.drawRBox(x - 3, y - 3, 42 + 6, 42 + 6, 4);
+    Disp.setDrawColor(0);
 
-    // Disp.drawBox(x, y, 42, 42);
-    // Disp.setDrawColor(1);
-    // if (bitmap[0] == 14)
-    //     Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, 14, 14, 42,42);
-    // else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
+    Disp.drawBox(x, y, 42, 42);
+    Disp.setDrawColor(1);
+    if (bitmap[0] == 14)
+        Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, 14, 14, 42,42);
+    //else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
 
-    // Disp.setDrawColor(0);
-    // Draw_Fill_Fillet(x - 3, y - 3, 42 + 6, 42 + 6);
-    // Disp.setDrawColor(1);
 }
 
 
@@ -525,7 +539,7 @@ static int Menu_Smooth_Animation_Last_choose = 0;
     @param -
 */
 void Menu_Control() {
-    if (!Menu_System_State) return;
+    //if (!Menu_System_State) return;
     Disp.clearBuffer();
 
     //计算过渡动画
@@ -548,11 +562,10 @@ void Menu_Control() {
                 //绘制目录树
                 if (Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x != 2) {
                     //Set_Font_Size(2);
-                    //Draw_Char(0, (i + Menu_Smooth_Animation[0].x) * 16, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + i == MenuLevel[real_Level_Id].max ? (char)200 : (char)204);
+                    Disp.drawUTF8(0, (1 - Menu_Smooth_Animation[3].x * (i != -1)) * ((i + Menu_Smooth_Animation[0].x) * 16 + 1), Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x == 0 ? "+" : "-");
                 }
                 //绘制目录名
-                //Set_Font_Size(1);
-                Draw_Utf(CNSize * (Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x != 2), (1 - Menu_Smooth_Animation[3].x * (i != -1)) * ((i + Menu_Smooth_Animation[0].x) * 16 + 1), Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].name);
+                Draw_Utf(7 * (Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x != 2), (1 - Menu_Smooth_Animation[3].x * (i != -1)) * ((i + Menu_Smooth_Animation[0].x) * 16 + 1), Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].name);
 
                 //对特殊菜单控件的分类渲染
                 switch (Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x) {
@@ -568,7 +581,7 @@ void Menu_Control() {
                     char buffer[5];
                     //Set_Cursor(SCREEN_COLUMN - 9 - Get_Font_Size() * 6 * Get_Dec_Deep(Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x), (int)((i + Menu_Smooth_Animation[0].x) * 16) + 3);
                     sprintf(buffer,"%d", Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x);
-                    Draw_Utf(SCREEN_COLUMN - 9 - 2 * 6 * Get_Dec_Deep(Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x), \
+                    Draw_Utf(SCREEN_COLUMN - 9 - 6 * Get_Dec_Deep(Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x), \
                         (int)((i + Menu_Smooth_Animation[0].x) * 16), \
                         buffer);
                     break;
@@ -610,14 +623,11 @@ void Menu_Control() {
 
         //反色高亮被选项
         Disp.setDrawColor(2);
-        // Disp.drawBox(0, \
-        //                     (Slide_space[1].x - Menu_Smooth_Animation[1].x) * 16, \
-        //                     Switch_space[SwitchSpace_OptionStripFixedLength]?DEBUG_4:(Get_GBK_Ascii_Pix_Len(1,Menu[Pos_Id].name) - Menu_Smooth_Animation[2].x + 12 * (Menu[Pos_Id].x != 2) + 1), \
-        //                     CNSize + 2);
-        Disp.drawBox(0, \
-            (Slide_space[1].x - Menu_Smooth_Animation[1].x) * 16, \
-            128, \
-            CNSize + 2);
+        Disp.drawRBox(0, \
+                            (Slide_space[1].x - Menu_Smooth_Animation[1].x) * 16, \
+                            Switch_space[SwitchSpace_OptionStripFixedLength]?DEBUG_4:(Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name) - Menu_Smooth_Animation[2].x + 12 * (Menu[Pos_Id].x != 2) + 1), \
+                            CNSize + 2 , \
+                            0);
         Disp.setDrawColor(1);
 
         //编码器控制页内选择框滚动选择
@@ -640,7 +650,7 @@ void Menu_Control() {
         Pos_Id = Get_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + Slide_space[1].x);
         Menu_Smooth_Animation[0].val = MenuLevel[real_Level_Id].x;
         Menu_Smooth_Animation[1].val = MenuLevel[real_Level_Id].x + Slide_space[1].x;
-        //Menu_Smooth_Animation[2].val = Get_GBK_Ascii_Pix_Len(1,Menu[Pos_Id].name);
+        Menu_Smooth_Animation[2].val = Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name);
 
     }
     else {
@@ -661,10 +671,7 @@ void Menu_Control() {
                         Draw_APP((1 - Menu_Smooth_Animation[3].x * (i != -1))*(-69 + i * 56 + Menu_Smooth_Animation[0].x * 56), 3, Menu[Pos_Id].icon);
                         //居中显示项目名
                         //Set_Font_Size(1);
-                        //Draw_Utf(GBK_HMiddle(0,128,1,Menu[id].name), 50, Menu[id].name);
-                        Disp.setFontPosCenter();
-                        Draw_Utf(64, 58, Menu[id].name);
-                        Disp.setFontPosTop();
+                        Draw_Utf(UTF8_HMiddle(0,128,1,Menu[id].name), 50, Menu[id].name);
                     }
                 }
                 else {
@@ -692,5 +699,5 @@ void Menu_Control() {
         default:break;
     }
     
-    Disp.sendBuffer();
+    Display();
 }
