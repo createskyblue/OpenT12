@@ -1,4 +1,5 @@
 #include "OpenT12.h"
+extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 /*
 	@作用 获取数值某一位
 	@传入 数值 指定位数
@@ -35,4 +36,17 @@ int Get_Int_Bit_Sum(int x)
 	for (int i = 0; i < Get_Dec_Deep(x); i++)
 		sum += get_Dec_Bit(x, i);
 	return sum;
+}
+
+uint32_t Get_UTF8_Ascii_Pix_Len(uint8_t size,char *s) {
+  return Disp.getUTF8Width(s);
+}
+
+/*
+    @作用 UTF8混合字符串计算水平居中
+    @输入：UTF8字符串
+    @输出：居中位置
+*/
+uint32_t UTF8_HMiddle(uint32_t x,uint32_t w,uint8_t size,char *s) {
+    return x + ( w - Get_UTF8_Ascii_Pix_Len(size,s)) / 2;
 }

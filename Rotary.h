@@ -5,7 +5,7 @@
 
 #define ROTARY_PIN1	D3
 #define ROTARY_PIN2	D4
-#define BUTTON_PIN	D5
+#define BUTTON_PIN	D6
 
 #define ROTARY_TYPE 2
 

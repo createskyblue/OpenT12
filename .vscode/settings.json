@@ -4,6 +4,10 @@
         "menu.h": "c",
         "draw_api.h": "c",
         "locale": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "random": "cpp",
+        "associative_base": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     }
 }
