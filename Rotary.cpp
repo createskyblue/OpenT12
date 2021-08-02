@@ -32,11 +32,21 @@ void sys_RotaryInit(void) {
  * @return {*}
  */
 void sys_Counter_Set(double min, double max, double step, double c) {
-    
+    delay(100);
     Count_min = min * ROTARY_TYPE;
     Count_max = max * ROTARY_TYPE;
     Count_step = step;
-    Count = constrain(c, Count_min, Count_max) * ROTARY_TYPE;
+    Count = constrain(c * ROTARY_TYPE, Count_min, Count_max);
+    Serial.print("设置编码器 -> 最小值:");
+    Serial.print(Count_min);
+    Serial.print(" 最大值:");
+    Serial.print(Count_max);
+    Serial.print(" 步进:");
+    Serial.print(Count_step);
+    Serial.print(" 传入计数:");
+    Serial.print(c);
+    Serial.print(" 当前计数:");
+    Serial.println(Count);
 }
 
 void sys_Counter_SetVal(double c) {

@@ -8,6 +8,7 @@
         "random": "cpp",
         "associative_base": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "limits": "cpp"
     }
 }

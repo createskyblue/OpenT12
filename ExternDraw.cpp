@@ -76,6 +76,18 @@ void Draw_Num_Bar(int i, int a, int b, int x, int y, int w, int h, int c) {
     Disp.setDrawColor(1);
 }
 
+void Draw_Slow_Bitmap(int x, int y, const unsigned char* bitmap, unsigned char w, unsigned char h)
+{
+    int xi, yi, intWidth = (w + 7) / 8;
+    for (yi = 0; yi < h; yi++) {
+        for (xi = 0; xi < w; xi++) {
+            if (pgm_read_byte(bitmap + yi * intWidth + xi / 8) & (128 >> (xi & 7))) {
+                Disp.drawPixel(x + xi, y + yi);
+            }
+        }
+    }
+}
+
 //位图缩放 代码片段改自arduboy2
 void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2,int h2) {
 	float mw=(float)w2/w1;

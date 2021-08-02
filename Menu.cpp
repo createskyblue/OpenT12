@@ -97,7 +97,7 @@ struct Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num] = {
         uint8_t a     参数A 0:无动作 1:开启图标化菜单
 */
 struct Menu_Level_System MenuLevel[3] = {
-    {0,0,0,3,1},
+    {0,0,0,4,1},
     {1,0,0,4,0},
     {2,0,0,5,0},
 };
@@ -129,9 +129,10 @@ struct Menu_Level_System MenuLevel[3] = {
 
 struct Menu_System Menu[] = {
     {0,0,       Title_Menu_Op,          "主菜单",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {0,1,       Jump_Menu_Op,           "个性化",               Set1,                       2,                                  0,          Menu_NULL_F},
-    {0,2,       Jump_Menu_Op,           "系统",                 Set2,                       1,                                  0,          Menu_NULL_F},
-    {0,3,       F_Menu_Op,              "返回",                 Set3,                       0,                                  0,          (*Exit_Menu_System)},
+    {0,1,       Jump_Menu_Op,          "学习强国",              Set0,                        0,                                  0,          Menu_NULL_F},
+    {0,2,       Jump_Menu_Op,           "个性化",               Set1,                       2,                                  0,          Menu_NULL_F},
+    {0,3,       Jump_Menu_Op,           "系统",                 Set2,                       1,                                  0,          Menu_NULL_F},
+    {0,4,       F_Menu_Op,              "返回",                 Set3,                       0,                                  0,          (*Exit_Menu_System)},
 
     {1,0,       Title_Menu_Op,          "系统",                 Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
     {1,1,       F_Menu_Op,              "查看曲线系数",          Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
@@ -524,7 +525,7 @@ void Draw_APP(int x, int y, char* bitmap) {
     Disp.setDrawColor(1);
     if (bitmap[0] == 14)
         Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, 14, 14, 42,42);
-    //else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
+    else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
 
 }
 
@@ -660,6 +661,10 @@ void Menu_Control() {
         */
         int id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x);
         int Pos_Id;
+
+        //居中显示项目名
+        Draw_Utf(UTF8_HMiddle(0,128,1,Menu[id].name), 50, Menu[id].name);
+        
         
         for (uint8_t i = 0; i < 5; i++) {
             Pos_Id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x + i - 2);
@@ -669,22 +674,30 @@ void Menu_Control() {
                 if (Menu[id].x != 2) {
                     if (Menu[Pos_Id].x != 2) {
                         Draw_APP((1 - Menu_Smooth_Animation[3].x * (i != -1))*(-69 + i * 56 + Menu_Smooth_Animation[0].x * 56), 3, Menu[Pos_Id].icon);
-                        //居中显示项目名
-                        //Set_Font_Size(1);
-                        Draw_Utf(UTF8_HMiddle(0,128,1,Menu[id].name), 50, Menu[id].name);
                     }
                 }
                 else {
                     //跳过属性为标题(x=2)的菜单项目  注意：如果当前菜单层被设置为图标化模式 则子菜单结构体设置中不可以出现属性为标题的错误！
-                    MenuLevel[real_Level_Id].x++; //跳过当前项
-                    sys_Counter_SetVal(MenuLevel[real_Level_Id].x);
-                    id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x); //重新计算当前项目id
-                    i--; //给循环补血
+                    //MenuLevel[real_Level_Id].x++; //跳过当前项
+                    //sys_Counter_SetVal(MenuLevel[real_Level_Id].x);
+                    //id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x); //重新计算当前项目id
+                    //i--; //给循环补血
                 } 
             }
         }
+
+        // Serial.print("x1:");
+        // Serial.print(MenuLevel[real_Level_Id].x);
+
         MenuLevel[real_Level_Id].x = sys_Counter_Get();
         Menu_Smooth_Animation[0].val=MenuLevel[real_Level_Id].x;
+
+        // Serial.print(" x2:");
+        // Serial.print(MenuLevel[real_Level_Id].x);
+
+        // Serial.print(" 编码器:");
+        // Serial.println(sys_Counter_Get());
+        
     }
     //编码器按下事件
     //菜单被选项激活 触发菜单被选项预设事件
