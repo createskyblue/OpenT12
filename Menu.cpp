@@ -78,9 +78,9 @@ struct Slide_Bar Slide_space[Slide_Bar_Num] = {
 */
 struct Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num] = {
     {0,0,0,0.4,1,0}, //菜单项目滚动动画
-    {0,0,0,0.2,1,0}, //滚动条平滑动画
-    {0,0,0,0.2,1,0}, //菜单选项条长度平滑动画
-    {0,0,0,0.3,0,0}, //项目归位动画
+    {0,0,0,0.3,1,0}, //滚动条平滑动画
+    {0,0,0,0.3,1,0}, //菜单选项条长度平滑动画
+    {0,0,0,0.4,0,0}, //项目归位动画
 };
 
 
@@ -400,40 +400,41 @@ void Next_Menu() {
     
 */
 void Pop_Windows(char* s) {
-    Disp.setCursor(0, 0);
-    Disp.print(s);
-    Display();
-    // //Set_Font_Size(2);
-    // int w, h;
+    // Disp.setCursor(0, 0);
+    // Disp.print(s);
+    // Display();
+    //Set_Font_Size(2);
+    int w = Get_UTF8_Ascii_Pix_Len(1,s);
+    int h = 12;
     // for (int i = 5;i > 0;i--) {
     //     //Set_Font_Size(i);
     //     w = CNSize * Get_Max_Line_Len(s) * Get_Font_Size() / 2;
-    //     h = CNSize * Get_Font_Size() * Get_Str_Next_Line_O(s);
+    //     //h = CNSize * Get_Font_Size() * Get_Str_Next_Line_O(s);
     //     if (w < SCREEN_COLUMN && h < SCREEN_ROW) break;
     // }
-    // int x = (SCREEN_COLUMN - w) / 2;
-    // int y = (SCREEN_ROW - h) / 2;
+    int x = (SCREEN_COLUMN - w) / 2;
+    int y = (SCREEN_ROW - h) / 2;
 
-    // Disp.setDrawColor(0);
-    // Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 66 * Switch_space[SwitchSpace_SmoothAnimation]); //<=15FPS以便人眼察觉细节变化
+    Disp.setDrawColor(0);
+    Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 66 * Switch_space[SwitchSpace_SmoothAnimation]); //<=15FPS以便人眼察觉细节变化
 
-    // int ix = 0;
-    // for (int i = 1;i <= 10;i++) {
-    //     //震荡动画
-    //     if (Switch_space[SwitchSpace_SmoothAnimation]) ix = (10 * cos((i * 3.14) / 2.0)) / i;
+    int ix = 0;
+    for (int i = 1;i <= 10;i++) {
+        //震荡动画
+        if (Switch_space[SwitchSpace_SmoothAnimation]) ix = (10 * cos((i * 3.14) / 2.0)) / i;
 
-    //     Disp.setDrawColor(0);
-    //     Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 0);
-    //     Disp.drawFrame(x - 1 + ix, y - 3, w + 1, h + 3);
-    //     Disp.setDrawColor(1);
-    //     Draw_Fill_Round_Rect2(x + ix, y - 2, w, h + 2);
-    //     Disp.setDrawColor(0);
-    //     Draw_Utf(x + 1 + ix, y - 1, s);
-    //     Disp.setDrawColor(1);
-    //     Display();
-    //     delay(20 * Switch_space[SwitchSpace_SmoothAnimation]);
-    // }
-    // //Set_Font_Size(1);
+        Disp.setDrawColor(0);
+        Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 0);
+        Disp.drawFrame(x - 1 + ix, y - 3, w + 1, h + 3);
+        Disp.setDrawColor(1);
+        Disp.drawRBox(x + ix, y - 2, w, h + 2 ,2);
+        Disp.setDrawColor(0);
+        Draw_Utf(x + 1 + ix, y - 1, s);
+        Disp.setDrawColor(1);
+        Display();
+        delay(20 * Switch_space[SwitchSpace_SmoothAnimation]);
+    }
+    //Set_Font_Size(1);
 }
 
 /*
@@ -521,12 +522,10 @@ void Draw_APP(int x, int y, char* bitmap) {
     Disp.drawRBox(x - 3, y - 3, 42 + 6, 42 + 6, 4);
     Disp.setDrawColor(0);
 
-    Disp.drawBox(x, y, 42, 42);
     Disp.setDrawColor(1);
     if (bitmap[0] == 14)
         Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, 14, 14, 42,42);
     else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
-
 }
 
 

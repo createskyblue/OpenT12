@@ -4,8 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/INTEL/Documents/Arduino/libraries/**",
-                "C:/Users/INTEL/AppData/Local/Arduino15/packages/**"
+                "C:/Users/${username}/Documents/Arduino/libraries/**",
+                "C:/Users/${username}/AppData/Local/Arduino15/packages/**"
             ],
             "defines": [
                 "_DEBUG",

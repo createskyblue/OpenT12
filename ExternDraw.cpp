@@ -78,11 +78,16 @@ void Draw_Num_Bar(int i, int a, int b, int x, int y, int w, int h, int c) {
 
 void Draw_Slow_Bitmap(int x, int y, const unsigned char* bitmap, unsigned char w, unsigned char h)
 {
+    uint8_t color = Disp.getDrawColor();
     int xi, yi, intWidth = (w + 7) / 8;
     for (yi = 0; yi < h; yi++) {
         for (xi = 0; xi < w; xi++) {
             if (pgm_read_byte(bitmap + yi * intWidth + xi / 8) & (128 >> (xi & 7))) {
                 Disp.drawPixel(x + xi, y + yi);
+            }else if (color != 2) {
+                Disp.setDrawColor(0);
+                Disp.drawPixel(x + xi, y + yi);
+                Disp.setDrawColor(color);
             }
         }
     }
@@ -90,6 +95,9 @@ void Draw_Slow_Bitmap(int x, int y, const unsigned char* bitmap, unsigned char w
 
 //位图缩放 代码片段改自arduboy2
 void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2,int h2) {
+    uint8_t color = Disp.getDrawColor();
+    // Serial.print("颜色");
+    // Serial.println(color);
 	float mw=(float)w2/w1;
 	float mh=(float)h2/h1;
 	uint8_t cmw=ceil(mw);
@@ -99,7 +107,11 @@ void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2
 		for (xi = 0; xi < w1; xi++) {
 			if (pgm_read_byte(bitmap + yi * byteWidth + xi / 8) & (128 >> (xi & 7))) {
 				Disp.drawBox(x + xi*mw, y + yi*mh, cmw, cmh);
-			}
+            }else if (color != 2) {
+                Disp.setDrawColor(0);
+                Disp.drawBox(x + xi*mw, y + yi*mh, cmw, cmh);
+                Disp.setDrawColor(color);
+            }
 		}
 	}
 }
