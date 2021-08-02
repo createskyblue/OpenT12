@@ -22,6 +22,8 @@ void setup() {
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
 
+    EnterLogo();
+
     //初始化编码器
     sys_RotaryInit();
 

@@ -374,7 +374,7 @@ void Next_Menu() {
 
 
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
-        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, -1, MenuLevel[real_Level_Id].x);
+        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, 1, MenuLevel[real_Level_Id].x);
     }else {
             if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min=1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
             sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);

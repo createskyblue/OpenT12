@@ -1,6 +1,9 @@
 #ifndef ExternDraw
 #define ExternDraw
 #include "Type.h"
+
+void EnterLogo(void);
+
 void Display(void);
 void Draw_Utf(int x, int y, char* s);
 void Blur(int sx, int sy, int ex, int ey, int f, int delay);
