@@ -676,13 +676,6 @@ void Menu_Control() {
                         Draw_APP((1 - Menu_Smooth_Animation[3].x * (i != -1))*(-69 + i * 56 + Menu_Smooth_Animation[0].x * 56), 3, Menu[Pos_Id].icon);
                     }
                 }
-                else {
-                    //跳过属性为标题(x=2)的菜单项目  注意：如果当前菜单层被设置为图标化模式 则子菜单结构体设置中不可以出现属性为标题的错误！
-                    //MenuLevel[real_Level_Id].x++; //跳过当前项
-                    //sys_Counter_SetVal(MenuLevel[real_Level_Id].x);
-                    //id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x); //重新计算当前项目id
-                    //i--; //给循环补血
-                } 
             }
         }
 
