@@ -1,6 +1,23 @@
 #include "OpenT12.h"
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
+void EnterLogo(void) {
+    for (int16_t x=-128;x<128;x+=4) {
+        //绘制Logo
+        Disp.setDrawColor(1);
+        Draw_Slow_Bitmap(0, 0, Logo, 128, 64);
+        //尖刺特效
+        Disp.setDrawColor(0);
+        for (uint yi=0;yi<4;yi++) {
+            Disp.drawTriangle(x, yi * 16 + 8, \
+                              x + 32, yi * 16, \
+                              x + 32, (yi + 1) * 16);
+        }
+        Display();
+    }
+    Disp.setDrawColor(1);
+}
+
 void Display(void) {
     ESP.wdtFeed();
     Disp.sendBuffer();
