@@ -15,6 +15,7 @@ void setup() {
 
     //初始化OLED
     Disp.begin();
+    //Disp.setBusClock(200000);
     Disp.enableUTF8Print();
     Disp.setFontDirection(0);
     Disp.setFontPosTop();
@@ -56,5 +57,5 @@ void loop() {
     //     DispFlashTimer = millis();
     //     noTone(14);//停止发声
     // }
-
+    delay(2);
 }

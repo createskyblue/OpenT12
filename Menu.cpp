@@ -12,7 +12,7 @@ int32_t real_Level_Id,Pos_Id,Back_Id=-1; //索引值
 
 
 //全局变量 控制右下角角标显示时间
-int32_t pages_Tip_Display_timer = 0;
+uint32_t pages_Tip_Display_timer = 0;
 //默认无动作后的1500ms关闭悬浮角标显示
 #define pages_Tip_Display_Timeout 1500
 
@@ -23,12 +23,6 @@ int32_t pages_Tip_Display_timer = 0;
 
 *//////////////////////////////////////////////////////////////////////
 //由于sizeof的原理是在编译阶段由编译器替换数组大小，因此我们无法计算指针的sizeof！需要在位图的第一个字节填写 n 阶矩阵图像
-unsigned char Set0[] = { 42,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0x7f,0xff,0xff,0xc0,0xff,0xfe,0x7f,0xff,0xff,0xc0,0xff,0xfe,0xff,0xff,0xf7,0xc0,0xff,0xfc,0xff,0xff,0xc3,0xc0,0xff,0xf0,0xc7,0xff,0x33,0xc0,0xff,0xfe,0xef,0xcc,0xe7,0xc0,0xff,0xcc,0xcf,0x0f,0xef,0xc0,0xff,0xc1,0x5f,0xcd,0xdf,0xc0,0xff,0xb8,0x1f,0xdc,0x9f,0xc0,0xff,0xb6,0x04,0xdb,0xbf,0xc0,0xff,0x9e,0x4c,0x5b,0x7f,0xc0,0xff,0xf9,0x9c,0x99,0x7f,0xc0,0xff,0xe7,0x3d,0xbf,0x7f,0xc0,0xff,0x9c,0xfc,0x36,0x7f,0xc0,0xfb,0x70,0xf8,0x26,0xff,0xc0,0xf8,0xfd,0x39,0xa4,0xff,0xc0,0xf9,0xfc,0x3f,0xc8,0xff,0xc0,0xf9,0xf1,0xff,0x86,0xff,0xc0,0xfb,0x81,0xff,0x46,0xff,0xc0,0xff,0xd9,0xfe,0x86,0xff,0xc0,0xff,0xf9,0xfe,0x3d,0xff,0xc0,0xff,0xd9,0xff,0x29,0xff,0xc0,0xff,0xf1,0xff,0x3d,0xff,0xc0,0xff,0xff,0xff,0xbf,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0,0xff,0xff,0xff,0xff,0xff,0xc0 };
-
-unsigned char Set1[] = { 14,0xc3,0xfc,0x18,0x00,0x18,0x00,0xc3,0xfc,0xff,0xfc,0xff,0x0c,0x00,0x60,0x00,0x60,0xff,0x0c,0xff,0xfc,0xf0,0xfc,0x06,0x00,0x06,0x00,0xf0,0xfc };
-unsigned char Set2[] = { 14,0xf0,0x3c,0xce,0x0c,0xbf,0x04,0xb3,0x04,0x73,0x00,0x7f,0x00,0x7e,0x00,0x7c,0x00,0x7c,0x00,0x7c,0x60,0xbc,0x64,0xbe,0x04,0xcf,0x0c,0xf0,0x3c };
-unsigned char Set3[] = { 14,0x80,0x0c,0x00,0x1c,0x3f,0xf4,0x3f,0xe0,0x3f,0xc4,0x37,0x8c,0x23,0x18,0x30,0x30,0x38,0x70,0x3c,0xf0,0x3f,0xf0,0x3f,0xf0,0x00,0x00,0x80,0x04 };
-unsigned char Set4[] = { 14,0x00,0x04,0x58,0x08,0x58,0x08,0x58,0x08,0x40,0x08,0x7f,0xf8,0x60,0x18,0x5f,0xe8,0x5b,0x68,0x5f,0xe8,0x5b,0x68,0x1c,0xe8,0x5f,0xe8,0x00,0x00 };
 /*
     @变量组 Switch_space[]
     @brief 开关控件 用于存储开关控件的值
@@ -59,7 +53,7 @@ uint8_t Switch_space[] = {1,0,0};
 */
 struct Slide_Bar Slide_space[Slide_Bar_Num] = {
     {255,0,255,1}, //亮度调整
-    {0,0,SCREEN_ROW / 16 + 1,1}, //自适应菜单滚动范围
+    {0,0,SCREEN_ROW / 16,1}, //自适应菜单滚动范围
     {0,0,100,1}, //音量调整::默认静音
 };
 
@@ -96,10 +90,15 @@ struct Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num] = {
         uint8_t max   最大页
         uint8_t a     参数A 0:无动作 1:开启图标化菜单
 */
-struct Menu_Level_System MenuLevel[3] = {
-    {0,0,0,4,1},
-    {1,0,0,4,0},
-    {2,0,0,5,0},
+struct Menu_Level_System MenuLevel[] = {
+    {0,0,0,3,0},
+    {1,0,0,5,0},
+    {2,0,0,6,0},
+    {3,0,0,4,0},
+    {4,0,0,4,0},
+    {5,0,0,6,0},
+    {6,0,0,3,0},
+    {7,0,0,6,0},
 };
 
 /*
@@ -128,25 +127,58 @@ struct Menu_Level_System MenuLevel[3] = {
 #define SingleBox_Menu_Op           5
 
 struct Menu_System Menu[] = {
-    {0,0,       Title_Menu_Op,          "主菜单",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {0,1,       Jump_Menu_Op,          "学习强国",              Set0,                        0,                                  0,          Menu_NULL_F},
-    {0,2,       Jump_Menu_Op,           "个性化",               Set1,                       2,                                  0,          Menu_NULL_F},
-    {0,3,       Jump_Menu_Op,           "系统",                 Set2,                       1,                                  0,          Menu_NULL_F},
-    {0,4,       F_Menu_Op,              "返回",                 Set3,                       0,                                  0,          (*Exit_Menu_System)},
+    {0,0,       Title_Menu_Op,         "主菜单",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
+    {0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  5,          Menu_NULL_F},
+    {0,3,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          Menu_NULL_F},
 
-    {1,0,       Title_Menu_Op,          "系统",                 Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,1,       F_Menu_Op,              "查看曲线系数",          Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,2,       F_Menu_Op,              "校准纸张计数器",        Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,3,       F_Menu_Op,              "关于",                 Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,4,       Jump_Menu_Op,           "返回",                 Menu_NULL_IMG,              0,                                  3,          Menu_NULL_F},
+    {1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {1,1,       Jump_Menu_Op,          "烙铁头",               Menu_NULL_IMG,              2,                                  0,          Menu_NULL_F},
+    {1,2,       Jump_Menu_Op,          "温度场景",               Menu_NULL_IMG,              3,                                  0,          Menu_NULL_F},
+    {1,3,       Jump_Menu_Op,          "定时场景",               Menu_NULL_IMG,              4,                                  0,          Menu_NULL_F},
+    {1,4,       Jump_Menu_Op,          "PID",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {1,5,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
 
-    {2,0,       Title_Menu_Op,          "个性化",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,1,       Switch_Menu_Op,         "过渡动画",             Menu_NULL_IMG,              SwitchSpace_SmoothAnimation,        0,          (*SmoothAnimationSystem_Clean)},
-    {2,2,       Switch_Menu_Op,         "选项条定宽",           Menu_NULL_IMG,              SwitchSpace_OptionStripFixedLength, 0,          Menu_NULL_F},
-    {2,3,       Progress_Bar_Menu_Op,   "屏幕亮度",             Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
-    {2,4,       Progress_Bar_Menu_Op,   "音量",                 Menu_NULL_IMG,              2,                                  1,         Menu_NULL_F},
-    {2,5,       Jump_Menu_Op,           "返回",                 Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
+    {2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,1,       Jump_Menu_Op,          "配置列表",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,2,       Jump_Menu_Op,          "校准",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,3,       Jump_Menu_Op,          "新建",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,4,       Jump_Menu_Op,          "重命名",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,5,       Jump_Menu_Op,          "删除",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {2,6,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
 
+    {3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {3,1,       Jump_Menu_Op,          "设定 启动 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {3,2,       Jump_Menu_Op,          "设定 休眠 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {3,3,       Jump_Menu_Op,          "设定 提温 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {3,4,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
+
+    {4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {4,1,       Jump_Menu_Op,          "设定 休眠 时间",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {4,2,       Jump_Menu_Op,          "设定 停机 时间",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {4,3,       Jump_Menu_Op,          "设定 提温 时长",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {4,4,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
+
+    {5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {5,1,       Jump_Menu_Op,          "个性化",               Menu_NULL_IMG,              6,                                  0,          Menu_NULL_F},
+    {5,2,       Jump_Menu_Op,          "欠压提醒",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {5,3,       Jump_Menu_Op,          "开机密码",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {5,4,       Jump_Menu_Op,          "语言设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {5,5,       Jump_Menu_Op,          "关于朱雀",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {5,6,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
+
+    {6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {6,1,       Jump_Menu_Op,          "显示效果",               Menu_NULL_IMG,              7,                                  0,          Menu_NULL_F},
+    {6,2,       Jump_Menu_Op,          "声音设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {6,3,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
+
+    {7,0,       Title_Menu_Op,         "显示效果",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,1,       Jump_Menu_Op,          "面板设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,2,       Jump_Menu_Op,          "翻转屏幕",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,3,       Jump_Menu_Op,          "屏幕亮度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,4,       Jump_Menu_Op,          "过渡动画",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,5,       Jump_Menu_Op,          "选项条定宽",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {7,6,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              6,                                  1,          Menu_NULL_F},
 };
 int deg=0;
 //系统UI
@@ -173,11 +205,11 @@ void System_UI() {
 
 
 
-// void About() {
-//     Disp.clearBuffer();
-//     Text_Reader("２０１９大学生电子设计竞赛Ｆ题纸张计数器程序：赖浩文        硬件：周孜宁        辅助：张家穗");
-//     Display();
-// }
+void SYS_About() {
+    Disp.clearBuffer();
+    Text_Reader("2019大学生电子设计竞赛Ｆ题纸张计数器\n程序：赖浩文\n硬件：周孜宁\n辅助：张家穗");
+    Display();
+}
 
 
 /*/////////////////////////////////////////////////////////////////////
@@ -284,56 +316,55 @@ void Page_Footnotes(int a, int b) {
     
 */
 void Text_Reader(char* s) {
-    // int len = strlen(s)/2;
-    // int Colunm_GBK_Char = SCREEN_COLUMN / CNSize;
-    // int Row_GBK_Char = SCREEN_ROW / CNSize;
-    // int pages = len / (Colunm_GBK_Char * Row_GBK_Char);
-    // int val_Pages = 0, last_Pages = pages + 1;
-    // char page_s[(SCREEN_COLUMN / CNSize) * 2 + 1];
-    // int now_pow;
+    int len = strlen(s)/2;
+    int Colunm_GBK_Char = SCREEN_COLUMN / CNSize;
+    int Row_GBK_Char = SCREEN_ROW / CNSize;
+    int pages = len / (Colunm_GBK_Char * Row_GBK_Char);
+    int val_Pages = 0, last_Pages = pages + 1;
+    char page_s[(SCREEN_COLUMN / CNSize) * 2 + 1];
+    int now_pow;
 
-    // //重置页码角标显示时间
-    // pages_Tip_Display_timer = millis();
+    //重置页码角标显示时间
+    pages_Tip_Display_timer = millis();
 
-    // //初始化编码器设置
-    // sys_Counter_Set(0, pages, -1, 0);
-    // uint8_t key = bsp_GetKey();
-    // uint8_t lastKey = 0;
-    // while (!sys_KeyProcess()) {
+    //初始化编码器设置
+    sys_Counter_Set(0, pages, 1, 0);
+    while (!sys_KeyProcess()) {
 
-    //     //获取输入
-    //     val_Pages = sys_Counter_Get();
-    //     //只有翻页时才刷新屏幕 节省资源::这里页码超时加了100ms是为了超时后可以Display刷新一下屏幕
-    //     if (val_Pages != last_Pages || (millis() - pages_Tip_Display_timer < pages_Tip_Display_Timeout + 100)) {
-    //         last_Pages = val_Pages;
-    //         Disp.clearBuffer();
+        //获取输入
+        val_Pages = sys_Counter_Get();
+        //只有翻页时才刷新屏幕 节省资源::这里页码超时加了100ms是为了超时后可以Display刷新一下屏幕
+        if (val_Pages != last_Pages || (millis() - pages_Tip_Display_timer < pages_Tip_Display_Timeout + 100)) {
+            last_Pages = val_Pages;
+            Disp.clearBuffer();
 
-    //         //自适应屏幕高度
-    //         for (int i = 0;i < Row_GBK_Char;i++) {
-    //             //计算当前行第一个字符地址
-    //             now_pow = (val_Pages * Colunm_GBK_Char * Row_GBK_Char + Colunm_GBK_Char * i) * 2;
-    //             for (int i = 0;i < sizeof(page_s);i++) {
-    //                 if (now_pow + i < strlen(s) && i < sizeof(page_s) - 1)
-    //                     page_s[i] = s[now_pow + i];
-    //                 else {
-    //                     page_s[i] = '\0';
-    //                     break;
-    //                 }
-    //             }
-    //             //显示当前行全角GBK字符
-    //             Draw_Utf(0, i * (CNSize + 1), page_s);
-    //         }
-    //         //绘制滚动条
-    //         Draw_Scale(SCREEN_COLUMN - 5, 0, 5, SCREEN_ROW - 1, pages + 1, map(val_Pages, 0, pages, 0, SCREEN_ROW - SCREEN_ROW /2- 1));
-    //         //绘制页码下标
-    //         Page_Footnotes(val_Pages + 1, pages + 1);
-    //         Display();
-    //     }
-    // }
-    // //延迟 防止短时间多次触发
-    // delay(50);
-    // //初始化菜单控件
-    // //Next_Menu();
+            //自适应屏幕高度
+            for (int i = 0;i < Row_GBK_Char;i++) {
+                //计算当前行第一个字符地址
+                now_pow = (val_Pages * Colunm_GBK_Char * Row_GBK_Char + Colunm_GBK_Char * i) * 2;
+                for (int i = 0;i < sizeof(page_s);i++) {
+                    if (now_pow + i < strlen(s) && i < sizeof(page_s) - 1)
+                        page_s[i] = s[now_pow + i];
+                    else {
+                        page_s[i] = '\0';
+                        break;
+                    }
+                }
+                //显示当前行Utf8字符
+                Draw_Utf(0, i * (CNSize + 1), page_s);
+            }
+            //绘制滚动条
+            Draw_Scale(SCREEN_COLUMN - 5, 0, 5, SCREEN_ROW - 1, pages + 1, map(val_Pages, 0, pages, 0, SCREEN_ROW - SCREEN_ROW /2- 1));
+            //绘制页码下标
+            Page_Footnotes(val_Pages + 1, pages + 1);
+            Display();
+        }
+        ESP.wdtFeed();
+    }
+    //延迟 防止短时间多次触发
+    delay(50);
+    //初始化菜单控件
+    //Next_Menu();
 }
 
 /*
@@ -374,11 +405,13 @@ void Next_Menu() {
 
 
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
-        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, 1, MenuLevel[real_Level_Id].x);
+        //设置编码器滚动范围
+        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max + 1, 1, Slide_space[1].x);
     }else {
-            if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min=1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
-            sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);
-            Slide_space[1].x = 0;
+        printf("Next_Menu:图标模式\n");
+        if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min=1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
+        sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);
+        Slide_space[1].x = 0;
     }
 
     if (Switch_space[SwitchSpace_SmoothAnimation]) {
@@ -391,6 +424,8 @@ void Next_Menu() {
         Menu_Smooth_Animation[3].val = 1;
     }
     Menu_System_State = 1;
+
+    printf("退出Next_Menu \n");
 }
 
 /*
@@ -404,7 +439,7 @@ void Pop_Windows(char* s) {
     // Disp.print(s);
     // Display();
     //Set_Font_Size(2);
-    int w = Get_UTF8_Ascii_Pix_Len(1,s);
+    int w = Get_UTF8_Ascii_Pix_Len(1,s) + 2;
     int h = 12;
     // for (int i = 5;i > 0;i--) {
     //     //Set_Font_Size(i);
@@ -455,15 +490,26 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     case 0:
         MenuLevelId = Menu[Id].a;
         if (!MenuLevel[Menu[Id].a].a) { //如果当前菜单层没有开启了图表化显示则对子菜单选项定向跳转执行配置
-            /*默认跳转后选项在最下端
-            Slide_space[1].x =constrain(Menu[Id].b,0,3);
-            MenuLevel[Menu[Id].a].x=constrain(Menu[Id].b + 1 - (SCREEN_ROW/16) ,0,MenuLevel[Menu[Id].a].max);
-            */
 
-           //跳转后选项在最上端：可能会出现意外的bug 慎重
-           Slide_space[1].x = 0;
-           MenuLevel[Menu[Id].a].x=Menu[Id].b;
-           if (MenuLevel[Menu[Id].a].max-MenuLevel[Menu[Id].a].x<=(SCREEN_ROW/16-1)) Slide_space[1].x=(SCREEN_ROW/16-1)-(MenuLevel[Menu[Id].a].max-MenuLevel[Menu[Id].a].x);
+            uint8_t ExcellentLimit = (MenuLevel[MenuLevelId].max + 1) - SCREEN_FONT_ROW; //(MenuLevel[MenuLevelId].max + 1)是为了从1开始计算
+            uint8_t ExcellentMedian = (SCREEN_FONT_ROW/2); //注意：这里从1开始计数
+            //计算最优显示区域
+            if (Menu[Id].b==0) {
+                //头只有最差显示区域
+                MenuLevel[Menu[Id].a].x = 0;
+                Slide_space[1].x = (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+            }else if (Menu[Id].b > 0 && Menu[Id].b <= MenuLevel[MenuLevelId].max - ExcellentMedian) {
+                //中部拥有绝佳的显示区域
+                MenuLevel[Menu[Id].a].x = Menu[Id].b - 1;
+                Slide_space[1].x = 1 + (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+            }else{
+                //靠后位置 以及 最差的尾部
+                MenuLevel[Menu[Id].a].x = ExcellentLimit;
+                Slide_space[1].x = Menu[Id].b - ExcellentLimit + (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+            }
+            
+            printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\nSlide_space[1].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, Slide_space[1].x);
+
 
         }
         if (Menu[Id].function) Menu[Id].function();
@@ -472,7 +518,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     case 1:
         Pop_Windows("正在处理");
         if (Menu[Id].function) Menu[Id].function();
-        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, -1, Slide_space[1].x + 1);
+        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, 1, Slide_space[1].x + 1);
         break;
     case 3:
         Switch_space[Menu[Id].a] = !Switch_space[Menu[Id].a];
@@ -507,7 +553,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
 
         //sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);
         if (Menu[Id].function) Menu[Id].function();
-        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, -1, Slide_space[1].x + 1);
+        sys_Counter_Set(Slide_space[1].min, Slide_space[1].max, 1, Slide_space[1].x + 1);
         break;
     
     case 5://单选模式
@@ -539,7 +585,8 @@ static int Menu_Smooth_Animation_Last_choose = 0;
     @param -
 */
 void Menu_Control() {
-    //if (!Menu_System_State) return;
+    //printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\nSlide_space[1].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, Slide_space[1].x);
+    if (!Menu_System_State) return;
     Disp.clearBuffer();
 
     //计算过渡动画
@@ -630,20 +677,23 @@ void Menu_Control() {
                             0);
         Disp.setDrawColor(1);
 
-        //编码器控制页内选择框滚动选择
+        //项目滚动处理
         Slide_space[1].x = sys_Counter_Get() - 1;
-        if (Slide_space[1].x >= Slide_space[1].max - 1) {
-            MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x++;
-            sys_Counter_SetVal(Slide_space[1].max - 1);
-        }
-        else if (Slide_space[1].x <= -1 && !(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x == 0 && sys_Counter_Get()!= 1)) {
-            MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x--;
+        if (Slide_space[1].x >= Slide_space[1].max) {
+            MenuLevel[real_Level_Id].x++;
+            sys_Counter_SetVal(Slide_space[1].max);
+        }else if (Slide_space[1].x <= -1) {
+            MenuLevel[real_Level_Id].x--;
             sys_Counter_SetVal(1);
         }
-        Slide_space[1].x = constrain(Slide_space[1].x, 0, min((int)Slide_space[1].max - 2, (int)MenuLevel[real_Level_Id].max));
+        //编码器控制页内选择框滚动选择
+        //CountMax = constrain(MenuLevel[real_Level_Id].max - MenuLevel[real_Level_Id].x + 1, 0, 7);
+        Slide_space[1].x = constrain(Slide_space[1].x, 0, Slide_space[1].max - 1);
+
+        // Slide_space[1].x = constrain(Slide_space[1].x, 0, min((int)Slide_space[1].max - 2, (int)MenuLevel[real_Level_Id].max));
         MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x = constrain(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x, \
                                                                     MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].min, \
-            (MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].max > Slide_space[1].max - 2)?(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].max - (Slide_space[1].max - 2)):0);
+            (MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].max > Slide_space[1].max - 1)?(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].max - (Slide_space[1].max - 1)):0);
 
         //更新过渡动画
         real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);

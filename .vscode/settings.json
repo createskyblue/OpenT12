@@ -9,6 +9,20 @@
         "associative_base": "cpp",
         "queue": "cpp",
         "stack": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "ranges": "cpp",
+        "bitset": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "valarray": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "ostream": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp"
     }
 }

@@ -2,12 +2,13 @@
 #include "Rotary.h"
 
 static double Count=0;
+static double CountLast = 0;
 static double Count_min=0;
 static double Count_max=0;
 static double Count_step=0;
 
 //菜单系统角标计时器
-extern int32_t pages_Tip_Display_timer;
+extern uint32_t pages_Tip_Display_timer;
 
 void sys_RotaryInit(void) {
     //初始化GPIO
@@ -72,10 +73,14 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
             ab0 = (a == b);
         }
     }
-    //Serial.println("OK");
+    //printf("编码器:%lf\n", sys_Counter_Get());
 }
 
 double sys_Counter_Get(void) {
+    if (Count != CountLast) {
+        CountLast = Count;
+        printf("C:%lf\n",Count);
+    }else printf("C:nc\n", Count);
     return Count / ROTARY_TYPE;
 }
 

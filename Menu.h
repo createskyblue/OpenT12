@@ -7,6 +7,7 @@
 #define SCREEN_COLUMN 128
 #define SCREEN_ROW    64
 #define SCREEN_PAGE_NUM 8
+#define SCREEN_FONT_ROW 4
 
 void System_UI(void);
 void Menu_Control(void);
@@ -24,8 +25,7 @@ void SmoothAnimationSystem_Clean(void);
 #define Slide_Bar_Num 3
 void Smooth_Animation_System();
 
-void About(void);
-void Text(void);
+void SYS_About(void);
 
 /*
 	@名称 Smooth_Animation
