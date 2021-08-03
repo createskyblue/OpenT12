@@ -2,17 +2,18 @@
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
 void EnterLogo(void) {
-    for (int16_t x=-128;x<128;x+=4) {
+    for (int16_t x=-128;x<128;x+=8) {
         //绘制Logo
         Disp.setDrawColor(1);
         Draw_Slow_Bitmap(0, 0, Logo, 128, 64);
-        //尖刺特效
+        //转场特效
+        Disp.setBitmapMode(1);
         Disp.setDrawColor(0);
-        for (uint yi=0;yi<4;yi++) {
-            Disp.drawTriangle(x, yi * 16 + 8, \
-                              x + 32, yi * 16, \
-                              x + 32, (yi + 1) * 16);
-        }
+
+        Disp.drawXBM(x, 0, 128, 64, TranAnimation);
+        if (x < 0) Disp.drawBox(128 + x, 0, -x, 64);
+
+        Disp.setBitmapMode(0);
         Display();
     }
     Disp.setDrawColor(1);
@@ -21,11 +22,13 @@ void EnterLogo(void) {
 void Display(void) {
     ESP.wdtFeed();
     Disp.sendBuffer();
+    //printf("d\n");
 }
 
 void Draw_Utf(int x,int y,char *s){
-    Disp.setCursor(x,y + 1);
-    Disp.print(s);
+    // Disp.setCursor(x,y + 1);
+    // Disp.print(s);
+    Disp.drawUTF8(x,y+1,s);
 }
 /*
 @ 作用：抖动1
