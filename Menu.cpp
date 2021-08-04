@@ -7,7 +7,7 @@ extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 uint8_t Menu_System_State = 0;
 
 //菜单层id 菜单项目id
-uint8_t MenuLevelId = 0, MenuId = 0; //标注值
+uint8_t MenuLevelId = 0, LastMenuLevelId =0, MenuId = 0; //标注值
 int32_t real_Level_Id,Pos_Id,Back_Id=-1; //索引值
 
 
@@ -90,15 +90,25 @@ struct Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num] = {
         uint8_t max   最大页
         uint8_t a     参数A 0:无动作 1:开启图标化菜单
 */
+
+#define Menu_NULL_IMG 0
+#define Menu_HAVE_IMG 1
+
 struct Menu_Level_System MenuLevel[] = {
-    {0,0,0,3,0},
-    {1,0,0,5,0},
-    {2,0,0,6,0},
-    {3,0,0,4,0},
-    {4,0,0,4,0},
-    {5,0,0,6,0},
-    {6,0,0,3,0},
-    {7,0,0,6,0},
+    {0,0,0,3,Menu_NULL_IMG},
+    {1,0,0,5,Menu_HAVE_IMG},
+    {2,0,0,6,Menu_HAVE_IMG},
+    {3,0,0,4,Menu_HAVE_IMG},
+    {4,0,0,4,Menu_HAVE_IMG},
+    {5,0,0,6,Menu_HAVE_IMG},
+    {6,0,0,4,Menu_HAVE_IMG},
+    {7,0,0,6,Menu_HAVE_IMG},
+    {8,0,0,3,Menu_HAVE_IMG},
+    {9,0,0,9,Menu_NULL_IMG},
+    {9,0,0,9,Menu_NULL_IMG},
+    {10,0,0,2,Menu_HAVE_IMG},
+    {11,0,0,2,Menu_HAVE_IMG},
+    {12,0,0,2,Menu_HAVE_IMG},
 };
 
 /*
@@ -116,7 +126,6 @@ struct Menu_Level_System MenuLevel[] = {
         uint8_t b               附加参数_2 (0-jump_id) (4-滑动条：true?执行函数:无操作)
         void (*function)(void);
 */
-#define Menu_NULL_IMG               0
 #define Menu_NULL_F                 0
 
 #define Jump_Menu_Op                0
@@ -125,60 +134,92 @@ struct Menu_Level_System MenuLevel[] = {
 #define Switch_Menu_Op              3
 #define Progress_Bar_Menu_Op        4
 #define SingleBox_Menu_Op           5
+#define Menu_NULL_OP                6
 
 struct Menu_System Menu[] = {
     {0,0,       Title_Menu_Op,         "主菜单",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
     {0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
-    {0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  5,          Menu_NULL_F},
+    {0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
     {0,3,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          Menu_NULL_F},
 
     {1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,1,       Jump_Menu_Op,          "烙铁头",               Menu_NULL_IMG,              2,                                  0,          Menu_NULL_F},
-    {1,2,       Jump_Menu_Op,          "温度场景",               Menu_NULL_IMG,              3,                                  0,          Menu_NULL_F},
-    {1,3,       Jump_Menu_Op,          "定时场景",               Menu_NULL_IMG,              4,                                  0,          Menu_NULL_F},
-    {1,4,       Jump_Menu_Op,          "PID",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {1,5,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
+    {1,1,       Jump_Menu_Op,          "烙铁头",               IMG_Tip,              2,                                  0,          Menu_NULL_F},
+    {1,2,       Jump_Menu_Op,          "温度场景",             Set1,              3,                                  0,          Menu_NULL_F},
+    {1,3,       Jump_Menu_Op,          "定时场景",             Set2,              4,                                  0,          Menu_NULL_F},
+    {1,4,       Jump_Menu_Op,          "温控模式",                 Set3,              12,                                  0,          Menu_NULL_F},
+    {1,5,       Jump_Menu_Op,          "返回",                Set7,              0,                                  1,          Menu_NULL_F},
 
     {2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,1,       Jump_Menu_Op,          "配置列表",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,2,       Jump_Menu_Op,          "校准",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,3,       Jump_Menu_Op,          "新建",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,4,       Jump_Menu_Op,          "重命名",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,5,       Jump_Menu_Op,          "删除",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {2,6,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
+    {2,1,       Jump_Menu_Op,          "切换配置",           Set8,              0,                                  0,          Menu_NULL_F},
+    {2,2,       Jump_Menu_Op,          "校准",               Set9,              0,                                  0,          Menu_NULL_F},
+    {2,3,       Jump_Menu_Op,          "新建",               IMG_Files,              0,                                  0,          Menu_NULL_F},
+    {2,4,       Jump_Menu_Op,          "重命名",             IMG_Pen2,              0,                                  0,          Menu_NULL_F},
+    {2,5,       Jump_Menu_Op,          "删除",               Set10,              0,                                  0,          Menu_NULL_F},
+    {2,6,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          Menu_NULL_F},
 
     {3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {3,1,       Jump_Menu_Op,          "设定 启动 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {3,2,       Jump_Menu_Op,          "设定 休眠 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {3,3,       Jump_Menu_Op,          "设定 提温 温度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {3,4,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
+    {3,1,       Jump_Menu_Op,          "设定 启动 温度",         Set13,              0,                                  0,          Menu_NULL_F},
+    {3,2,       Jump_Menu_Op,          "设定 休眠 温度",         Set11,              0,                                  0,          Menu_NULL_F},
+    {3,3,       Jump_Menu_Op,          "设定 提温 温度",         Set14,              0,                                  0,          Menu_NULL_F},
+    {3,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  2,          Menu_NULL_F},
 
     {4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {4,1,       Jump_Menu_Op,          "设定 休眠 时间",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {4,2,       Jump_Menu_Op,          "设定 停机 时间",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {4,3,       Jump_Menu_Op,          "设定 提温 时长",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {4,4,       Jump_Menu_Op,          "保存",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
+    {4,1,       Jump_Menu_Op,          "设定 停机 时间",         Set13,              0,                                  0,          Menu_NULL_F},
+    {4,2,       Jump_Menu_Op,          "设定 休眠 时间",         Set11,              0,                                  0,          Menu_NULL_F},
+    {4,3,       Jump_Menu_Op,          "设定 提温 时长",         Set14,              0,                                  0,          Menu_NULL_F},
+    {4,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  3,          Menu_NULL_F},
 
     {5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {5,1,       Jump_Menu_Op,          "个性化",               Menu_NULL_IMG,              6,                                  0,          Menu_NULL_F},
-    {5,2,       Jump_Menu_Op,          "欠压提醒",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {5,3,       Jump_Menu_Op,          "开机密码",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {5,4,       Jump_Menu_Op,          "语言设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {5,5,       Jump_Menu_Op,          "关于朱雀",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {5,6,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
+    {5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
+    {5,2,       Jump_Menu_Op,          "欠压提醒",             Set6,              0,                                  0,          Menu_NULL_F},
+    {5,3,       Jump_Menu_Op,          "开机密码",             Lock,              0,                                  0,          Menu_NULL_F},
+    {5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              0,                                  0,          Menu_NULL_F},
+    {5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              0,                                  0,          Menu_NULL_F},
+    {5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
 
     {6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {6,1,       Jump_Menu_Op,          "显示效果",               Menu_NULL_IMG,              7,                                  0,          Menu_NULL_F},
-    {6,2,       Jump_Menu_Op,          "声音设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {6,3,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
+    {6,1,       Jump_Menu_Op,          "显示效果",             Set4,              7,                                  0,          Menu_NULL_F},
+    {6,2,       Jump_Menu_Op,          "声音设置",             Set5,              10,                                  0,          Menu_NULL_F},
+    {6,3,       Jump_Menu_Op,          "编码器方向",            Set19,              0,                                  0,          Menu_NULL_F},
+    {6,4,       Jump_Menu_Op,          "返回",                 Set7,              5,                                  1,          Menu_NULL_F},
 
     {7,0,       Title_Menu_Op,         "显示效果",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,1,       Jump_Menu_Op,          "面板设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,2,       Jump_Menu_Op,          "翻转屏幕",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,3,       Jump_Menu_Op,          "屏幕亮度",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,4,       Jump_Menu_Op,          "过渡动画",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,5,       Jump_Menu_Op,          "选项条定宽",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {7,6,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,              6,                                  1,          Menu_NULL_F},
+    {7,1,       Jump_Menu_Op,          "面板设置",               Set0,              8,                                  0,          Menu_NULL_F},
+    {7,2,       Jump_Menu_Op,          "翻转屏幕",               IMG_Flip,              0,                                  0,          Menu_NULL_F},
+    {7,3,       Jump_Menu_Op,          "过渡动画",               IMG_Animation,    11,                                  0,          Menu_NULL_F},
+    {7,4,       Jump_Menu_Op,          "屏幕亮度",               IMG_Sun,              0,                                  0,          Menu_NULL_F},
+    {7,5,       Jump_Menu_Op,          "选项条定宽",             IMG_Size,              9,                                  0,          Menu_NULL_F},
+    {7,6,       Jump_Menu_Op,          "返回",                  Set7,              6,                                  1,          Menu_NULL_F},
+
+    {8,0,       Title_Menu_Op,         "面板设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {8,1,       Jump_Menu_Op,          "简约",               Set17,              0,                                  0,          Menu_NULL_F},
+    {8,2,       Jump_Menu_Op,          "详细",               Set18,              0,                                  0,          Menu_NULL_F},
+    {8,3,       Jump_Menu_Op,          "保存",               Save,              7,                                  1,          Menu_NULL_F},
+
+    {9,0,       Title_Menu_Op,         "选项条定宽设置&测试",      Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,1,       Jump_Menu_Op,          "固定",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,2,       Jump_Menu_Op,          "自适应",                 Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,3,       Jump_Menu_Op,          "--- 往下翻 ---",         Menu_NULL_IMG,              9,                                  4,          Menu_NULL_F},
+    {9,4,       Menu_NULL_OP,          "人民!",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,5,       Menu_NULL_OP,          "只有人民~",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,6,       Menu_NULL_OP,          "才是创造世界历史的",      Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
+    {9,7,       Menu_NULL_OP,          "动 力！",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {9,8,       Jump_Menu_Op,          "--- 往上翻 ---",         Menu_NULL_IMG,              9,                                  0,          Menu_NULL_F},
+    {9,9,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,              7,                                  5,          Menu_NULL_F},
+
+    {10,0,       Title_Menu_Op,         "声音设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {10,1,       Jump_Menu_Op,          "开启",               Set5,              6,                                  2,          Menu_NULL_F},
+    {10,2,       Jump_Menu_Op,          "关闭",               Set5_1,              6,                                  2,          Menu_NULL_F},
+
+    {11,0,       Title_Menu_Op,         "动画设置",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {11,1,       Jump_Menu_Op,          "开启",               IMG_Animation,                  7,                                  3,          Menu_NULL_F},
+    {11,2,       Jump_Menu_Op,          "关闭",               IMG_Animation_DISABLE,          7,                                  3,          Menu_NULL_F},
+
+    {12,0,       Title_Menu_Op,         "温控模式",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    {12,1,       Jump_Menu_Op,          "PID控制",               Set16,               1,                                  4,          Menu_NULL_F},
+    {12,2,       Jump_Menu_Op,          "模糊控制",              Set15,      1,                                  4,          Menu_NULL_F},
+
+
 };
 int deg=0;
 //系统UI
@@ -415,9 +456,12 @@ void Next_Menu() {
     }
 
     if (Switch_space[SwitchSpace_SmoothAnimation]) {
-        Disp.setDrawColor(0);
-        Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 20 * Switch_space[SwitchSpace_SmoothAnimation]);
-        Disp.setDrawColor(1);
+        if (LastMenuLevelId != MenuLevelId) {
+            Disp.setDrawColor(0);
+            Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 20 * Switch_space[SwitchSpace_SmoothAnimation]);
+            Disp.setDrawColor(1);
+        }
+        
 
         //项目归位动画
         Menu_Smooth_Animation[3].last = 0;
@@ -488,6 +532,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     Id = Get_Menu_Id(lid, id);
     switch (Menu[Id].x) {
     case 0:
+        LastMenuLevelId = MenuLevelId; //决定是否播放转场动画
         MenuLevelId = Menu[Id].a;
         if (!MenuLevel[Menu[Id].a].a) { //如果当前菜单层没有开启了图表化显示则对子菜单选项定向跳转执行配置
 
@@ -507,11 +552,12 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
                 MenuLevel[Menu[Id].a].x = ExcellentLimit;
                 Slide_space[1].x = Menu[Id].b - ExcellentLimit + (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
             }
-            
-            printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\nSlide_space[1].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, Slide_space[1].x);
-
-
+            // printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\nSlide_space[1].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, Slide_space[1].x);
+        }else{
+            //当前是图标模式
+            MenuLevel[Menu[Id].a].x = Menu[Id].b;
         }
+        //按需求跳转完成后执行函数
         if (Menu[Id].function) Menu[Id].function();
         Next_Menu();
         break;

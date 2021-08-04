@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "opencv3.4.2 compile task",
+            "command": "g++",
+            "args": [
+                "-g", 
+                "${file}",
+                "-o",
+                "${workspaceFolder}\\${fileBasenameNoExtension}.exe",
+                "-I",
+                "D:\\OpenCV-MinGW-Build-OpenCV-4.1.1-x64\\include",
+                "-I",
+                "D:\\OpenCV-MinGW-Build-OpenCV-4.1.1-x64\\include\\opencv2",
+                "-L",
+                "D:\\OpenCV-MinGW-Build-OpenCV-4.1.1-x64\\x64\\mingw\\bin",
+                "-l", "libopencv_calib3d411",
+                "-l", "libopencv_core411",
+                "-l", "libopencv_dnn411",
+                "-l", "libopencv_features2d411",
+                "-l", "libopencv_flann411",
+                "-l", "libopencv_highgui411",                
+                "-l", "libopencv_imgcodecs411",
+                "-l", "libopencv_imgproc411",
+                "-l", "libopencv_ml411",
+                "-l", "libopencv_objdetect411",
+                "-l", "libopencv_photo411",
+                "-l", "libopencv_stitching411",
+                "-l", "libopencv_videoio411",
+                "-l", "libopencv_video411"
+            ],
+            "options": {
+                "cwd": "D:\\mingw64\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
