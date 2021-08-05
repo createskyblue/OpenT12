@@ -1,5 +1,4 @@
 #include "OpenT12.h"
-extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
 void EnterLogo(void) {
     for (int16_t x=-128;x<128;x+=8) {
@@ -17,6 +16,10 @@ void EnterLogo(void) {
         Display();
     }
     Disp.setDrawColor(1);
+}
+
+void Clear(void) {
+    Disp.clearBuffer();
 }
 
 void Display(void) {

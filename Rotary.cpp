@@ -77,10 +77,10 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
 }
 
 double sys_Counter_Get(void) {
-    if (Count != CountLast) {
-        CountLast = Count;
-        printf("C:%lf\n",Count);
-    }else printf("C:nc\n", Count);
+    // if (Count != CountLast) {
+    //     CountLast = Count;
+    //     printf("C:%lf\n",Count);
+    // }else printf("C:nc\n", Count);
     return Count / ROTARY_TYPE;
 }
 

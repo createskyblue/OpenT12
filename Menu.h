@@ -25,6 +25,7 @@ void SmoothAnimationSystem_Clean(void);
 #define Slide_Bar_Num 3
 void Smooth_Animation_System();
 
+void Update_OLED_Light_Level();
 void SYS_About(void);
 
 /*
@@ -53,7 +54,7 @@ extern Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num];
 		step 步进
 */
 struct Slide_Bar {
-	int x;	 //值
+	int* x;	 //值
 	int min;
 	int max;
 	int step;
