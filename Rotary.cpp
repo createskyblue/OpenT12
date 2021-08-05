@@ -6,6 +6,7 @@ static double CountLast = 0;
 static double Count_min=0;
 static double Count_max=0;
 static double Count_step=0;
+static uint8_t CounterChanged = 0;
 
 //菜单系统角标计时器
 extern uint32_t pages_Tip_Display_timer;
@@ -74,6 +75,12 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
         }
     }
     //printf("编码器:%lf\n", sys_Counter_Get());
+
+    if (Count != CountLast) {
+        CountLast = Count;
+        CounterChanged = 1;
+    }
+
 }
 
 double sys_Counter_Get(void) {
@@ -82,6 +89,12 @@ double sys_Counter_Get(void) {
     //     printf("C:%lf\n",Count);
     // }else printf("C:nc\n", Count);
     return Count / ROTARY_TYPE;
+}
+
+uint8_t sys_Counter_Change(void) {
+    uint8_t flag = CounterChanged;
+    CounterChanged = 0;
+    return flag;
 }
 
 //编码器按键按下 + 软件滤波

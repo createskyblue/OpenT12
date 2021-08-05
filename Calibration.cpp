@@ -15,7 +15,7 @@ void ShowCurveCoefficient(void) {
     }
     Display();
     while (!sys_KeyProcess()) {
-        ESP.wdtFeed();
+        //ESP.wdtFeed();
     }
 }
 

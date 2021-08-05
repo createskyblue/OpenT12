@@ -34,7 +34,7 @@ uint16_t GetADC0(void) {
         ADC /= 2.0;
     }
     //ª÷∏¥‘≠PWM≈‰÷√
-    analogWrite(PWM_PIN, PWM);
+    //analogWrite(PWM_PIN, PWM);
     return ADC;
 }
 
@@ -46,6 +46,6 @@ void SetPOWER(uint8_t POWER) {
         PWM = 255 - POWER;
     }
     //…Ë÷√ ‰≥ˆPWM
-    analogWrite(PWM_PIN, PWM);
+    //analogWrite(PWM_PIN, PWM);
 }
 

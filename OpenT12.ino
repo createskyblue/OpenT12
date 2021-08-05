@@ -15,7 +15,7 @@ void ESPRotaryInterrupt();
 void setup() {
     //初始化GPIO
     pinMode(BEEP_PIN, OUTPUT);
-    analogWrite(PWM_PIN, 255);
+    //analogWrite(PWM_PIN, 255);
 
     //初始化串口
     Serial.begin(115200);

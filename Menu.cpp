@@ -419,7 +419,7 @@ void Text_Reader(char* s) {
             Page_Footnotes(val_Pages + 1, pages + 1);
             Display();
         }
-        ESP.wdtFeed();
+        //ESP.wdtFeed();
     }
     //延迟 防止短时间多次触发
     delay(50);
@@ -675,7 +675,7 @@ void Menu_Control() {
         //int Pos_Id = Get_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + *Slide_space[Slide_space_Scroll].x);
         //显示菜单项目名::这里有两行文字是在屏幕外 用于动过渡动画
         for (int i = -1;i < SCREEN_PAGE_NUM / 2 + 1;i++) {
-            if (MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + i <= MenuLevel[real_Level_Id].max) {
+            if (MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + i >= 0 && MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + i <= MenuLevel[real_Level_Id].max) {
 
                 //绘制目录树
                 if (Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].x != 2) {
