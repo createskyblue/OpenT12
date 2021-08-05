@@ -23,6 +23,7 @@
         "*.tcc": "cpp",
         "ostream": "cpp",
         "chrono": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "complex": "cpp"
     }
 }
