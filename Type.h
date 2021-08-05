@@ -1,6 +1,6 @@
 #ifndef TYPE_H
 #define TYPE_H
-#include <c_types.h>
+#include <stdint.h>
 static const uint8_t D0   = 16;
 static const uint8_t D1   = 5;
 static const uint8_t D2   = 4;

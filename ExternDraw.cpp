@@ -23,7 +23,7 @@ void Clear(void) {
 }
 
 void Display(void) {
-    ESP.wdtFeed();
+    //ESP.wdtFeed();
     Disp.sendBuffer();
     //printf("d\n");
 }

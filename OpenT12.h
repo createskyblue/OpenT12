@@ -14,10 +14,10 @@
 #include "Calibration.h"
 #include "TipControl.h"
 
-#define BEEP_PIN    D5
-#define ADC_PIN     A0
-#define PWM_PIN     D7
-#define SW_PIN      D8
+#define BEEP_PIN    19
+#define ADC_PIN     36
+#define PWM_PIN     23
+#define SW_PIN      18
 
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
