@@ -1,51 +1,153 @@
 #include "OpenT12.h"
 
-//[¼ÈÈ»ÓĞÁËnmos ÎªÉ¶»¹Òªpmos]¿ÆÆÕ:https://www.bilibili.com/video/BV1Mb4y1k7fd?from=search&seid=15411923932488650975
+//[æ—¢ç„¶æœ‰äº†nmos ä¸ºå•¥è¿˜è¦pmos]ç§‘æ™®:https://www.bilibili.com/video/BV1Mb4y1k7fd?from=search&seid=15411923932488650975
 
 enum MOS_Type{
     PMOS=0,
     NMOS
 };
-//»ù´¡ÎÂ¿Ø
+//PWM
+uint8_t PWM_Freq = 2000;    // é¢‘ç‡
+uint8_t PWM_Channel = 1;    // é€šé“
+uint8_t PWM_Resolution = 8;   // åˆ†è¾¨ç‡
+//åŸºç¡€æ¸©æ§
 uint8_t MyMOS = PMOS;
+uint8_t POWER = 0;
 uint8_t PWM = 0;
-uint16_t TipTemperature = 0;
+double TipTemperature = 0;
+double PID_Output = 0;
+double PID_Setpoint = 0;
+uint32_t ADCSamplingInterval; //ADCé‡‡æ ·é—´éš”(ms)
 //PID
-double aggKp = 11, aggKi = 0.5, aggKd = 1;
-double consKp = 11, consKi = 3, consKd = 5;
+double aggKp = 11.0, aggKi = 0.5, aggKd = 1.0;
+double consKp = 11.0, consKi = 3.0, consKd = 5.0;
 
-//¼ÆËãÊµ¼ÊÎÂ¶È
+//åˆå§‹åŒ–çƒ™é“å¤´æ¸©æ§ç³»ç»Ÿ
+void TipControlInit(void) {
+
+    MyPID.SetOutputLimits(0, 255); //PIDè¾“å‡ºé™å¹…
+    MyPID.SetMode(AUTOMATIC); //PIDæ§åˆ¶æ¨¡å¼
+    MyPID.SetSampleTime(10); //PIDé‡‡æ ·æ—¶é—´
+
+    pinMode(ADC_PIN, INPUT); //ADC
+    ledcAttachPin(PWM_PIN, PWM_Channel);  // å°†é€šé“ä¸å¯¹åº”çš„å¼•è„šè¿æ¥
+    ledcSetup(PWM_Channel, PWM_Freq, PWM_Resolution); // è®¾ç½®é€šé“
+    SetPOWER(0); //å…³é—­åŠŸç‡ç®¡è¾“å‡º
+        
+}
+
+//è®¡ç®—å®é™…æ¸©åº¦
 double CalculateTemp(uint16_t ADC) {
     TipTemperature = PTemp[0] + ADC * PTemp[1] + ADC * ADC * PTemp[2] + ADC * ADC * ADC * PTemp[3];
     return TipTemperature;
 }
 
-//»ñÈ¡ADC¶ÁÊı
-uint16_t GetADC0(void) {
-    //±ØĞëÒª¹Ø±ÕMOS¹Ü²ÅÄÜ³É¹¦¶ÁÈ¡µçÈÈÅ¼
-    SetPOWER(0);
+//PWMè¾“å‡ºæ¨¡å—
+void PWMOutput(uint8_t pwm) {
+    if (pwm == 255) ledcWrite(PWM_Channel, 256);
+    else ledcWrite(PWM_Channel, pwm);
+}
 
-    //ÈôÔ­Êä³ö·Ç¹Ø±Õ£¬ÔòÔÚ¹Ø±ÕÊä³öºóµÈ´ıÒ»¶ÎÊ±¼ä£¬ÒòÎªµçÈÈÅ¼ºÍ¼ÓÈÈË¿ÊÇ´®ÔÚÒ»ÆğµÄ£¬Ö»ÓĞ²»¼ÓÈÈµÄÊ±ºò²ÅÄÜ°²È«·ÃÎÊÈÈÅ¼ÎÂ¶È
-    if (PWM!=0) delay(10);
-    //¶ÁÈ¡²¢Æ½»¬ÂË²¨¾­¹ıÔËËã·Å´óÆ÷·Å´óºóµÄÈÈÅ¼ADCÊı¾İ
-    uint16_t ADC = analogRead(ADC_PIN);
-    for (uint8_t i = 0;i < 10;i++) {
-        ADC += analogRead(ADC_PIN);
-        ADC /= 2.0;
+/**
+ *è°ƒç”¨å¡å°”æ›¼æ»¤æ³¢å™¨ å®è·µ
+ */
+KFP KFP_Temp = { 0.02,0,0,0,0.02,7.0000};
+//è·å–ADCè¯»æ•°
+int GetADC0(void) {
+    static uint32_t ADCSamplingTime = 0; //ä¸Šæ¬¡é‡‡æ ·æ—¶é—´
+    static uint32_t ADCReadCoolTimer = 0;
+
+    //è®°å½•é‡‡æ ·é—´éš”æ—¶é—´
+    ADCSamplingInterval = ADCSamplingTime - millis();
+    ADCSamplingTime = millis();
+    
+    //è‹¥åŸè¾“å‡ºéå…³é—­ï¼Œåˆ™åœ¨å…³é—­è¾“å‡ºåç­‰å¾…ä¸€æ®µæ—¶é—´ï¼Œå› ä¸ºç”µçƒ­å¶å’ŒåŠ çƒ­ä¸æ˜¯ä¸²åœ¨ä¸€èµ·çš„ï¼Œåªæœ‰ä¸åŠ çƒ­çš„æ—¶å€™æ‰èƒ½å®‰å…¨è®¿é—®çƒ­å¶æ¸©åº¦
+    if (POWER != 0 ) {
+        ADCReadCoolTimer = millis();
+        //å¿…é¡»è¦å…³é—­MOSç®¡æ‰èƒ½æˆåŠŸè¯»å–ç”µçƒ­å¶
+        SetPOWER(0);
     }
-    //»Ö¸´Ô­PWMÅäÖÃ
-    //analogWrite(PWM_PIN, PWM);
+
+    if (millis() - ADCReadCoolTimer <= 2) {
+        return -1; //æ•°æ®æœªå‡†å¤‡å¥½
+    }
+
+    //è¯»å–å¹¶å¹³æ»‘æ»¤æ³¢ç»è¿‡è¿ç®—æ”¾å¤§å™¨æ”¾å¤§åçš„çƒ­å¶ADCæ•°æ®
+    uint16_t ADC_RAW = analogRead(ADC_PIN);
+    uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
+    printf("%d,%d\r\n", ADC_RAW,ADC);
+
     return ADC;
 }
 
-//ÉèÖÃÊä³ö¹¦ÂÊ
-void SetPOWER(uint8_t POWER) {
-    //MOS¹Ü·ÖÀà´¦Àí
+//è®¾ç½®è¾“å‡ºåŠŸç‡
+void SetPOWER(uint8_t power) {
+    POWER = power;
+    //MOSç®¡åˆ†ç±»å¤„ç†
     if (MyMOS==PMOS) {
-        //PMOS µÍµçÆ½´¥·¢
-        PWM = 255 - POWER;
+        //PMOS ä½ç”µå¹³è§¦å‘
+        PWM = 255 - power;
     }
-    //ÉèÖÃÊä³öPWM
-    //analogWrite(PWM_PIN, PWM);
+    
+    //è®¾ç½®è¾“å‡ºPWM
+    //if (PWM==255) digitalWrite(PWM_PIN, HIGH);
+    //else if (PWM==0) digitalWrite(PWM_PIN, LOW);
+    //else PWMOutput(PWM);
+    PWMOutput(PWM);
 }
 
+
+//æ¸©åº¦æ§åˆ¶å¾ªç¯
+void TemperatureControlLoop(void) {
+    Clear();
+    char buffer[50];
+    int ADC, LastADC;
+    double gap=0;
+    sys_Counter_Set(150, 450, 10, 320);
+    while(1) {
+        shell_task();
+        Clear();
+
+        PID_Setpoint = sys_Counter_Get();
+
+        ADC = GetADC0();
+        //åŠ çƒ­
+        if (ADC != -1) {
+            LastADC = ADC;
+            TipTemperature = CalculateTemp(LastADC);
+
+            gap = abs(PID_Setpoint - TipTemperature);
+            if (1) {
+                if (gap < 30) MyPID.SetTunings(consKp, consKi, consKd);
+                else MyPID.SetTunings(aggKp, aggKi, aggKd);
+                //è®¾ç½®PIDé‡‡æ ·ç‡
+                //MyPID.SetSampleTime(ADCSamplingInterval);
+                //å°è¯•è®¡ç®—PID
+                printf("è®¡ç®—PIDï¼š%d\n PIDè¾“å‡º:%lf", MyPID.Compute(), PID_Output);
+                
+            }
+            SetPOWER(PID_Output);
+        }
+
+
+        for (uint8_t i=0;i<5;i++) {
+            Disp.setCursor(0, 12*i+1);
+
+            switch(i) {
+                case 0: sprintf(buffer, "è¿è¡Œæ—¶é—´:%ld", millis()); break;
+                case 1: sprintf(buffer, "è®¾å®šæ¸©åº¦ï¼š%.0lfÂ°C", PID_Setpoint); break;
+                case 2: sprintf(buffer, "å½“å‰æ¸©åº¦ï¼š%.4lfÂ°C", TipTemperature); break;
+                case 3: sprintf(buffer, "ADCæ•°æ®:%d", LastADC); break;
+                case 4: sprintf(buffer, "PIDè¾“å‡º:%.4lf", PID_Output); break;
+            }
+            Disp.print(buffer);
+        }
+
+
+        //Progress_Bar(i, 0, FixNum, 0, 64-8, 128, 8, 1);
+
+        Display();
+    }
+    //å…³é—­åŠŸç‡ç®¡è¾“å‡º
+    SetPOWER(0);
+}

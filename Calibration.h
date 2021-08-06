@@ -13,10 +13,10 @@
 400-520
 450-579
 */
-#define TempP1 3.14581990
-#define TempP2 1.33178723
-#define TempP3 -0.00241587
-#define TempP4 0.00000252
+#define TempP1 112.2143936157
+#define TempP2 0.2472778559
+#define TempP3 -0.0000419526
+#define TempP4 0.0000000133
 
 #define FixNum 9
 extern float    PTemp[FixNum]; //温度拟合系数
