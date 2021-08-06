@@ -24,6 +24,12 @@
         "ostream": "cpp",
         "chrono": "cpp",
         "algorithm": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "istream": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "iterator": "cpp",
+        "serstream": "cpp"
     }
 }

@@ -1,7 +1,7 @@
 #include "OpenT12.h"
 
 float    PTemp[FixNum] = { TempP1, TempP2, TempP3, TempP4 }; //温度拟合系数
-uint32_t Calibration_Base[FixNum] = { 50,100, 150, 200, 250, 300, 350, 400, 450 };
+uint32_t Calibration_Base[FixNum] = {100, 150, 200, 250, 300, 320 ,350, 400, 450 };
 uint32_t Calibration_Input[FixNum] = { 0 };
 
 //显示曲线系数
@@ -25,11 +25,22 @@ void CalibrationTemperature(void) {
     char buffer[50];
     uint8_t key;
     uint16_t SetADC = 0;
-    sys_Counter_Set(0, 1023, 1, 0);
+    int ADC,LastADC;
+    sys_Counter_Set(0, 4095, 1, 0);
     for (uint8_t i = 0;i < FixNum;) {
         Clear();
 
-        unsigned long ADC = GetADC0();
+        SetADC = sys_Counter_Get();
+
+        ADC = GetADC0();
+        //加热
+        if (ADC!=-1) {
+            LastADC = ADC;
+            
+            if (LastADC < SetADC) SetPOWER(255);
+            else SetPOWER(0);
+        }
+        
 
         sprintf(buffer, "运行时间:%ld", millis());
         Disp.setCursor(0, 1);
@@ -39,17 +50,11 @@ void CalibrationTemperature(void) {
         Disp.setCursor(0, 13);
         Disp.print(buffer);
 
-        sprintf(buffer, "ADC:%d", ADC);
+        sprintf(buffer, "ADC:%d", LastADC);
         Disp.setCursor(0, 25);
         Disp.print(buffer);
 
         //Progress_Bar(i, 0, FixNum, 0, 64-8, 128, 8, 1);
-
-        //加热
-        SetADC = sys_Counter_Get();
-        if (ADC < SetADC) PWM = 255;
-        else PWM = 0;
-
 
         Display();
 
@@ -60,6 +65,9 @@ void CalibrationTemperature(void) {
             i++;
         }
     }
+    //关闭功率管输出
+    SetPOWER(0);
+    //进行曲线拟合
     polyfit(FixNum, Calibration_Input, Calibration_Base, 3, PTemp);
     Pop_Windows("曲线拟合完成!");
     delay(800);

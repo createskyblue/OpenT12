@@ -7,18 +7,23 @@
 
 /////////////////////////////////////////////////////////////////
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-//PID MyPID(&Input, &Output, &Setpoint, aggKp, aggKi, aggKd, REVERSE);
+PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
 uint32_t DispFlashTimer = 0;
 void ESPRotaryInterrupt();
 
-void setup() {
-    //初始化GPIO
-    pinMode(BEEP_PIN, OUTPUT);
-    //analogWrite(PWM_PIN, 255);
 
+
+void setup() {
     //初始化串口
     Serial.begin(115200);
+    shellInit();
+
+    //初始化GPIO
+    pinMode(BEEP_PIN, OUTPUT);
+    
+    //初始化烙铁头
+    TipControlInit();
 
     //初始化OLED
     Disp.begin();
@@ -38,36 +43,15 @@ void setup() {
 
     //初始化中断
     //ESPRotaryLoop.attach_ms(10, ESPRotaryInterrupt);
-    Next_Menu();
 
+    Next_Menu();
+    //CalibrationTemperature();
 }
 
 char buffer[50];
 void loop() {
     System_UI();
-    if (millis() - DispFlashTimer > 33) {
-        //tone(14, 1000);
-        uint16_t ADC = GetADC0();
-
-        Disp.clearBuffer();
-
-        sprintf(buffer, "运行时间:%ld", millis());
-        Disp.setCursor(0, 1);
-        Disp.print(buffer);
-
-        sprintf(buffer, "ADC:%d", ADC);
-        Disp.setCursor(0, 13);
-        Disp.print(buffer);
-
-        sprintf(buffer, "换算温度:%lf", CalculateTemp(ADC));
-        Disp.setCursor(0, 25);
-        Disp.print(buffer);
-
-        Disp.sendBuffer();
-
-        DispFlashTimer = millis();
-        //noTone(14);//停止发声
-    }
+    TemperatureControlLoop();
 }
 
 
