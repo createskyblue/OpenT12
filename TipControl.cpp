@@ -14,13 +14,15 @@ uint8_t PWM_Resolution = 8;   // 分辨率
 uint8_t MyMOS = PMOS;
 uint8_t POWER = 0;
 uint8_t PWM = 0;
+uint16_t LastADC = 0;
 double TipTemperature = 0;
 double PID_Output = 0;
 double PID_Setpoint = 0;
+uint16_t PIDSampleTime = 10;
 uint32_t ADCSamplingInterval; //ADC采样间隔(ms)
 //PID
-double aggKp = 11.0, aggKi = 0.5, aggKd = 1.0;
-double consKp = 11.0, consKi = 3.0, consKd = 5.0;
+double aggKp = 30.0, aggKi = 0, aggKd = 0.5;
+double consKp = 20.0, consKi = 1, consKd = 0.5;
 
 //初始化烙铁头温控系统
 void TipControlInit(void) {
@@ -51,7 +53,7 @@ void PWMOutput(uint8_t pwm) {
 /**
  *调用卡尔曼滤波器 实践
  */
-KFP KFP_Temp = { 0.02,0,0,0,0.02,7.0000};
+KFP KFP_Temp = { 0.02,0,0,0,0.01,7.0000};
 //获取ADC读数
 int GetADC0(void) {
     static uint32_t ADCSamplingTime = 0; //上次采样时间
@@ -75,7 +77,7 @@ int GetADC0(void) {
     //读取并平滑滤波经过运算放大器放大后的热偶ADC数据
     uint16_t ADC_RAW = analogRead(ADC_PIN);
     uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
-    printf("%d,%d\r\n", ADC_RAW,ADC);
+    //printf("%d,%d\r\n", ADC_RAW,ADC);
 
     return ADC;
 }
@@ -88,11 +90,6 @@ void SetPOWER(uint8_t power) {
         //PMOS 低电平触发
         PWM = 255 - power;
     }
-    
-    //设置输出PWM
-    //if (PWM==255) digitalWrite(PWM_PIN, HIGH);
-    //else if (PWM==0) digitalWrite(PWM_PIN, LOW);
-    //else PWMOutput(PWM);
     PWMOutput(PWM);
 }
 
@@ -101,53 +98,31 @@ void SetPOWER(uint8_t power) {
 void TemperatureControlLoop(void) {
     Clear();
     char buffer[50];
-    int ADC, LastADC;
+    int ADC;
     double gap=0;
-    sys_Counter_Set(150, 450, 10, 320);
-    while(1) {
-        shell_task();
-        Clear();
 
-        PID_Setpoint = sys_Counter_Get();
+    PID_Setpoint = sys_Counter_Get();
 
-        ADC = GetADC0();
-        //加热
-        if (ADC != -1) {
-            LastADC = ADC;
-            TipTemperature = CalculateTemp(LastADC);
+    ADC = GetADC0();
+    //加热
+    if (ADC != -1) {
+        LastADC = ADC;
+        TipTemperature = CalculateTemp(LastADC);
+        gap = abs(PID_Setpoint - TipTemperature);
+        if (1) {
+            //根据温度差选择最优的PID配置，PID参数可被Shell实时更改
+            if (gap < 30) MyPID.SetTunings(consKp, consKi, consKd);
+            else MyPID.SetTunings(aggKp, aggKi, aggKd);
+            //更新PID采样时间：采样时间可被Shell实时更改
+            MyPID.SetSampleTime(PIDSampleTime);
 
-            gap = abs(PID_Setpoint - TipTemperature);
-            if (1) {
-                if (gap < 30) MyPID.SetTunings(consKp, consKi, consKd);
-                else MyPID.SetTunings(aggKp, aggKi, aggKd);
-                //设置PID采样率
-                //MyPID.SetSampleTime(ADCSamplingInterval);
-                //尝试计算PID
-                printf("计算PID：%d\n PID输出:%lf", MyPID.Compute(), PID_Output);
-                
-            }
-            SetPOWER(PID_Output);
+            //尝试计算PID
+            //printf("计算PID：%d\n PID输出:%lf", MyPID.Compute(), PID_Output);
+            MyPID.Compute();
+            printf("Temp:%lf,%lf\r\n", TipTemperature, PID_Setpoint);
+            
         }
-
-
-        for (uint8_t i=0;i<5;i++) {
-            Disp.setCursor(0, 12*i+1);
-
-            switch(i) {
-                case 0: sprintf(buffer, "运行时间:%ld", millis()); break;
-                case 1: sprintf(buffer, "设定温度：%.0lf°C", PID_Setpoint); break;
-                case 2: sprintf(buffer, "当前温度：%.4lf°C", TipTemperature); break;
-                case 3: sprintf(buffer, "ADC数据:%d", LastADC); break;
-                case 4: sprintf(buffer, "PID输出:%.4lf", PID_Output); break;
-            }
-            Disp.print(buffer);
-        }
-
-
-        //Progress_Bar(i, 0, FixNum, 0, 64-8, 128, 8, 1);
-
-        Display();
+        //设置功率管输出功率
+        SetPOWER(PID_Output);
     }
-    //关闭功率管输出
-    SetPOWER(0);
 }

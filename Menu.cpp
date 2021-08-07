@@ -241,8 +241,28 @@ struct Menu_System Menu[] = {
 
 };
 int deg=0;
+void System_UI_Init(void) {
+    sys_Counter_Set(150, 450, 10, 320);
+}
 //系统UI
-void System_UI() {
+void System_UI(void) {
+    Clear();
+
+    char buffer[50];
+    for (uint8_t i = 0;i < 5;i++) {
+        Disp.setCursor(0, 12 * i + 1);
+
+        switch (i) {
+        case 0: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+        case 1: sprintf(buffer, "设定温度：%.0lf°C", PID_Setpoint); break;
+        case 2: sprintf(buffer, "当前温度：%.4lf°C", TipTemperature); break;
+        case 3: sprintf(buffer, "ADC数据:%d", LastADC); break;
+        case 4: sprintf(buffer, "PID输出:%.4lf", PID_Output); break;
+        }
+        Disp.print(buffer);
+    }
+    Display();
+
     static uint8_t count = 0;
     //触发编码器按键进入菜单
     if (sys_KeyProcess()) count++;
@@ -255,6 +275,8 @@ void System_UI() {
         *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
         Next_Menu();
         while (Menu_System_State) Menu_Control();
+        //退出菜单后重新初始化主界面
+        System_UI_Init();
     }
 }
 

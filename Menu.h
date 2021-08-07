@@ -9,7 +9,9 @@
 #define SCREEN_PAGE_NUM 8
 #define SCREEN_FONT_ROW 4
 
+void System_UI_Init(void);
 void System_UI(void);
+
 void Menu_Control(void);
 void Draw_APP(int x,int y,char* bitmap);
 void Page_Footnotes(int a, int b);

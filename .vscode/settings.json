@@ -30,6 +30,7 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "iterator": "cpp",
-        "serstream": "cpp"
+        "serstream": "cpp",
+        "sstream": "cpp"
     }
 }
