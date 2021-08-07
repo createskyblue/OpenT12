@@ -1,5 +1,4 @@
-#include "Arduino.h"
-#include "Rotary.h"
+#include "OpenT12.h"
 
 static double Count=0;
 static double CountLast = 0;
@@ -59,6 +58,9 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
     //重置菜单系统角标计时器
     pages_Tip_Display_timer = millis();
 
+    //更新编码器方向
+    double step = (RotaryDirection == 0) ? Count_step : -Count_step;
+
     static volatile uint8_t a0, b0;
     static volatile uint8_t ab0;
     uint8_t a = digitalRead(ROTARY_PIN1);
@@ -67,9 +69,9 @@ void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
         a0 = a;
         if (b != b0) {
             b0 = b;
-            Count = constrain(Count + ((a == b) ? Count_step : -Count_step), Count_min, Count_max);
+            Count = constrain(Count + ((a == b) ? step : -step), Count_min, Count_max);
             if ((a == b) != ab0) {
-                Count = constrain(Count + ((a == b) ? Count_step : -Count_step), Count_min, Count_max);
+                Count = constrain(Count + ((a == b) ? step : -step), Count_min, Count_max);
             }
             ab0 = (a == b);
         }

@@ -21,13 +21,17 @@ void Next_Menu(void);
 void Pop_Windows(char *s);
 void Exit_Menu_System(void);
 void Save_Exit_Menu_System(void);
+void JumpWithTitle(void);
 void SmoothAnimationSystem_Clean(void);
 
-#define Smooth_Animation_Num 4
-#define Slide_Bar_Num 3
-void Smooth_Animation_System();
+void Smooth_Animation_System(void);
 
-void Update_OLED_Light_Level();
+void Update_OLED_Light_Level(void);
+void Update_OLED_Flip(void);
+
+void PopMsg_BootPasswd(void);
+void PopMsg_RotaryDirection(void);
+void PopMsg_ScreenFlip(void);
 void SYS_About(void);
 
 /*
@@ -46,7 +50,7 @@ struct Smooth_Animation {
 	uint8_t a;   //是否允许累加
 	uint8_t b;   //选择过渡动画计算函数
 };
-extern Smooth_Animation Menu_Smooth_Animation[Smooth_Animation_Num];
+extern struct Smooth_Animation Menu_Smooth_Animation[];
 /*
 	@名称 Slide_Bar
 	@变量
@@ -61,7 +65,7 @@ struct Slide_Bar {
 	int max;
 	int step;
 };
-extern Slide_Bar Slide_space[Slide_Bar_Num];
+extern struct Slide_Bar Slide_space[];
 
 struct Menu_Level_System {
 	uint8_t id;   //当前层id

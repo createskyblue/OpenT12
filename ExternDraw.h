@@ -3,6 +3,7 @@
 #include "Type.h"
 
 void EnterLogo(void);
+void ShowBootMsg(void);
 
 void Clear(void);
 void Display(void);
