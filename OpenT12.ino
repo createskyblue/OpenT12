@@ -9,9 +9,30 @@
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
-uint32_t DispFlashTimer = 0;
-void ESPRotaryInterrupt();
+int BootTemp  = 320;
+int SleepTemp = 250;
+int BoostTemp = 50;
 
+int ShutdownTimer = 10;
+int SleepTimer    = 5;
+int BoostTimer    = 30;
+
+uint8_t DEBUG_MODE = true;
+uint8_t PIDMode = true;
+
+uint8_t PanelSettings = PANELSET_Detailed;
+uint8_t ScreenFlip = false;
+uint8_t SmoothAnimation_Flag = true;
+int     ScreenBrightness = 255;
+uint8_t OptionStripFixedLength_Flag = false;
+
+uint8_t Volume = 0;
+uint8_t RotaryDirection = false;
+
+int UndervoltageAlert = 3;
+int BootPasswd = false;
+uint8_t Language = LANG_Chinese;
+/////////////////////////////////////////////////////////////////
 
 
 void setup() {
@@ -35,15 +56,15 @@ void setup() {
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
 
+    //显示启动信息
+    ShowBootMsg();
+
+    //显示Logo
     EnterLogo();
 
     //初始化编码器
     sys_RotaryInit();
 
-
-    //初始化中断
-    //ESPRotaryLoop.attach_ms(10, ESPRotaryInterrupt);
-    //CalibrationTemperature();
 
     System_UI_Init();
 }

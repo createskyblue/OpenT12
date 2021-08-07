@@ -1,7 +1,7 @@
 #include "OpenT12.h"
 
 void EnterLogo(void) {
-    for (int16_t x=-128;x<128;x+=8) {
+    for (int16_t x=-128;x<128;x+=12) {
         //绘制Logo
         Disp.setDrawColor(1);
         Draw_Slow_Bitmap(0, 0, Logo, 128, 64);
@@ -16,6 +16,41 @@ void EnterLogo(void) {
         Display();
     }
     Disp.setDrawColor(1);
+}
+
+void ShowBootMsg(void) {
+    Clear();
+
+    // if (DEBUG_MODE == true) {
+    //     Disp.drawUTF8(1, 0, "调试");
+    //     Disp.drawUTF8(1, 64 - 12, "调试");
+    //     Disp.drawUTF8(128 - 12 * 2, 0, "调试");
+    //     Disp.drawUTF8(128 - 12 * 2, 64 - 12, "调试");
+    // }
+    char buffer[50];
+    uint64_t ChipMAC = ESP.getEfuseMac();
+    char ChipMAC_S[19]={0};
+
+    for (uint8_t i=0;i<6;i++) {
+        sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
+    }
+
+    for (uint8_t i = 0;i < 5;i++) {
+        Disp.setCursor(0, 12 * i + 1);
+
+        switch (i) {
+        case 0: sprintf(buffer, "[调试模式] 编译时间"); break;
+        case 1: sprintf(buffer, "%s %s", __DATE__,__TIME__); break;
+        case 2: sprintf(buffer, "MAC %s", ChipMAC_S); break;
+        case 3: sprintf(buffer, "CPU频率:%u MHZ", ESP.getCpuFreqMHz()); break;
+        case 4: sprintf(buffer, "%s", ESP.getSdkVersion()); break;
+        }
+        Disp.print(buffer);
+    }
+    Display();
+
+    Display();
+    delay(300);
 }
 
 void Clear(void) {
