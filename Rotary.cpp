@@ -52,7 +52,7 @@ void sys_Counter_Set(double min, double max, double step, double c) {
 }
 
 void sys_Counter_SetVal(double c) {
-    Count = constrain(c, Count_min, Count_max) * ROTARY_TYPE;
+    Count = constrain(c * ROTARY_TYPE, Count_min, Count_max);
 }
 
 void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {

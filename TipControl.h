@@ -6,9 +6,11 @@
 
 extern uint8_t MyMOS;
 extern uint8_t PWM;
+extern uint16_t LastADC;
 extern double TipTemperature;
 extern double PID_Output;
 extern double PID_Setpoint;
+extern uint16_t PIDSampleTime;
 
 extern double aggKp, aggKi, aggKd;
 extern double consKp, consKi, consKd;

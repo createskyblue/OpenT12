@@ -43,15 +43,15 @@ void setup() {
 
     //初始化中断
     //ESPRotaryLoop.attach_ms(10, ESPRotaryInterrupt);
-
-    Next_Menu();
     //CalibrationTemperature();
+
+    System_UI_Init();
 }
 
-char buffer[50];
 void loop() {
-    System_UI();
+    shell_task();
     TemperatureControlLoop();
+    System_UI();
 }
 
 
