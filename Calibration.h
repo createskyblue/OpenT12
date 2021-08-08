@@ -13,18 +13,20 @@
 400-520
 450-579
 */
-#define TempP1 112.2143936157
-#define TempP2 0.2472778559
-#define TempP3 -0.0000419526
-#define TempP4 0.0000000133
 
-#define FixNum 9
-extern float    PTemp[FixNum]; //温度拟合系数
+//温度拟合经验常数：按照实际情况通过拟合得到
+#define TempP1 89.5980148315
+#define TempP2 0.1474261284
+#define TempP3 0.0000062302
+#define TempP4 -0.0000000001
+
+#define FixNum 10
+extern double   PTemp[FixNum]; //温度拟合系数
 extern uint32_t Calibration_Base[FixNum];
 extern uint32_t Calibration_Input[FixNum];
 
 void ShowCurveCoefficient(void);
 void CalibrationTemperature(void);
-void gauss_solve(long n, float A[], float x[], float b[]);
-void polyfit(long n, long x[], long y[], long poly_n, float p[]);
+void gauss_solve(long n, double A[], double x[], double b[]);
+void polyfit(long n, long x[], long y[], long poly_n, double p[]);
 #endif

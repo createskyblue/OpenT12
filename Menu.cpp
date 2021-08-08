@@ -44,6 +44,7 @@ enum Switch_space_Obj{
     SwitchSpace_ScreenFlip,
     SwitchSpace_Volume,
     SwitchSpace_RotaryDirection,
+    SwitchSpace_HandleTrigger,
     SwitchSpace_Language,
 
 };
@@ -56,6 +57,7 @@ uint8_t *Switch_space[] = {
     &ScreenFlip,
     &Volume,
     &RotaryDirection,
+    &HandleTrigger,
     &Language,
 };
 
@@ -150,7 +152,7 @@ struct Menu_Level_System MenuLevel[] = {
     {3,0,0,4,Menu_HAVE_IMG},
     {4,0,0,4,Menu_HAVE_IMG},
     {5,0,0,6,Menu_HAVE_IMG},
-    {6,0,0,4,Menu_HAVE_IMG},
+    {6,0,0,5,Menu_HAVE_IMG},
     {7,0,0,6,Menu_HAVE_IMG},
     {8,0,0,2,Menu_HAVE_IMG},
     {9,0,0,9,Menu_NULL_IMG},
@@ -158,6 +160,7 @@ struct Menu_Level_System MenuLevel[] = {
     {11,0,0,2,Menu_HAVE_IMG},
     {12,0,0,2,Menu_HAVE_IMG},
     {13,0,0,1,Menu_HAVE_IMG},
+    {14,0,0,2,Menu_HAVE_IMG},
 };
 
 /*
@@ -230,7 +233,8 @@ struct Menu_System Menu[] = {
     {6,1,       Jump_Menu_Op,          "显示效果",             Set4,              7,                                  0,          Menu_NULL_F},
     {6,2,       Jump_Menu_Op,          "声音设置",             Set5,              10,                                  0,          Menu_NULL_F},
     {6,3,       Switch_Menu_Op,        "编码器方向",            Set19,           SwitchSpace_RotaryDirection,         0,          *PopMsg_RotaryDirection},
-    {6,4,       Jump_Menu_Op,          "返回",                 Set7,              5,                                  1,          Menu_NULL_F},
+    {6,4,       Jump_Menu_Op,          "手柄触发",             IMG_Trigger,             14,         0,          Menu_NULL_F},
+    {6,5,       Jump_Menu_Op,          "返回",                 Set7,              5,                                  1,          Menu_NULL_F},
 
     {7,0,       Title_Menu_Op,         "显示效果",               Menu_NULL_IMG,              6,                        1,          Menu_NULL_F},
     {7,1,       Jump_Menu_Op,          "面板设置",               Set0,              8,                                  0,          Menu_NULL_F},
@@ -270,13 +274,17 @@ struct Menu_System Menu[] = {
     {13,0,       Title_Menu_Op,         "语言设置",               Menu_NULL_IMG,              5,                                  4,          Menu_NULL_F},
     {13,1,       SingleBox_Menu_Op,     "简体中文",               Lang_CN,               SwitchSpace_Language,                    LANG_Chinese,          *JumpWithTitle},
 
+    {14,0,       Title_Menu_Op,         "手柄触发",               Menu_NULL_IMG,              6,                                  4,          Menu_NULL_F},
+    {14,1,       SingleBox_Menu_Op,     "震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
+    {14,2,       SingleBox_Menu_Op,     "干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
+
 
 
 
 };
 int deg=0;
 void System_UI_Init(void) {
-    sys_Counter_Set(150, 450, 10, 320);
+    sys_Counter_Set(150, 400, 5, 320);
 }
 //系统UI
 void System_UI(void) {
@@ -287,11 +295,11 @@ void System_UI(void) {
         Disp.setCursor(0, 12 * i + 1);
 
         switch (i) {
-        case 0: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
-        case 1: sprintf(buffer, "设定温度：%.0lf°C", PID_Setpoint); break;
-        case 2: sprintf(buffer, "当前温度：%.4lf°C", TipTemperature); break;
-        case 3: sprintf(buffer, "ADC数据:%d", LastADC); break;
-        case 4: sprintf(buffer, "PID输出:%.4lf", PID_Output); break;
+        case 0: sprintf(buffer, "状态:%s 控温:%s", TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode==1)?"PID":"模糊"); break;
+        case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint,TipTemperature); break;
+        case 2: sprintf(buffer, "ADC数据:%d", LastADC); break;
+        case 3: sprintf(buffer, "PID输出:%.4lf", PID_Output); break;
+        case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
         }
         Disp.print(buffer);
     }
@@ -374,7 +382,11 @@ void SYS_About(void) {
 uint8_t CheckBoxSelection[] = { 0xff,0xc0,0x80,0x40,0x80,0xc0,0x81,0xc0,0x81,0xc0,0x83,0x40,0x9b,0x40,0x8e,0x40,0x86,0x40,0xff,0xc0 };
 
 void Save_Exit_Menu_System() {
-    Pop_Windows("正在保存数据\n请勿切断电源");
+    Pop_Windows("保存中 请勿切断电源");
+
+    //保存图标
+    Draw_Slow_Bitmap_Resize(128 - 28 -4, 64 - 28 -4, Save + 1, Save[0], Save[0], 28, 28);
+    Display();
 
     //这里放读写flash的代码
     delay(1000);
@@ -726,9 +738,7 @@ void Draw_APP(int x, int y, char* bitmap) {
     Disp.setDrawColor(0);
 
     Disp.setDrawColor(1);
-    if (bitmap[0] == 14)
-        Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, 14, 14, 42,42);
-    else Draw_Slow_Bitmap(x, y, bitmap + 1, 42, 42);
+    Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, bitmap[0], bitmap[0], 42, 42);
 }
 
 
