@@ -39,7 +39,7 @@ void TipControlInit(void) {
 }
 
 //计算实际温度
-double CalculateTemp(uint16_t ADC) {
+double CalculateTemp(double ADC) {
     TipTemperature = PTemp[0] + ADC * PTemp[1] + ADC * ADC * PTemp[2] + ADC * ADC * ADC * PTemp[3];
     return TipTemperature;
 }
@@ -103,13 +103,17 @@ void TemperatureControlLoop(void) {
 
     PID_Setpoint = sys_Counter_Get();
 
+    //尝试访问ADC
     ADC = GetADC0();
-    //加热
     if (ADC != -1) {
         LastADC = ADC;
-        TipTemperature = CalculateTemp(LastADC);
+        TipTemperature = CalculateTemp((double)LastADC);
         gap = abs(PID_Setpoint - TipTemperature);
-        if (1) {
+
+        //控温模式
+        if (PIDMode) {
+            //PID模式
+
             //根据温度差选择最优的PID配置，PID参数可被Shell实时更改
             if (gap < 30) MyPID.SetTunings(consKp, consKi, consKd);
             else MyPID.SetTunings(aggKp, aggKi, aggKd);
@@ -119,10 +123,38 @@ void TemperatureControlLoop(void) {
             //尝试计算PID
             //printf("计算PID：%d\n PID输出:%lf", MyPID.Compute(), PID_Output);
             MyPID.Compute();
-            printf("Temp:%lf,%lf\r\n", TipTemperature, PID_Setpoint);
             
+        }else{
+            //模糊模式
+            if(TipTemperature < PID_Setpoint) PID_Output = 255;
+            else PID_Output = 0;
         }
+
+        //更新状态码
+        if (PID_Output > 180) {
+            //加热
+            TempCTRL_Status = TEMP_STATUS_HEAT;
+        }else{
+            if (gap < 10) {
+                //温差接近目标值：正常
+                TempCTRL_Status = TEMP_STATUS_WORKY;
+            }else{
+                //进行PID微调：维持
+                TempCTRL_Status = TEMP_STATUS_HOLD;
+            }
+        }
+
+        if (TipTemperature > 500) {
+            //未检测到烙铁头
+            TempCTRL_Status = TEMP_STATUS_ERROR;
+            //强制关闭输出
+            PID_Output = 0;
+        }
+
         //设置功率管输出功率
         SetPOWER(PID_Output);
+
+        //串口打印温度
+        printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
     }
 }

@@ -28,10 +28,23 @@ uint8_t OptionStripFixedLength_Flag = false;
 
 uint8_t Volume = 0;
 uint8_t RotaryDirection = false;
+uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
 int UndervoltageAlert = 3;
 int BootPasswd = false;
 uint8_t Language = LANG_Chinese;
+
+//面板状态条
+uint8_t TempCTRL_Status = TEMP_STATUS_OFF;
+char* TempCTRL_Status_Mes[]={
+    "停机",
+    "休眠",
+    "提温",
+    "正常",
+    "加热",
+    "维持",
+    "错误",
+};
 /////////////////////////////////////////////////////////////////
 
 

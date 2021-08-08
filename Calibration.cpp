@@ -1,7 +1,7 @@
 #include "OpenT12.h"
 
-float    PTemp[FixNum] = { TempP1, TempP2, TempP3, TempP4 }; //温度拟合系数
-uint32_t Calibration_Base[FixNum] = {100, 150, 200, 250, 300, 320 ,350, 400, 450 };
+double   PTemp[FixNum] = { TempP1, TempP2, TempP3, TempP4 }; //温度拟合系数
+uint32_t Calibration_Base[FixNum] = { 150, 200, 250, 300, 325 ,350, 375,400, 425,450 };
 uint32_t Calibration_Input[FixNum] = { 0 };
 
 //显示曲线系数
@@ -84,10 +84,10 @@ void CalibrationTemperature(void) {
   sumxy: 线性方程组的Y值
   p: 返回拟合的结果
   ============================================================*/
-void gauss_solve(long n, float A[], float x[], float b[])
+void gauss_solve(long n, double A[], double x[], double b[])
 {
   long i, j, k, r;
-  float max;
+  double max;
   for (k = 0; k < n - 1; k++)
   {
     max = fabs(A[k * n + k]);   // find maxmum
@@ -132,16 +132,16 @@ void gauss_solve(long n, float A[], float x[], float b[])
 /*=======拟合y=a0+a1*x+a2*x^2+……+apoly_n*x^poly_n========*/
 /*=====n是数据个数 xy是数据值 poly_n是多项式的项数======*/
 /*===返回a0,a1,a2,……a[poly_n]，系数比项数多一（常数项）=====*/
-void polyfit(long n, long x[], long y[], long poly_n, float p[])
+void polyfit(long n, long x[], long y[], long poly_n, double p[])
 {
   long i, j;
-  float *tempx, *tempy, *sumxx, *sumxy, *ata;
+  double *tempx, *tempy, *sumxx, *sumxy, *ata;
 
-  tempx = (float *)calloc(n , sizeof(float));
-  sumxx = (float *)calloc((poly_n * 2 + 1) , sizeof(float));
-  tempy = (float *)calloc(n , sizeof(float));
-  sumxy = (float *)calloc((poly_n + 1) , sizeof(float));
-  ata = (float *)calloc( (poly_n + 1) * (poly_n + 1) , sizeof(float) );
+  tempx = (double *)calloc(n , sizeof(double));
+  sumxx = (double *)calloc((poly_n * 2 + 1) , sizeof(double));
+  tempy = (double *)calloc(n , sizeof(double));
+  sumxy = (double *)calloc((poly_n + 1) , sizeof(double));
+  ata = (double *)calloc( (poly_n + 1) * (poly_n + 1) , sizeof(double) );
   for (i = 0; i < n; i++)
   {
     tempx[i] = 1;
