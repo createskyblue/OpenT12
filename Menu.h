@@ -9,6 +9,8 @@
 #define SCREEN_PAGE_NUM 8
 #define SCREEN_FONT_ROW 4
 
+extern uint32_t pages_Tip_Display_timer;
+
 void System_UI_Init(void);
 void System_UI(void);
 

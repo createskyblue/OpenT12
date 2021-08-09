@@ -18,6 +18,7 @@ uint16_t LastADC = 0;
 double TipTemperature = 0;
 double PID_Output = 0;
 double PID_Setpoint = 0;
+double TempGap = 0;
 uint16_t PIDSampleTime = 10;
 uint32_t ADCSamplingInterval; //ADC采样间隔(ms)
 //PID
@@ -45,7 +46,9 @@ double CalculateTemp(double ADC) {
 }
 
 //PWM输出模块
+uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
+    if (PWMOutput_Lock) pwm = 0;
     if (pwm == 255) ledcWrite(PWM_Channel, 256);
     else ledcWrite(PWM_Channel, pwm);
 }
@@ -64,10 +67,10 @@ int GetADC0(void) {
     ADCSamplingTime = millis();
     
     //若原输出非关闭，则在关闭输出后等待一段时间，因为电热偶和加热丝是串在一起的，只有不加热的时候才能安全访问热偶温度
-    if (POWER != 0 ) {
+    if (PWMOutput_Lock == false) {
         ADCReadCoolTimer = millis();
-        //必须要关闭MOS管才能成功读取电热偶
-        SetPOWER(0);
+        //锁定功率管输出：必须要关闭MOS管才能成功读取电热偶
+        PWMOutput_Lock = true;
     }
 
     if (millis() - ADCReadCoolTimer <= 2) {
@@ -78,6 +81,9 @@ int GetADC0(void) {
     uint16_t ADC_RAW = analogRead(ADC_PIN);
     uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
     //printf("%d,%d\r\n", ADC_RAW,ADC);
+
+    //解锁功率管输出
+    PWMOutput_Lock = false;
 
     return ADC;
 }
@@ -99,7 +105,6 @@ void TemperatureControlLoop(void) {
     Clear();
     char buffer[50];
     int ADC;
-    double gap=0;
 
     PID_Setpoint = sys_Counter_Get();
 
@@ -108,14 +113,15 @@ void TemperatureControlLoop(void) {
     if (ADC != -1) {
         LastADC = ADC;
         TipTemperature = CalculateTemp((double)LastADC);
-        gap = abs(PID_Setpoint - TipTemperature);
+        TempGap = abs(PID_Setpoint - TipTemperature);
 
+        /////////////////////////////////////////////////////////////////////////
         //控温模式
         if (PIDMode) {
             //PID模式
 
             //根据温度差选择最优的PID配置，PID参数可被Shell实时更改
-            if (gap < 30) MyPID.SetTunings(consKp, consKi, consKd);
+            if (TempGap < 30) MyPID.SetTunings(consKp, consKi, consKd);
             else MyPID.SetTunings(aggKp, aggKi, aggKd);
             //更新PID采样时间：采样时间可被Shell实时更改
             MyPID.SetSampleTime(PIDSampleTime);
@@ -129,32 +135,10 @@ void TemperatureControlLoop(void) {
             if(TipTemperature < PID_Setpoint) PID_Output = 255;
             else PID_Output = 0;
         }
-
-        //更新状态码
-        if (PID_Output > 180) {
-            //加热
-            TempCTRL_Status = TEMP_STATUS_HEAT;
-        }else{
-            if (gap < 10) {
-                //温差接近目标值：正常
-                TempCTRL_Status = TEMP_STATUS_WORKY;
-            }else{
-                //进行PID微调：维持
-                TempCTRL_Status = TEMP_STATUS_HOLD;
-            }
-        }
-
-        if (TipTemperature > 500) {
-            //未检测到烙铁头
-            TempCTRL_Status = TEMP_STATUS_ERROR;
-            //强制关闭输出
-            PID_Output = 0;
-        }
-
-        //设置功率管输出功率
-        SetPOWER(PID_Output);
-
         //串口打印温度
         printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
     }
+    //烙铁检测错误
+    if (TipTemperature > 500) ERROREvent = true;
 }
+

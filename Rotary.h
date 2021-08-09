@@ -15,5 +15,5 @@ void sys_Counter_SetVal(double c);
 void sys_Counter_IRQHandler(void);
 double sys_Counter_Get(void);
 uint8_t sys_Counter_Change(void);
-bool sys_KeyProcess(void);
+uint8_t sys_KeyProcess(void);
 #endif
