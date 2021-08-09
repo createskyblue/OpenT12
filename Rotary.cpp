@@ -7,8 +7,9 @@ static double Count_max=0;
 static double Count_step=0;
 static uint8_t CounterChanged = 0;
 
-//菜单系统角标计时器
-extern uint32_t pages_Tip_Display_timer;
+static void sys_Counter_click(void);
+static void sys_Counter_doubleclick(void);
+static void sys_Counter_longclick(void);
 
 void sys_RotaryInit(void) {
     //初始化GPIO
@@ -16,10 +17,15 @@ void sys_RotaryInit(void) {
     pinMode(ROTARY_PIN2, INPUT_PULLUP);
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-    //初始化中断
+    //初始化按键事件检测
+    RButton.attachClick(sys_Counter_click);
+    RButton.attachDoubleClick(sys_Counter_doubleclick);
+    RButton.attachLongPressStart(sys_Counter_longclick);
+
+    //初始化编码器中断
     attachInterrupt(ROTARY_PIN1, sys_Counter_IRQHandler, CHANGE);
 
-    //初始化编码器设置
+    //初始化编码器设置(测试默认)
     sys_Counter_Set(-1.2, 6.6, 0.1, 3.14);
 }
 
@@ -55,8 +61,8 @@ void sys_Counter_SetVal(double c) {
 }
 
 void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
-    //重置菜单系统角标计时器
-    pages_Tip_Display_timer = millis();
+    //重置事件计时器
+    TimerUpdateEvent();
 
     //更新编码器方向
     double step = (RotaryDirection == 0) ? Count_step : -Count_step;
@@ -99,15 +105,87 @@ uint8_t sys_Counter_Change(void) {
     return flag;
 }
 
+//按键FIFO循环大小
+#define RButton_FIFO_Size 10
+//按键FIFO读写指针
+static uint8_t RButton_FIFO_pwrite = 0;
+static uint8_t RButton_FIFO_pread = 0;
+//按键FIFO缓存区
+static uint8_t RButton_FIFO[RButton_FIFO_Size];
+//按键FIFO缓存区有效数据大小
+static uint8_t RButton_FIFO_BufferSize = 0;
+
+/*** 
+ * @description: 写按键FIFO
+ * @param uint8_t State 要写入FIFO的按键状态值
+ * @return 无
+ */
+//
+static void Write_RButton_FIFO(uint8_t State) {
+    RButton_FIFO[RButton_FIFO_pwrite] = State;
+    printf("FIFO写入[%d]=%d\n", RButton_FIFO_pwrite, State);
+    //写指针移位
+    RButton_FIFO_pwrite++;
+    //按键缓冲区数据大小+1
+    if (RButton_FIFO_BufferSize < RButton_FIFO_Size) RButton_FIFO_BufferSize++;
+    //循环写
+    if (RButton_FIFO_pwrite >= RButton_FIFO_Size) RButton_FIFO_pwrite = 0;
+    printf("FIFO缓存区大小:%d\n\n", RButton_FIFO_BufferSize);
+}
+/*** 
+ * @description: 读按键FIFO
+ * @param {*}
+ * @return 按键State
+ */
+//读按键FIFO
+static uint8_t Read_RButton_FIFO(void) {
+    //判断当前按键缓冲区是否有数据
+    if (RButton_FIFO_BufferSize == 0) return 0;
+
+    //从按键FIFO缓存读取数据
+    uint8_t res = RButton_FIFO[RButton_FIFO_pread];
+    printf("FIFO读取[%d]=%d\n", RButton_FIFO_pread,res);
+    //读指针移位
+    RButton_FIFO_pread++;
+    RButton_FIFO_BufferSize--;
+    //循环写
+    if (RButton_FIFO_pread >= RButton_FIFO_Size) RButton_FIFO_pread = 0;
+    printf("FIFO缓存区大小:%d\n\n", RButton_FIFO_BufferSize);
+    return res;
+}
+/*** 
+ * @description: 按键单击回调函数
+ * @param {*}
+ * @return {*}
+ */
+void sys_Counter_click(void)
+{
+    printf("触发单击事件\n");
+    Write_RButton_FIFO(1);
+}
+/*** 
+ * @description: 按键长按回调函数
+ * @param {*}
+ * @return {*}
+ */
+void sys_Counter_longclick(void)
+{
+    printf("触发长按事件\n");
+    Write_RButton_FIFO(2);
+}
+/*** 
+ * @description: 按键双击回调函数
+ * @param {*}
+ * @return {*}
+ */
+void sys_Counter_doubleclick(void)
+{
+    printf("触发双击事件\n");
+    Write_RButton_FIFO(3);
+}
+
 //编码器按键按下 + 软件滤波
-bool sys_KeyProcess(void) {
-    if (!digitalRead(BUTTON_PIN)) {
-        delay(50);
-        if(!digitalRead(BUTTON_PIN)) {
-            //重置菜单系统角标计时器
-            pages_Tip_Display_timer = millis();
-            return 1;
-        }
-    }
-    return 0;
+uint8_t sys_KeyProcess(void) {
+    RButton.tick();
+    return Read_RButton_FIFO();
 }

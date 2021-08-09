@@ -6,12 +6,14 @@
 #include <PID_v1.h>
 #include <U8g2lib.h>
 #include <Ticker.h>
+#include <OneButton.h>
 #include "Type.h"
 #include "serial_putc.h"
 #include "MyShell.h"
 #include "Rotary.h"
 #include "MathFun.h"
 #include "ExternDraw.h"
+#include "Event.h"
 #include "Menu.h"
 #include "Calibration.h"
 #include "TipControl.h"
@@ -37,6 +39,7 @@ enum HANDLETRIGGER {
     HANDLETRIGGER_ReedSwitch,
 };
 
+extern OneButton RButton;
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 extern PID MyPID;
 extern KFP KFP_Temp;
@@ -47,9 +50,14 @@ extern int BootTemp;
 extern int SleepTemp;
 extern int BoostTemp;
 
-extern int ShutdownTimer;
-extern int SleepTimer;
-extern int BoostTimer;
+extern int ShutdownTime;
+extern int SleepTime;
+extern int BoostTime;
+
+extern bool ERROREvent;
+extern bool ShutdownEvent;
+extern bool SleepEvent;
+extern bool BoostEvent;
 
 extern uint8_t PIDMode;
 

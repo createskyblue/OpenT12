@@ -6,6 +6,7 @@
 */
 
 /////////////////////////////////////////////////////////////////
+OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
@@ -13,9 +14,14 @@ int BootTemp  = 320;
 int SleepTemp = 250;
 int BoostTemp = 50;
 
-int ShutdownTimer = 10;
-int SleepTimer    = 5;
-int BoostTimer    = 30;
+int ShutdownTime = 10;
+int SleepTime    = 5;
+int BoostTime    = 30;
+
+bool ERROREvent = false;
+bool ShutdownEvent = false;
+bool SleepEvent = false;
+bool BoostEvent = false;
 
 uint8_t DEBUG_MODE = true;
 uint8_t PIDMode = true;
@@ -47,17 +53,19 @@ char* TempCTRL_Status_Mes[]={
 };
 /////////////////////////////////////////////////////////////////
 
-
+//先初始化硬件->显示LOGO->初始化软件
 void setup() {
     //初始化串口
     Serial.begin(115200);
-    shellInit();
 
     //初始化GPIO
     pinMode(BEEP_PIN, OUTPUT);
     
     //初始化烙铁头
     TipControlInit();
+
+    //初始化编码器
+    sys_RotaryInit();
 
     //初始化OLED
     Disp.begin();
@@ -75,17 +83,26 @@ void setup() {
     //显示Logo
     EnterLogo();
 
-    //初始化编码器
-    sys_RotaryInit();
+    //初始化命令解析器
+    shellInit();
 
-
+    //初始化UI
     System_UI_Init();
 }
 
 void loop() {
-    shell_task();
-    TemperatureControlLoop();
+    //命令解析器
+    while (Serial.available()) shell_task();
+    //温度闭环控制
+    TemperatureControlLoop(); 
+    //更新系统事件
+    TimerEventLoop();
+    //更新状态码
+    SYS_StateCode_Update();
+    //刷新UI
     System_UI();
+    //设置输出功率
+    SetPOWER(PID_Output);
 }
 
 

@@ -1,4 +1,3 @@
-#include "Menu.h"
 #include "OpenT12.h"
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 
@@ -83,9 +82,9 @@ enum Slide_space_Obj{
     Slide_space_SleepTemp,
     Slide_space_BoostTemp,
 
-    Slide_space_ShutdownTimer,
-    Slide_space_SleepTimer,
-    Slide_space_BoostTimer,
+    Slide_space_ShutdownTime,
+    Slide_space_SleepTime,
+    Slide_space_BoostTime,
 
     Slide_space_UndervoltageAlert,
     Slide_space_BootPasswd,
@@ -99,9 +98,9 @@ struct Slide_Bar Slide_space[] = {
     {&SleepTemp,150,400,5},
     {&BoostTemp,0,150,1},
 
-    {&ShutdownTimer,0,60,1},
-    {&SleepTimer,0,60,1},
-    {&BoostTimer,0,600,1},
+    {&ShutdownTime,0,60,1},
+    {&SleepTime,0,60,1},
+    {&BoostTime,0,600,1},
 
     {&UndervoltageAlert,0,36,1},
     {&BootPasswd,0,999,1},
@@ -216,9 +215,9 @@ struct Menu_System Menu[] = {
     {3,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  2,          Menu_NULL_F},
 
     {4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
-    {4,1,       Progress_Bar_Menu_Op,  "停机时间(分)",         Set13,              Slide_space_ShutdownTimer,                                               0,          Menu_NULL_F},
-    {4,2,       Progress_Bar_Menu_Op,  "休眠时间(分)",         Set11,              Slide_space_SleepTimer,                                                0,          Menu_NULL_F},
-    {4,3,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTimer,                                                0,          Menu_NULL_F},
+    {4,1,       Progress_Bar_Menu_Op,  "停机时间(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
+    {4,2,       Progress_Bar_Menu_Op,  "休眠时间(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
+    {4,3,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
     {4,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  3,          Menu_NULL_F},
 
     {5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
@@ -305,11 +304,11 @@ void System_UI(void) {
     }
     Display();
 
+    printf("ERROREvent:%d 状态:%s \n", ERROREvent, TempCTRL_Status_Mes[TempCTRL_Status]);
+
     static uint8_t count = 0;
-    //触发编码器按键进入菜单
-    if (sys_KeyProcess()) count++;
-    else count=0;
-    if (count>=4) {
+    //编码器长按按键进入菜单
+    if (sys_KeyProcess() == 2) {
         //关闭功率管输出
         SetPOWER(0);
         //初始化菜单
@@ -912,10 +911,13 @@ void Menu_Control() {
     //菜单被选项激活 触发菜单被选项预设事件
     switch(sys_KeyProcess()) {
         case 1:
+        case 3:
+            //单击和双击则执行当前项目
             Run_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id,MenuLevel[real_Level_Id].x +  *Slide_space[Slide_space_Scroll].x);
         break;
         case 2:
-            Run_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id,MenuLevel[real_Level_Id].x);
+            //长按执行 标题跳转
+            Run_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id,0);
         break;
         
         default:break;
