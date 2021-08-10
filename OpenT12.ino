@@ -59,8 +59,9 @@ void setup() {
     Serial.begin(115200);
 
     //初始化GPIO
-    pinMode(BEEP_PIN, OUTPUT);
-    
+    BeepInit();
+    pinMode(POWER_ADC_PIN, INPUT);
+
     //初始化烙铁头
     TipControlInit();
 
@@ -76,6 +77,18 @@ void setup() {
     Disp.setFont(u8g2_font_wqy12_t_gb2312);
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
+
+
+    SetNote(NOTE_B, 7);
+    delay(150);
+    SetNote(NOTE_B, 9);
+    delay(150);
+    SetNote(NOTE_B, 12);
+    delay(150);
+    SetTone(0);
+
+
+    
 
     //显示启动信息
     ShowBootMsg();
@@ -104,12 +117,14 @@ void loop() {
     //设置输出功率
     SetPOWER(PID_Output);
 }
-
-
-
-
-
-
-
-
-
+/**
+ * @description: 计算主电源电压
+ * @param {*}
+ * @return 主电源电压估计值
+ */
+double Get_MainPowerVoltage(void) {
+    uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
+    double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
+    double   TipADC_V_R1 = (TipADC_V_R2*POWER_ADC_VCC_R1)/POWER_ADC_R2_GND;
+    return   TipADC_V_R1 + TipADC_V_R2;
+}

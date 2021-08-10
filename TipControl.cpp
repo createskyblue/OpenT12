@@ -32,7 +32,7 @@ void TipControlInit(void) {
     MyPID.SetMode(AUTOMATIC); //PID控制模式
     MyPID.SetSampleTime(10); //PID采样时间
 
-    pinMode(ADC_PIN, INPUT); //ADC
+    pinMode(TIP_ADC_PIN, INPUT); //ADC
     ledcAttachPin(PWM_PIN, PWM_Channel);  // 将通道与对应的引脚连接
     ledcSetup(PWM_Channel, PWM_Freq, PWM_Resolution); // 设置通道
     SetPOWER(0); //关闭功率管输出
@@ -78,7 +78,7 @@ int GetADC0(void) {
     }
 
     //读取并平滑滤波经过运算放大器放大后的热偶ADC数据
-    uint16_t ADC_RAW = analogRead(ADC_PIN);
+    uint16_t ADC_RAW = analogRead(TIP_ADC_PIN);
     uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
     //printf("%d,%d\r\n", ADC_RAW,ADC);
 
@@ -90,13 +90,16 @@ int GetADC0(void) {
 
 //设置输出功率
 void SetPOWER(uint8_t power) {
+    static uint8_t LastPWM = 0;
     POWER = power;
     //MOS管分类处理
     if (MyMOS==PMOS) {
         //PMOS 低电平触发
         PWM = 255 - power;
     }
-    PWMOutput(PWM);
+    //printf("PWM:%d",PWM);
+    if (LastPWM!=PWM) PWMOutput(PWM);
+    LastPWM = PWM;
 }
 
 

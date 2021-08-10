@@ -118,3 +118,14 @@ float kalmanFilter(KFP *kfp,float input)
     return kfp->out;
 }
 
+/*** 
+ * @description: 把ESP32的原生ADC采样数据通过经验公式转换为电压
+ * @param {uint16_t} adc
+ * @return 电压(单位:V)
+ */
+#define ADC1_MinVol 0.128
+#define ADC1_MaxVol 3.11
+double ESP32_ADC2Vol(uint16_t adc) {
+    //return ((adc / 4095.0) * (ADC1_MaxVol - ADC1_MinVol)) + ADC1_MinVol;
+    return (adc / 4095.0) * 3.3;
+}

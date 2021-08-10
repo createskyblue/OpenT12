@@ -17,11 +17,21 @@
 #include "Menu.h"
 #include "Calibration.h"
 #include "TipControl.h"
+#include "Beep.h"
 
-#define BEEP_PIN    19
-#define ADC_PIN     36
-#define PWM_PIN     23
-#define SW_PIN      18
+//注意Pin36与Pin39连接了内部霍尔传感器,不建议复用高敏感用途
+//另外，建议给ADC输入串联一个0.1uF的电容，有利于减少噪声
+#define BEEP_PIN      19
+#define BEEP_PIN2     18
+
+#define TIP_ADC_PIN   34
+#define POWER_ADC_PIN 35
+#define PWM_PIN       23
+#define SW_PIN        18
+
+//计算主电源电压
+#define POWER_ADC_VCC_R1 47000
+#define POWER_ADC_R2_GND 4700
 
 enum SYSLANG {
     LANG_English = 0,
@@ -75,6 +85,7 @@ extern int UndervoltageAlert;
 extern int BootPasswd;
 extern uint8_t Language;
 
+extern double Get_MainPowerVoltage(void);
 
 enum TEMP_CTRL_STATUS_CODE {
     TEMP_STATUS_OFF = 0,

@@ -20,6 +20,11 @@ void TimerEventLoop(void) {
         // if (BoostEvent && TimerEventTimer)
 }
 
+/*** 
+ * @description: 更新状态码
+ * @param {*}
+ * @return {*}
+ */
 void SYS_StateCode_Update(void) {
     //更新状态码
     if (PID_Output > 180) {
@@ -59,6 +64,4 @@ void SYS_StateCode_Update(void) {
         PID_Output = 0;
     }
 
-
-    
 }
