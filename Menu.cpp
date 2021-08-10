@@ -296,8 +296,8 @@ void System_UI(void) {
         switch (i) {
         case 0: sprintf(buffer, "状态:%s 控温:%s", TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode==1)?"PID":"模糊"); break;
         case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint,TipTemperature); break;
-        case 2: sprintf(buffer, "ADC数据:%d", LastADC); break;
-        case 3: sprintf(buffer, "PID输出:%.4lf", PID_Output); break;
+        case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
+        case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
         case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
         }
         Disp.print(buffer);
