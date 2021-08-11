@@ -110,6 +110,10 @@ void TemperatureControlLoop(void) {
     int ADC;
 
     PID_Setpoint = sys_Counter_Get();
+    if (BoostEvent) {
+        //短时功率加成
+        PID_Setpoint += BoostTemp;
+    }
 
     //尝试访问ADC
     ADC = GetADC0();

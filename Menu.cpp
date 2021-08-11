@@ -304,11 +304,10 @@ void System_UI(void) {
     }
     Display();
 
-    printf("ERROREvent:%d 状态:%s \n", ERROREvent, TempCTRL_Status_Mes[TempCTRL_Status]);
+    //printf("ERROREvent:%d 状态:%s \n", ERROREvent, TempCTRL_Status_Mes[TempCTRL_Status]);
 
-    static uint8_t count = 0;
     //编码器长按按键进入菜单
-    if (sys_KeyProcess() == 2) {
+    if (SYSKey == 2) {
         //关闭功率管输出
         SetPOWER(0);
         //初始化菜单

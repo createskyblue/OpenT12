@@ -21,6 +21,9 @@ void sys_RotaryInit(void) {
     RButton.attachClick(sys_Counter_click);
     RButton.attachDoubleClick(sys_Counter_doubleclick);
     RButton.attachLongPressStart(sys_Counter_longclick);
+    RButton.setDebounceTicks(25);
+    RButton.setClickTicks(30);
+    RButton.setPressTicks(300);
 
     //初始化编码器中断
     attachInterrupt(ROTARY_PIN1, sys_Counter_IRQHandler, CHANGE);
@@ -185,7 +188,9 @@ void sys_Counter_doubleclick(void)
 }
 
 //编码器按键按下 + 软件滤波
+uint8_t SYSKey = 0;
 uint8_t sys_KeyProcess(void) {
     RButton.tick();
-    return Read_RButton_FIFO();
+    SYSKey = Read_RButton_FIFO();
+    return SYSKey;
 }

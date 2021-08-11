@@ -9,6 +9,8 @@
 
 #define ROTARY_TYPE 2
 
+extern uint8_t SYSKey;
+
 void sys_RotaryInit(void);
 void sys_Counter_Set(double min, double max, double step, double c);
 void sys_Counter_SetVal(double c);
