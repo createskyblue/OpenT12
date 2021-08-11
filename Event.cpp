@@ -7,7 +7,19 @@ void TimerUpdateEvent(void) {
 }
 
 void BoostButton_EventLoop(void) {
-
+    static uint32_t BoostTimer = 0;
+    //单击 进行短时功率爆发
+    if (SYSKey == 1) {
+        if (!BoostEvent) {
+            BoostEvent = true;
+            BoostTimer = millis();
+        } else BoostEvent = false;
+    }
+    //功率爆发技能计时器
+    if (millis() - BoostTimer > BoostTime * 1000) {
+        //技能时间到
+        BoostEvent = false;
+    }
 }
 
 void TimerEventLoop(void) {
@@ -50,8 +62,6 @@ void SYS_StateCode_Update(void) {
     }else if (BoostEvent) {
         //快速升温事件
         TempCTRL_Status = TEMP_STATUS_BOOST;
-        //短时功率加成
-        PID_Output += BoostTemp;
     }else if (SleepEvent) {
         //烙铁进入休眠模式
         TempCTRL_Status = TEMP_STATUS_SLEEP;

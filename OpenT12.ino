@@ -106,9 +106,10 @@ void setup() {
 void loop() {
     //命令解析器
     while (Serial.available()) shell_task();
+    sys_KeyProcess();
     //温度闭环控制
     TemperatureControlLoop(); 
-    //更新系统事件
+    //更新系统事件：：系统事件可能会改变功率输出
     TimerEventLoop();
     //更新状态码
     SYS_StateCode_Update();

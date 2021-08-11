@@ -39,7 +39,7 @@ void ShowBootMsg(void) {
         Disp.setCursor(0, 12 * i + 1);
 
         switch (i) {
-        case 0: sprintf(buffer, "[调试模式] 编译时间"); break;
+        case 0: sprintf(buffer, "[启动信息] 编译时间"); break;
         case 1: sprintf(buffer, "%s %s", __DATE__,__TIME__); break;
         case 2: sprintf(buffer, "MAC %s", ChipMAC_S); break;
         case 3: sprintf(buffer, "CPU频率:%u MHZ", ESP.getCpuFreqMHz()); break;
