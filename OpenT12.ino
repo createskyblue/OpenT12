@@ -10,7 +10,7 @@ OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
-int BootTemp  = 320;
+int BootTemp  = 300;
 int SleepTemp = 250;
 int BoostTemp = 50;
 
@@ -22,6 +22,7 @@ bool ERROREvent = false;
 bool ShutdownEvent = false;
 bool SleepEvent = false;
 bool BoostEvent = false;
+bool UnderVoltageEvent = false;
 
 uint8_t DEBUG_MODE = true;
 uint8_t PIDMode = true;
@@ -36,20 +37,22 @@ uint8_t Volume = 0;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
+double SYS_Voltage = 3.3;
 int UndervoltageAlert = 3;
 int BootPasswd = false;
 uint8_t Language = LANG_Chinese;
 
 //面板状态条
 uint8_t TempCTRL_Status = TEMP_STATUS_OFF;
+const unsigned char* C_table[] = { c1, c2, c3, Lightning, c5, c6, c7 };
 char* TempCTRL_Status_Mes[]={
+    "错误",
     "停机",
     "休眠",
     "提温",
     "正常",
     "加热",
     "维持",
-    "错误",
 };
 /////////////////////////////////////////////////////////////////
 
@@ -87,9 +90,6 @@ void setup() {
     delay(150);
     SetTone(0);
 
-
-    
-
     //显示启动信息
     ShowBootMsg();
 
@@ -101,6 +101,11 @@ void setup() {
 
     //初始化UI
     System_UI_Init();
+    //首次启动的时候根据启动温度配置，重新设定目标温度
+    sys_Counter_SetVal(BootTemp);
+
+    //ShutdownEventLoop();
+    
 }
 
 void loop() {
@@ -124,8 +129,11 @@ void loop() {
  * @return 主电源电压估计值
  */
 double Get_MainPowerVoltage(void) {
-    uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
-    double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
+    //uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
+    double TipADC_V_R2 = analogReadMilliVolts(POWER_ADC_PIN) / 1000.0;
+    //double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
     double   TipADC_V_R1 = (TipADC_V_R2*POWER_ADC_VCC_R1)/POWER_ADC_R2_GND;
-    return   TipADC_V_R1 + TipADC_V_R2;
+
+    SYS_Voltage = TipADC_V_R1 + TipADC_V_R2;
+    return SYS_Voltage;
 }

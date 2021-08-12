@@ -26,6 +26,10 @@ void SetK_R(int argc, char** argv) {
     KFP_Temp.R = atof(argv[1]);
 }
 
+// void SetEventTimer(int argc, char** argv) {
+//     TimerEventTimer = atof(argv[1]);
+// }
+
 void shellInit(void) {
     shell_init(shell_reader, shell_writer, 0);
     shell_register(command_test, PSTR("test"));
@@ -38,6 +42,8 @@ void shellInit(void) {
 
     shell_register(SetK_Q, PSTR("SetK_Q"));
     shell_register(SetK_R, PSTR("SetK_R"));
+
+    // shell_register(SetEventTimer, PSTR("SetEventTimer"));
 
 }
 
