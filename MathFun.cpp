@@ -129,3 +129,12 @@ double ESP32_ADC2Vol(uint16_t adc) {
     //return ((adc / 4095.0) * (ADC1_MaxVol - ADC1_MinVol)) + ADC1_MinVol;
     return (adc / 4095.0) * 3.3;
 }
+
+/*** 
+ * @description: 分钟转毫秒
+ * @param {uint32_t} min
+ * @return {*}
+ */
+uint32_t Minute2Millis(uint32_t min) {
+    return min * 60 * 1000;
+}

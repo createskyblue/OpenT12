@@ -173,3 +173,53 @@ void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2
 		}
 	}
 }
+
+
+//绘制屏保-密集运算线条
+void DrawIntensiveComputingLine(void) {
+    static uint8_t Line[4];
+    for (uint8_t a = 0; a < 4; a++) {
+        Line[a] += rand() % 2 - 1;
+        if (Line[a] > 128) Line[a] -= 128;
+        for (uint8_t b = 0; b < rand() % 3 + 3; b++) {
+            Disp.drawHLine(0, Line[a] + rand() % 20 - 10, 128); //水平线
+            Disp.drawVLine(Line[a] + rand() % 20 - 10, 0, 64); //垂直线
+        }
+    }
+}
+//FP 密集运算屏保
+void DrawIntensiveComputing(void) {
+    float calculate;
+
+    //随机线条
+    DrawIntensiveComputingLine();
+
+    calculate = sin(millis() / 4000.0);
+    //模拟噪点
+    for (int i = 0; i < calculate * 256 + 256; i++)  Disp.drawPixel(rand() % 128, rand() % 64);
+    //波浪警告声
+    //SetTone(64 + calculate * 64 + rand() % 16 - 8);
+    SetTone(1500 + calculate * 500 + rand() % 64 - 32 - (((millis() / 1000) % 2 == 1) ? 440 : 0));
+}
+/*** 
+ * @description: 在屏幕中心绘制文本
+ * @param {*}
+ * @return {*}
+ */
+void DrawMsgBox(char* s) {
+    int w = Get_UTF8_Ascii_Pix_Len(1, s) + 2;
+    int h = 12;
+    int x = (SCREEN_COLUMN - w) / 2;
+    int y = (SCREEN_ROW - h) / 2;
+
+    Disp.setDrawColor(0);
+
+    Disp.setDrawColor(0);
+    Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 3, 0);
+    Disp.drawFrame(x - 1 , y - 3, w + 1, h + 3);
+    Disp.setDrawColor(1);
+    Disp.drawRBox(x , y - 2, w, h + 2, 2);
+    Disp.setDrawColor(0);
+    Draw_Utf(x + 1 , y - 1, s);
+    Disp.setDrawColor(1);
+}

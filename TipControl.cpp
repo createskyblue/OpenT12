@@ -48,7 +48,11 @@ double CalculateTemp(double ADC) {
 //PWM输出模块
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
-    if (PWMOutput_Lock) pwm = 0;
+    //PWM锁
+    if (PWMOutput_Lock || ShutdownEvent) {
+        if (MyMOS == PMOS) pwm = 255;
+        else pwm = 0;
+    }
     if (pwm == 255) ledcWrite(PWM_Channel, 256);
     else ledcWrite(PWM_Channel, pwm);
 }
@@ -113,6 +117,8 @@ void TemperatureControlLoop(void) {
     if (BoostEvent) {
         //短时功率加成
         PID_Setpoint += BoostTemp;
+    }else if (SleepEvent) {
+        PID_Setpoint = SleepTemp;
     }
 
     //尝试访问ADC
