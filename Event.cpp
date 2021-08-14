@@ -53,10 +53,10 @@ void TimerEventLoop(void) {
         SleepEvent = true;
         ShutdownEvent = false;
     }else{
-        printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
         SleepEvent = false;
         ShutdownEvent = false;
     }
+    printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
     
 }
 
@@ -90,7 +90,9 @@ void SYS_StateCode_Update(void) {
     }else if (BoostEvent) {
         //快速升温事件
         TempCTRL_Status = TEMP_STATUS_BOOST;
-    }else if (ShutdownEvent) {
+    }
+    
+    if (ShutdownEvent) {
         //烙铁进入停机模式
         TempCTRL_Status = TEMP_STATUS_OFF;
         //关闭输出

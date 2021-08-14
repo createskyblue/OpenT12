@@ -289,30 +289,33 @@ void System_UI_Init(void) {
 void System_UI(void) {
     Clear();
 
-    char buffer[50];
-    for (uint8_t i = 0;i < 5;i++) {
-        Disp.setCursor(0, 12 * i + 1);
+    //睡眠模式屏保入口
+    if (SleepEvent) RunSleepLoop();
+    else {
+        char buffer[50];
+        for (uint8_t i = 0;i < 5;i++) {
+            Disp.setCursor(0, 12 * i + 1);
 
-        switch (i) {
-        case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status , TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
-        case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint,TipTemperature); break;
-        case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
-        case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
-        case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+            switch (i) {
+            case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
+            case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
+            case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
+            case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
+            case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+            }
+            Disp.print(buffer);
         }
-        Disp.print(buffer);
+
+
+        //温度控制状态图标
+        Draw_Slow_Bitmap(74, 1, C_table[TempCTRL_Status], 14, 14);
+        //欠压告警图标
+        if (UnderVoltageEvent && (millis() / 1000) % 2) Draw_Slow_Bitmap(58, 1, Set6 + 1, 14, 14);
     }
-
-    
-    //温度控制状态图标
-    Draw_Slow_Bitmap(74, 1, C_table[TempCTRL_Status], 14, 14);
-    //欠压告警图标
-    if (UnderVoltageEvent && (millis()/1000)%2) Draw_Slow_Bitmap(58, 1, Set6 + 1, 14, 14);
-    
-
     Display();
 
     //printf("ERROREvent:%d 状态:%s \n", ERROREvent, TempCTRL_Status_Mes[TempCTRL_Status]);
+    
 
     //编码器长按按键进入菜单
     if (SYSKey == 2) {

@@ -23,5 +23,6 @@ typedef struct
 float kalmanFilter(KFP *kfp,float input);
 
 double ESP32_ADC2Vol(uint16_t adc);
+int sign(int x);
 
 #endif

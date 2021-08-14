@@ -125,6 +125,9 @@ static uint8_t RButton_FIFO_BufferSize = 0;
  */
 //
 static void Write_RButton_FIFO(uint8_t State) {
+    //重置事件计时器
+    TimerUpdateEvent();
+    
     RButton_FIFO[RButton_FIFO_pwrite] = State;
     printf("FIFO写入[%d]=%d\n", RButton_FIFO_pwrite, State);
     //写指针移位

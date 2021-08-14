@@ -138,3 +138,11 @@ double ESP32_ADC2Vol(uint16_t adc) {
 uint32_t Minute2Millis(uint32_t min) {
     return min * 60 * 1000;
 }
+/*** 
+ * @description: 判断符号正负
+ * @param {int} x
+ * @return {*}
+ */
+int sign(int x) {
+    return (x > 0) - (x < 0);
+}
