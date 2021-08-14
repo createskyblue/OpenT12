@@ -18,6 +18,7 @@
 #include "Calibration.h"
 #include "TipControl.h"
 #include "Beep.h"
+#include "Bezier.h"
 
 //注意Pin36与Pin39连接了内部霍尔传感器,不建议复用高敏感用途
 //另外，建议给ADC输入串联一个0.1uF的电容，有利于减少噪声

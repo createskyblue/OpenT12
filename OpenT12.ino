@@ -105,6 +105,7 @@ void setup() {
     sys_Counter_SetVal(BootTemp);
 
     //ShutdownEventLoop();
+    // RunSleepScene();
     
 }
 
