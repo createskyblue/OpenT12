@@ -120,21 +120,20 @@ void Draw_Scale(int x, int y, int w, int h, int s, int v) {
 	@作用：绘制数值条
 	@输入：i=值 a=值的最小值 b=值的最大值 x=左上顶点x轴坐标 y=左上顶点y轴坐标 w=宽度 h=高度 c=颜色
 */
-void Draw_Num_Bar(int i, int a, int b, int x, int y, int w, int h, int c) {
-    Disp.setDrawColor(c);
-	Disp.drawFrame(x, y, w - 3 * 6 - 1, h);
-	Disp.drawBox(x+2, y+2, map(i, a, b, 0, w - 3 * 6 - 1 - 4), h-4);
-
+void Draw_Num_Bar(float i, float a, float b, int x, int y, int w, int h, int c) {
     char buffer[20];
-    sprintf(buffer,"%d",i);
+    sprintf(buffer, "%.1f", i);
+    uint8_t textWidth = Disp.getUTF8Width(buffer) + 3;
 
-	Disp.drawStr(x + w - 3 * 6, y -1, buffer);
+    Disp.setDrawColor(c);
+    Disp.drawFrame(x, y, w - textWidth -2, h);
+    Disp.drawBox(x + 2, y + 2, map(i, a, b, 0, w - textWidth - 6 ), h - 4);
+
+    
+
+    Disp.drawStr(x + w - textWidth, y - 1, buffer);
 	//进行去棱角操作:增强文字视觉焦点
     Disp.setDrawColor(0);
-	Disp.drawPixel(x, y);
-	Disp.drawPixel(x, y + h-1);
-	Disp.drawPixel(x + w - 3 * 6-2, y);
-	Disp.drawPixel(x + w - 3 * 6-2, y + h-1);
     Disp.setDrawColor(1);
 }
 

@@ -47,7 +47,6 @@ enum Switch_space_Obj{
     SwitchSpace_Language,
 
     SwitchSpace_TipID,
-
 };
 uint8_t *Switch_space[] = {
     &SmoothAnimation_Flag,
@@ -93,21 +92,35 @@ enum Slide_space_Obj{
     Slide_space_UndervoltageAlert,
     Slide_space_BootPasswd,
 
+    Slide_space_PID_AP,
+    Slide_space_PID_AI,
+    Slide_space_PID_AD,
+    Slide_space_PID_CP,
+    Slide_space_PID_CI,
+    Slide_space_PID_CD,
+
 };
 struct Slide_Bar Slide_space[] = {
-    {&ScreenBrightness,0,255,16}, //亮度调整
-    {&MenuScroll,0,SCREEN_ROW / 16,1}, //自适应菜单滚动范围
+    {(float*)&ScreenBrightness,0,255,16}, //亮度调整
+    {(float*)&MenuScroll,0,SCREEN_ROW / 16,1}, //自适应菜单滚动范围
 
-    {&BootTemp,150,400,5},
-    {&SleepTemp,150,400,5},
-    {&BoostTemp,0,150,1},
+    {(float*)&BootTemp,150,400,5},
+    {(float*)&SleepTemp,150,400,5},
+    {(float*)&BoostTemp,0,150,1},
 
-    {&ShutdownTime,0,60,1},
-    {&SleepTime,0,60,1},
-    {&BoostTime,0,600,1},
+    {(float*)&ShutdownTime,0,60,1},
+    {(float*)&SleepTime,0,60,1},
+    {(float*)&BoostTime,0,600,1},
 
-    {&UndervoltageAlert,0,36,1},
-    {&BootPasswd,0,999,1},
+    {(float*)&UndervoltageAlert,0,36,1},
+    {(float*)&BootPasswd,0,999,1},
+
+    {(float*)&aggKp,0,50,0.5},
+    {(float*)&aggKi,0,50,0.5},
+    {(float*)&aggKd,0,50,0.5},
+    {(float*)&consKp,0,50,0.5},
+    {(float*)&consKi,0,50,0.5},
+    {(float*)&consKd,0,50,0.5},
 };
 
 /*
@@ -125,7 +138,7 @@ struct Slide_Bar Slide_space[] = {
 */
 #define Smooth_Animation_Num sizeof(Menu_Smooth_Animation)/sizeof(Menu_Smooth_Animation[0])
 struct Smooth_Animation Menu_Smooth_Animation[] = {
-    {0,0,0,0.3,1,0}, //菜单项目滚动动画
+    {0,0,0,0.4,1,0}, //菜单项目滚动动画
     {0,0,0,0.15,1,0}, //滚动条平滑动画
     {0,0,0,0.15,1,0}, //菜单选项条长度平滑动画
     {0,0,0,0.2,0,0}, //项目归位动画
@@ -151,7 +164,7 @@ struct Smooth_Animation Menu_Smooth_Animation[] = {
 struct Menu_Level_System MenuLevel[] = {
     {0,0,0,3,Menu_NULL_IMG},
     {1,0,0,5,Menu_HAVE_IMG},
-    {2,0,0,6,Menu_HAVE_IMG},
+    {2,0,0,7,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
     {4,0,0,4,Menu_HAVE_IMG},
     {5,0,0,6,Menu_HAVE_IMG},
@@ -166,6 +179,10 @@ struct Menu_Level_System MenuLevel[] = {
     {14,0,0,2,Menu_HAVE_IMG},
 
     {15,0,0, MaxTipConfig ,Menu_NULL_IMG},
+
+    {16,0,0, 3 ,Menu_NULL_IMG},
+    {17,0,0, 4 ,Menu_NULL_IMG},
+    {18,0,0, 4 ,Menu_NULL_IMG},
 };
 
 /*
@@ -194,106 +211,124 @@ struct Menu_Level_System MenuLevel[] = {
 #define Menu_NULL_OP                6
 
 struct Menu_System Menu[] = {
-    {0,0,       Title_Menu_Op,         "欢迎使用[朱雀]控制器",  Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
-    {0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
-    {0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
+    { 0,0,       Title_Menu_Op,         "欢迎使用[朱雀]控制器",  Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    { 0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
+    { 0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
+    { 0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
+ 
+    { 1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
+    { 1,1,       Jump_Menu_Op,          "烙铁头",               IMG_Tip,              2,                                  0,          Menu_NULL_F},
+    { 1,2,       Jump_Menu_Op,          "温度场景",             Set1,              3,                                  0,          Menu_NULL_F},
+    { 1,3,       Jump_Menu_Op,          "定时场景",             Set2,              4,                                  0,          Menu_NULL_F},
+    { 1,4,       Jump_Menu_Op,          "温控模式",                 Set3,              12,                                  0,          Menu_NULL_F},
+    { 1,5,       Jump_Menu_Op,          "返回",                Set7,              0,                                  1,          Menu_NULL_F},
+ 
+    { 2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
+    { 2,1,       Jump_Menu_Op,          "切换配置",           Set8,              15,                                  0,          *FlashTipMenu},
+    { 2,2,       F_Menu_Op,             "校准",               Set9,              0,                                  0,          *CalibrationTemperature},
+    { 2,3,       Jump_Menu_Op,          "PID参数",                 Set3,              16,                                  0,    Menu_NULL_F},
+    { 2,4,     F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
+    { 2,5,     F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
+    { 2,6,     F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
+    { 2,7,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          *SaveTipConfig},
+ 
+    { 3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
+    { 3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},
+    { 3,2,       Progress_Bar_Menu_Op,  "休眠温度",         Set11,              Slide_space_SleepTemp,                                  0,          Menu_NULL_F},
+    { 3,3,       Progress_Bar_Menu_Op,  "提温温度",         Set14,              Slide_space_BoostTemp,                                  0,          Menu_NULL_F},
+    { 3,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  2,          Menu_NULL_F},
+ 
+    { 4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
+    { 4,1,       Progress_Bar_Menu_Op,  "停机时间(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
+    { 4,2,       Progress_Bar_Menu_Op,  "休眠时间(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
+    { 4,3,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
+    { 4,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  3,          Menu_NULL_F},
+ 
+    { 5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
+    { 5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
+    { 5,2,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
+    { 5,3,       Progress_Bar_Menu_Op,  "开机密码",             Lock,              Slide_space_BootPasswd,              0,          Menu_NULL_F},
+    { 5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
+    { 5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              0,                                  0,          Menu_NULL_F},
+    { 5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
+ 
+    { 6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
+    { 6,1,       Jump_Menu_Op,          "显示效果",             Set4,              7,                                  0,          Menu_NULL_F},
+    { 6,2,       Jump_Menu_Op,          "声音设置",             Set5,              10,                                  0,          Menu_NULL_F},
+    { 6,3,       Switch_Menu_Op,        "编码器方向",            Set19,           SwitchSpace_RotaryDirection,         0,          *PopMsg_RotaryDirection},
+    { 6,4,       Jump_Menu_Op,          "手柄触发",             IMG_Trigger,             14,         0,          Menu_NULL_F},
+    { 6,5,       Jump_Menu_Op,          "返回",                 Set7,              5,                                  1,          Menu_NULL_F},
+ 
+    { 7,0,       Title_Menu_Op,         "显示效果",               Menu_NULL_IMG,              6,                        1,          Menu_NULL_F},
+    { 7,1,       Jump_Menu_Op,          "面板设置",               Set0,              8,                                  0,          Menu_NULL_F},
+    { 7,2,       Switch_Menu_Op,        "翻转屏幕",               IMG_Flip,          SwitchSpace_ScreenFlip,               0,        *Update_OLED_Flip},
+    { 7,3,       Jump_Menu_Op,          "过渡动画",               IMG_Animation,    11,                                  0,          Menu_NULL_F},
+    { 7,4,       Progress_Bar_Menu_Op,  "屏幕亮度",               IMG_Sun,          Slide_space_ScreenBrightness,        1,          *Update_OLED_Light_Level},
+    { 7,5,       Jump_Menu_Op,          "选项条定宽",             IMG_Size,              9,                                  0,          Menu_NULL_F},
+    { 7,6,       Jump_Menu_Op,          "返回",                  Set7,              6,                                  1,          Menu_NULL_F},
+ 
+    { 8,0,       Title_Menu_Op,         "面板设置",               Menu_NULL_IMG,              7,                                  1,          Menu_NULL_F},
+    { 8,1,       SingleBox_Menu_Op,     "简约",               Set17,              SwitchSpace_PanelSettings,                     0,          *JumpWithTitle},
+    { 8,2,       SingleBox_Menu_Op,     "详细",               Set18,              SwitchSpace_PanelSettings,                     1,          *JumpWithTitle},
+ 
+    { 9,0,       Title_Menu_Op,         "选项条定宽设置&测试",      Menu_NULL_IMG,              7,                                  5,          Menu_NULL_F},
+    { 9,1,       SingleBox_Menu_Op,     "固定",                   Menu_NULL_IMG,              SwitchSpace_OptionStripFixedLength, true,          Menu_NULL_F},
+    { 9,2,       SingleBox_Menu_Op,     "自适应",                 Menu_NULL_IMG,              SwitchSpace_OptionStripFixedLength, false,          Menu_NULL_F},
+    { 9,3,       Jump_Menu_Op,          "--- 往下翻 ---",         Menu_NULL_IMG,              9,                                  4,          Menu_NULL_F},
+    { 9,4,       Menu_NULL_OP,          "人民!",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    { 9,5,       Menu_NULL_OP,          "只有人民~",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    { 9,6,       Menu_NULL_OP,          "才是创造世界历史的",      Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
+    { 9,7,       Menu_NULL_OP,          "动 力！",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    { 9,8,       Jump_Menu_Op,          "--- 往上翻 ---",         Menu_NULL_IMG,              9,                                  0,          Menu_NULL_F},
+    { 9,9,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,              7,                                  5,          Menu_NULL_F},
+ 
+    { 10,0,       Title_Menu_Op,         "声音设置",               Menu_NULL_IMG,              6,                                  2,          Menu_NULL_F},
+    { 10,1,       SingleBox_Menu_Op,     "开启",               Set5,              SwitchSpace_Volume,                              true,          *JumpWithTitle},
+    { 10,2,       SingleBox_Menu_Op,     "关闭",               Set5_1,              SwitchSpace_Volume,                            false,          *JumpWithTitle},
+ 
+    { 11,0,       Title_Menu_Op,         "动画设置",               Menu_NULL_IMG,              7,                                  3,          Menu_NULL_F},
+    { 11,1,       SingleBox_Menu_Op,     "开启",               IMG_Animation,                  SwitchSpace_SmoothAnimation,        true,          *JumpWithTitle},
+    { 11,2,       SingleBox_Menu_Op,     "关闭",               IMG_Animation_DISABLE,          SwitchSpace_SmoothAnimation,        false,          *JumpWithTitle},
+ 
+    { 12,0,       Title_Menu_Op,         "温控模式",               Menu_NULL_IMG,              1,                                  4,          Menu_NULL_F},
+    { 12,1,       SingleBox_Menu_Op,     "PID控制",               Set16,               SwitchSpace_PIDMode,                        true,          *JumpWithTitle},
+    { 12,2,       SingleBox_Menu_Op,     "模糊控制",              Set15,      SwitchSpace_PIDMode,                                 false,          *JumpWithTitle},
+ 
+    { 13,0,       Title_Menu_Op,         "语言设置",               Menu_NULL_IMG,              5,                                  4,          Menu_NULL_F},
+    { 13,1,       SingleBox_Menu_Op,     "简体中文",               Lang_CN,               SwitchSpace_Language,                    LANG_Chinese,          *JumpWithTitle},
 
-    {1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
-    {1,1,       Jump_Menu_Op,          "烙铁头",               IMG_Tip,              2,                                  0,          Menu_NULL_F},
-    {1,2,       Jump_Menu_Op,          "温度场景",             Set1,              3,                                  0,          Menu_NULL_F},
-    {1,3,       Jump_Menu_Op,          "定时场景",             Set2,              4,                                  0,          Menu_NULL_F},
-    {1,4,       Jump_Menu_Op,          "温控模式",                 Set3,              12,                                  0,          Menu_NULL_F},
-    {1,5,       Jump_Menu_Op,          "返回",                Set7,              0,                                  1,          Menu_NULL_F},
+    { 14,0,       Title_Menu_Op,         "手柄触发",               Menu_NULL_IMG,              6,                                  4,          Menu_NULL_F},
+    { 14,1,       SingleBox_Menu_Op,     "震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
+    { 14,2,       SingleBox_Menu_Op,     "干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
+ 
+    { 15,0,       Title_Menu_Op,         "烙铁头列表",             Menu_NULL_IMG,              2,                                  1,          *LoadTipConfig},
+    { 15,1,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          0,        *JumpWithTitle},
+    { 15,2,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          1,       *JumpWithTitle},
+    { 15,3,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          2,       *JumpWithTitle},
+    { 15,4,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          3,       *JumpWithTitle},
+    { 15,5,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          4,       *JumpWithTitle},
+    { 15,6,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          5,       *JumpWithTitle},
+    { 15,7,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          6,       *JumpWithTitle},
+    { 15,8,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          7,       *JumpWithTitle},
+    { 15,9,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          8,       *JumpWithTitle},
+    { 15,10,      SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          9,       *JumpWithTitle},
 
-    {2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
-    {2,1,       Jump_Menu_Op,          "切换配置",           Set8,              15,                                  0,          *FlashTipMenu},
-    {2,2,       F_Menu_Op,             "校准",               Set9,              0,                                  0,          *CalibrationTemperature},
-    {2,3,       F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
-    {2,4,       F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
-    {2,5,       F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
-    {2,6,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          *SaveTipConfig},
+    { 16,0,       Title_Menu_Op,         "PID参数",             Menu_NULL_IMG,              2,                                  3,          Menu_NULL_F },
+    { 16,1,       Jump_Menu_Op,          "PID爬升期参数",               Menu_NULL_IMG,      17,                                 0,          Menu_NULL_F },
+    { 16,2,       Jump_Menu_Op,          "PID接近期参数",               Menu_NULL_IMG,      18,                                 0,          Menu_NULL_F },
+    { 16,3,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           2,                                  3,          Menu_NULL_F },
 
-    {3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
-    {3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},
-    {3,2,       Progress_Bar_Menu_Op,  "休眠温度",         Set11,              Slide_space_SleepTemp,                                  0,          Menu_NULL_F},
-    {3,3,       Progress_Bar_Menu_Op,  "提温温度",         Set14,              Slide_space_BoostTemp,                                  0,          Menu_NULL_F},
-    {3,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  2,          Menu_NULL_F},
+    { 17,0,       Title_Menu_Op,         "PID爬升期",             Menu_NULL_IMG,            16,                                 1,          Menu_NULL_F },
+    { 17,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_AP,                 0,          Menu_NULL_F },
+    { 17,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_AI,                 0,          Menu_NULL_F },
+    { 17,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_AD,                 0,          Menu_NULL_F },
+    { 17,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 1,          *SaveTipConfig },
 
-    {4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
-    {4,1,       Progress_Bar_Menu_Op,  "停机时间(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
-    {4,2,       Progress_Bar_Menu_Op,  "休眠时间(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
-    {4,3,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
-    {4,4,       Jump_Menu_Op,          "保存",                  Save,              1,                                  3,          Menu_NULL_F},
-
-    {5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
-    {5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
-    {5,2,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
-    {5,3,       Progress_Bar_Menu_Op,  "开机密码",             Lock,              Slide_space_BootPasswd,              0,          Menu_NULL_F},
-    {5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
-    {5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              0,                                  0,          Menu_NULL_F},
-    {5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
-
-    {6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
-    {6,1,       Jump_Menu_Op,          "显示效果",             Set4,              7,                                  0,          Menu_NULL_F},
-    {6,2,       Jump_Menu_Op,          "声音设置",             Set5,              10,                                  0,          Menu_NULL_F},
-    {6,3,       Switch_Menu_Op,        "编码器方向",            Set19,           SwitchSpace_RotaryDirection,         0,          *PopMsg_RotaryDirection},
-    {6,4,       Jump_Menu_Op,          "手柄触发",             IMG_Trigger,             14,         0,          Menu_NULL_F},
-    {6,5,       Jump_Menu_Op,          "返回",                 Set7,              5,                                  1,          Menu_NULL_F},
-
-    {7,0,       Title_Menu_Op,         "显示效果",               Menu_NULL_IMG,              6,                        1,          Menu_NULL_F},
-    {7,1,       Jump_Menu_Op,          "面板设置",               Set0,              8,                                  0,          Menu_NULL_F},
-    {7,2,       Switch_Menu_Op,        "翻转屏幕",               IMG_Flip,          SwitchSpace_ScreenFlip,               0,        *Update_OLED_Flip},
-    {7,3,       Jump_Menu_Op,          "过渡动画",               IMG_Animation,    11,                                  0,          Menu_NULL_F},
-    {7,4,       Progress_Bar_Menu_Op,  "屏幕亮度",               IMG_Sun,          Slide_space_ScreenBrightness,        1,          *Update_OLED_Light_Level},
-    {7,5,       Jump_Menu_Op,          "选项条定宽",             IMG_Size,              9,                                  0,          Menu_NULL_F},
-    {7,6,       Jump_Menu_Op,          "返回",                  Set7,              6,                                  1,          Menu_NULL_F},
-
-    {8,0,       Title_Menu_Op,         "面板设置",               Menu_NULL_IMG,              7,                                  1,          Menu_NULL_F},
-    {8,1,       SingleBox_Menu_Op,     "简约",               Set17,              SwitchSpace_PanelSettings,                     0,          *JumpWithTitle},
-    {8,2,       SingleBox_Menu_Op,     "详细",               Set18,              SwitchSpace_PanelSettings,                     1,          *JumpWithTitle},
-
-    {9,0,       Title_Menu_Op,         "选项条定宽设置&测试",      Menu_NULL_IMG,              7,                                  5,          Menu_NULL_F},
-    {9,1,       SingleBox_Menu_Op,     "固定",                   Menu_NULL_IMG,              SwitchSpace_OptionStripFixedLength, true,          Menu_NULL_F},
-    {9,2,       SingleBox_Menu_Op,     "自适应",                 Menu_NULL_IMG,              SwitchSpace_OptionStripFixedLength, false,          Menu_NULL_F},
-    {9,3,       Jump_Menu_Op,          "--- 往下翻 ---",         Menu_NULL_IMG,              9,                                  4,          Menu_NULL_F},
-    {9,4,       Menu_NULL_OP,          "人民!",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {9,5,       Menu_NULL_OP,          "只有人民~",               Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {9,6,       Menu_NULL_OP,          "才是创造世界历史的",      Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
-    {9,7,       Menu_NULL_OP,          "动 力！",                   Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
-    {9,8,       Jump_Menu_Op,          "--- 往上翻 ---",         Menu_NULL_IMG,              9,                                  0,          Menu_NULL_F},
-    {9,9,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,              7,                                  5,          Menu_NULL_F},
-
-    {10,0,       Title_Menu_Op,         "声音设置",               Menu_NULL_IMG,              6,                                  2,          Menu_NULL_F},
-    {10,1,       SingleBox_Menu_Op,     "开启",               Set5,              SwitchSpace_Volume,                              true,          *JumpWithTitle},
-    {10,2,       SingleBox_Menu_Op,     "关闭",               Set5_1,              SwitchSpace_Volume,                            false,          *JumpWithTitle},
-
-    {11,0,       Title_Menu_Op,         "动画设置",               Menu_NULL_IMG,              7,                                  3,          Menu_NULL_F},
-    {11,1,       SingleBox_Menu_Op,     "开启",               IMG_Animation,                  SwitchSpace_SmoothAnimation,        true,          *JumpWithTitle},
-    {11,2,       SingleBox_Menu_Op,     "关闭",               IMG_Animation_DISABLE,          SwitchSpace_SmoothAnimation,        false,          *JumpWithTitle},
-
-    {12,0,       Title_Menu_Op,         "温控模式",               Menu_NULL_IMG,              1,                                  4,          Menu_NULL_F},
-    {12,1,       SingleBox_Menu_Op,     "PID控制",               Set16,               SwitchSpace_PIDMode,                        true,          *JumpWithTitle},
-    {12,2,       SingleBox_Menu_Op,     "模糊控制",              Set15,      SwitchSpace_PIDMode,                                 false,          *JumpWithTitle},
-
-    {13,0,       Title_Menu_Op,         "语言设置",               Menu_NULL_IMG,              5,                                  4,          Menu_NULL_F},
-    {13,1,       SingleBox_Menu_Op,     "简体中文",               Lang_CN,               SwitchSpace_Language,                    LANG_Chinese,          *JumpWithTitle},
-
-    {14,0,       Title_Menu_Op,         "手柄触发",               Menu_NULL_IMG,              6,                                  4,          Menu_NULL_F},
-    {14,1,       SingleBox_Menu_Op,     "震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
-    {14,2,       SingleBox_Menu_Op,     "干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
-
-    {15,0,       Title_Menu_Op,         "烙铁头列表",             Menu_NULL_IMG,              2,                                  1,          *LoadTipConfig},
-    {15,1,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          0,        *JumpWithTitle},
-    {15,2,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          1,       *JumpWithTitle},
-    {15,3,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          2,       *JumpWithTitle},
-    {15,4,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          3,       *JumpWithTitle},
-    {15,5,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          4,       *JumpWithTitle},
-    {15,6,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          5,       *JumpWithTitle},
-    {15,7,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          6,       *JumpWithTitle},
-    {15,8,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          7,       *JumpWithTitle},
-    {15,9,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          8,       *JumpWithTitle},
-    {15,10,      SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          9,          *JumpWithTitle},
+    { 18,0,       Title_Menu_Op,         "PID接近期",             Menu_NULL_IMG,            16,                                 2,          *SaveTipConfig },
+    { 18,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_CP,                 0,          Menu_NULL_F },
+    { 18,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_CI,                 0,          Menu_NULL_F },
+    { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
+    { 18,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
 };
 int deg=0;
 void System_UI_Init(void) {
@@ -640,8 +675,9 @@ int Get_Menu_Id(uint8_t lid, uint8_t id) {
 void MenuSYS_SetCounter() {
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
         //设置编码器滚动范围
-        uint8_t MinimumScrolling = min(Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
-        sys_Counter_Set(Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, *Slide_space[Slide_space_Scroll].x);
+        uint8_t MinimumScrolling = min((int)Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
+        sys_Counter_Set((int)Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, (int)*Slide_space[Slide_space_Scroll].x + (1));
+        printf("滚动条:%d\n", (int)*Slide_space[Slide_space_Scroll].x);
     } else {
         printf("Next_Menu:图标模式\n");
         if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min = 1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
@@ -748,15 +784,15 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
             if (Menu[Id].b==0) {
                 //头只有最差显示区域
                 MenuLevel[Menu[Id].a].x = 0;
-                *Slide_space[Slide_space_Scroll].x = (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = 0; //+(1) 是因为实际上计算会-1 ,这里要补回来
             }else if (Menu[Id].b > 0 && Menu[Id].b <= MenuLevel[MenuLevelId].max - ExcellentMedian) {
                 //中部拥有绝佳的显示区域
                 MenuLevel[Menu[Id].a].x = Menu[Id].b - 1;
-                *Slide_space[Slide_space_Scroll].x = 1 + (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = 1; //+(1) 是因为实际上计算会-1 ,这里要补回来
             }else{
                 //靠后位置 以及 最差的尾部
                 MenuLevel[Menu[Id].a].x = ExcellentLimit;
-                *Slide_space[Slide_space_Scroll].x = Menu[Id].b - ExcellentLimit + (1); //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = Menu[Id].b - ExcellentLimit; //+(1) 是因为实际上计算会-1 ,这里要补回来
             }
             // printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\n*Slide_space[Slide_space_Scroll].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, *Slide_space[Slide_space_Scroll].x);
         }else{
@@ -805,6 +841,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
 
         //sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);
         if (Menu[Id].function) Menu[Id].function();
+        printf("滚动条:%d\n", (int)*Slide_space[Slide_space_Scroll].x);
         MenuSYS_SetCounter();
         break;
     
@@ -835,6 +872,7 @@ static int Menu_Smooth_Animation_Last_choose = 0;
     @param -
 */
 void Menu_Control() {
+    printf("菜单系统: 滚动条:%d \n", (int)*Slide_space[Slide_space_Scroll].x);
     //printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\n*Slide_space[Slide_space_Scroll].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, *Slide_space[Slide_space_Scroll].x);
     if (!Menu_System_State) return;
     Disp.clearBuffer();
@@ -874,11 +912,9 @@ void Menu_Control() {
 
                     //滑动条
                 case 4:
-                    //Disp.setDrawColor(1);
                     char buffer[5];
-                    //Set_Cursor(SCREEN_COLUMN - 9 - Get_Font_Size() * 6 * Get_Dec_Deep(Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x), (int)((i + Menu_Smooth_Animation[0].x) * 16) + 3);
-                    sprintf(buffer,"%d", Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x);
-                    Draw_Utf(SCREEN_COLUMN - 9 - 6 * Get_Dec_Deep(Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x), \
+                    sprintf(buffer,"%.1f", *Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x);
+                    Draw_Utf(SCREEN_COLUMN - 9 - Disp.getUTF8Width(buffer), \
                         (int)((i + Menu_Smooth_Animation[0].x) * 16), \
                         buffer);
                     break;
