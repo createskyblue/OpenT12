@@ -60,10 +60,10 @@ extern struct Smooth_Animation Menu_Smooth_Animation[];
 		step 步进
 */
 struct Slide_Bar {
-	int* x;	 //值
-	int min;
-	int max;
-	int step;
+	float* x;	 //值
+	float min;
+	float max;
+	float step;
 };
 extern struct Slide_Bar Slide_space[];
 
