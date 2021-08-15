@@ -12,13 +12,13 @@ PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRE
 /////////////////////////////////////////////////////////////////
 char* TipName = "默认";
 
-int BootTemp  = 300;
-int SleepTemp = 250;
-int BoostTemp = 50;
+float BootTemp  = 300;
+float SleepTemp = 250;
+float BoostTemp = 50;
 
-int ShutdownTime = 0;
-int SleepTime    = 5;
-int BoostTime    = 30;
+float ShutdownTime = 0;
+float SleepTime    = 5;
+float BoostTime    = 30;
 
 bool ERROREvent = false;
 bool ShutdownEvent = false;
@@ -32,16 +32,16 @@ uint8_t PIDMode = true;
 uint8_t PanelSettings = PANELSET_Detailed;
 uint8_t ScreenFlip = false;
 uint8_t SmoothAnimation_Flag = true;
-int     ScreenBrightness = 255;
+float   ScreenBrightness = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
 uint8_t Volume = 0;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
-double SYS_Voltage = 3.3;
-int UndervoltageAlert = 3;
-int BootPasswd = false;
+double  SYS_Voltage = 3.3;
+float   UndervoltageAlert = 3;
+float   BootPasswd = false;
 uint8_t Language = LANG_Chinese;
 
 //面板状态条
