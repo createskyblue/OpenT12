@@ -112,15 +112,15 @@ struct Slide_Bar Slide_space[] = {
     {(float*)&SleepTime,0,60,1},
     {(float*)&BoostTime,0,600,1},
 
-    {(float*)&UndervoltageAlert,0,36,1},
+    {(float*)&UndervoltageAlert,0,36,0.25},
     {(float*)&BootPasswd,0,999,1},
 
-    {(float*)&aggKp,0,50,0.5},
-    {(float*)&aggKi,0,50,0.5},
-    {(float*)&aggKd,0,50,0.5},
-    {(float*)&consKp,0,50,0.5},
-    {(float*)&consKi,0,50,0.5},
-    {(float*)&consKd,0,50,0.5},
+    {(float*)&aggKp,0,50,0.1},
+    {(float*)&aggKi,0,50,0.1},
+    {(float*)&aggKd,0,50,0.1},
+    {(float*)&consKp,0,50,0.1},
+    {(float*)&consKi,0,50,0.1},
+    {(float*)&consKd,0,50,0.1},
 };
 
 /*
@@ -676,8 +676,8 @@ void MenuSYS_SetCounter() {
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
         //设置编码器滚动范围
         uint8_t MinimumScrolling = min((int)Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
-        sys_Counter_Set((int)Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, (int)*Slide_space[Slide_space_Scroll].x + (1));
-        printf("滚动条:%d\n", (int)*Slide_space[Slide_space_Scroll].x);
+        sys_Counter_Set((int)Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, (int)*Slide_space[Slide_space_Scroll].x + (1)); //+(1) 是因为实际上计算会-1 ,这里要补回来
+        
     } else {
         printf("Next_Menu:图标模式\n");
         if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min = 1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
@@ -784,15 +784,15 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
             if (Menu[Id].b==0) {
                 //头只有最差显示区域
                 MenuLevel[Menu[Id].a].x = 0;
-                *Slide_space[Slide_space_Scroll].x = 0; //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = 0;
             }else if (Menu[Id].b > 0 && Menu[Id].b <= MenuLevel[MenuLevelId].max - ExcellentMedian) {
                 //中部拥有绝佳的显示区域
                 MenuLevel[Menu[Id].a].x = Menu[Id].b - 1;
-                *Slide_space[Slide_space_Scroll].x = 1; //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = 1;
             }else{
                 //靠后位置 以及 最差的尾部
                 MenuLevel[Menu[Id].a].x = ExcellentLimit;
-                *Slide_space[Slide_space_Scroll].x = Menu[Id].b - ExcellentLimit; //+(1) 是因为实际上计算会-1 ,这里要补回来
+                *Slide_space[Slide_space_Scroll].x = Menu[Id].b - ExcellentLimit;
             }
             // printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\n*Slide_space[Slide_space_Scroll].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, *Slide_space[Slide_space_Scroll].x);
         }else{
@@ -841,7 +841,6 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
 
         //sys_Counter_Set(MenuLevel[real_Level_Id].min, MenuLevel[real_Level_Id].max, 1, MenuLevel[real_Level_Id].x);
         if (Menu[Id].function) Menu[Id].function();
-        printf("滚动条:%d\n", (int)*Slide_space[Slide_space_Scroll].x);
         MenuSYS_SetCounter();
         break;
     
@@ -872,7 +871,6 @@ static int Menu_Smooth_Animation_Last_choose = 0;
     @param -
 */
 void Menu_Control() {
-    printf("菜单系统: 滚动条:%d \n", (int)*Slide_space[Slide_space_Scroll].x);
     //printf("MenuLevelId:%d\nMenuLevel[MenuLevelId].x:%d\n*Slide_space[Slide_space_Scroll].x:%d\n", MenuLevelId, MenuLevel[MenuLevelId].x, *Slide_space[Slide_space_Scroll].x);
     if (!Menu_System_State) return;
     Disp.clearBuffer();
@@ -882,7 +880,7 @@ void Menu_Control() {
 
     //分别获取 菜单层、菜单项 索引值
     real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);
-    Pos_Id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x + *Slide_space[Slide_space_Scroll].x);
+    Pos_Id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x + (int)*Slide_space[Slide_space_Scroll].x);
 
     //若当前菜单层级没有开题图标化则使用普通文本菜单的模式进行渲染显示 若屏幕分辨率低于128*32 则强制启用文本菜单模式
     if (!MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].a || SCREEN_ROW <= 32) {
@@ -932,7 +930,7 @@ void Menu_Control() {
                             10, 10);
                     }
                     //当前项高亮
-                    if (*Slide_space[Slide_space_Scroll].x == i) {
+                    if ((int)*Slide_space[Slide_space_Scroll].x == i) {
                         Disp.setDrawColor(2);
                         Disp.drawBox(SCREEN_COLUMN - 32 - 2 + DEBUG_3, \
                             (i + Menu_Smooth_Animation[0].x) * 16 + 1, \
@@ -952,12 +950,12 @@ void Menu_Control() {
         Draw_Scale(SCREEN_COLUMN - RollingStripWidth, 0, RollingStripWidth, SCREEN_ROW - 1, MenuLevel[real_Level_Id].max + 1, map(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + *Slide_space[Slide_space_Scroll].x, 0, MenuLevel[real_Level_Id].max + 1, -Menu_Smooth_Animation[1].x * (SCREEN_ROW / (MenuLevel[real_Level_Id].max + 1)), SCREEN_ROW - 1));
 
         //显示页码角标
-        Page_Footnotes(MenuLevel[real_Level_Id].x + 1 + *Slide_space[Slide_space_Scroll].x, MenuLevel[real_Level_Id].max + 1);
+        Page_Footnotes(MenuLevel[real_Level_Id].x + 1 + (int)*Slide_space[Slide_space_Scroll].x, MenuLevel[real_Level_Id].max + 1);
 
         //反色高亮被选项
         Disp.setDrawColor(2);
         Disp.drawRBox(0, \
-                            (*Slide_space[Slide_space_Scroll].x - Menu_Smooth_Animation[1].x) * 16, \
+                            ((int)*Slide_space[Slide_space_Scroll].x - Menu_Smooth_Animation[1].x) * 16, \
                             *Switch_space[SwitchSpace_OptionStripFixedLength]?DEBUG_4:(Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name) - Menu_Smooth_Animation[2].x + 12 * (Menu[Pos_Id].x != 2) + 1), \
                             CNSize + 2 , \
                             0);
@@ -965,16 +963,16 @@ void Menu_Control() {
 
         //项目滚动处理
         *Slide_space[Slide_space_Scroll].x = sys_Counter_Get() - 1;
-        if (*Slide_space[Slide_space_Scroll].x >= Slide_space[Slide_space_Scroll].max) {
+        if ((int)*Slide_space[Slide_space_Scroll].x >= Slide_space[Slide_space_Scroll].max) {
             MenuLevel[real_Level_Id].x++;
             sys_Counter_SetVal(Slide_space[Slide_space_Scroll].max);
-        }else if (*Slide_space[Slide_space_Scroll].x <= -1) {
+        }else if ((int)*Slide_space[Slide_space_Scroll].x <= -1) {
             MenuLevel[real_Level_Id].x--;
             sys_Counter_SetVal(1);
         }
         //编码器控制页内选择框滚动选择
         //CountMax = constrain(MenuLevel[real_Level_Id].max - MenuLevel[real_Level_Id].x + 1, 0, 7);
-        *Slide_space[Slide_space_Scroll].x = constrain(*Slide_space[Slide_space_Scroll].x, 0, Slide_space[Slide_space_Scroll].max - 1);
+        *Slide_space[Slide_space_Scroll].x = constrain((int)*Slide_space[Slide_space_Scroll].x, 0, Slide_space[Slide_space_Scroll].max - 1);
 
         // *Slide_space[Slide_space_Scroll].x = constrain(*Slide_space[Slide_space_Scroll].x, 0, min((int)Slide_space[Slide_space_Scroll].max - 2, (int)MenuLevel[real_Level_Id].max));
         MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x = constrain(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x, \
@@ -983,9 +981,9 @@ void Menu_Control() {
 
         //更新过渡动画
         real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);
-        Pos_Id = Get_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + *Slide_space[Slide_space_Scroll].x);
+        Pos_Id = Get_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x + (int)*Slide_space[Slide_space_Scroll].x);
         Menu_Smooth_Animation[0].val = MenuLevel[real_Level_Id].x;
-        Menu_Smooth_Animation[1].val = MenuLevel[real_Level_Id].x + *Slide_space[Slide_space_Scroll].x;
+        Menu_Smooth_Animation[1].val = MenuLevel[real_Level_Id].x + (int)*Slide_space[Slide_space_Scroll].x;
         Menu_Smooth_Animation[2].val = Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name);
 
     }

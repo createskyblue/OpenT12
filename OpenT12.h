@@ -70,13 +70,13 @@ extern uint8_t DEBUG_MODE;
 
 extern char* TipName;
 
-extern int BootTemp;
-extern int SleepTemp;
-extern int BoostTemp;
+extern float BootTemp;
+extern float SleepTemp;
+extern float BoostTemp;
 
-extern int ShutdownTime;
-extern int SleepTime;
-extern int BoostTime;
+extern float ShutdownTime;
+extern float SleepTime;
+extern float BoostTime;
 
 extern bool ERROREvent;
 extern bool ShutdownEvent;
@@ -89,7 +89,7 @@ extern uint8_t PIDMode;
 extern uint8_t PanelSettings;
 extern uint8_t ScreenFlip;
 extern uint8_t SmoothAnimation_Flag;
-extern int     ScreenBrightness;
+extern float   ScreenBrightness;
 extern uint8_t OptionStripFixedLength_Flag;
 
 extern uint8_t Volume;
@@ -97,8 +97,8 @@ extern uint8_t RotaryDirection;
 extern uint8_t HandleTrigger;
 
 extern double SYS_Voltage;
-extern int UndervoltageAlert;
-extern int BootPasswd;
+extern float  UndervoltageAlert;
+extern float  BootPasswd;
 extern uint8_t Language;
 
 extern double Get_MainPowerVoltage(void);
