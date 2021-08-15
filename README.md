@@ -1,5 +1,6 @@
 # 这是一个预览版
-主控ESP32
+![](img/MainScreen.png)
+主控ESP32,正式版将兼容ESP8266
 
 ## 引脚定义
 屏幕SCL         ->22
