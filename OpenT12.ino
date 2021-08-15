@@ -103,11 +103,12 @@ void setup() {
 
     //初始化UI
     System_UI_Init();
+
     //首次启动的时候根据启动温度配置，重新设定目标温度
     sys_Counter_SetVal(BootTemp);
 
-    //ShutdownEventLoop();
-    // RunSleepScene();
+    //载入烙铁头配置
+    LoadTipConfig();
     
 }
 
