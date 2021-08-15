@@ -3,6 +3,7 @@
 #include "Type.h"
 
 extern uint8_t MyMOS;
+extern uint8_t POWER;
 extern uint8_t PWM;
 extern uint16_t LastADC;
 extern double TipTemperature;

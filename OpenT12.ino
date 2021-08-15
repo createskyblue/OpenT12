@@ -10,11 +10,13 @@ OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
+char* TipName = "默认";
+
 int BootTemp  = 300;
 int SleepTemp = 250;
 int BoostTemp = 50;
 
-int ShutdownTime = 10;
+int ShutdownTime = 0;
 int SleepTime    = 5;
 int BoostTime    = 30;
 
@@ -73,7 +75,7 @@ void setup() {
 
     //初始化OLED
     Disp.begin();
-    //Disp.setBusClock(200000);
+    Disp.setBusClock(1000000);
     Disp.enableUTF8Print();
     Disp.setFontDirection(0);
     Disp.setFontPosTop();

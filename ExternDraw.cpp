@@ -57,9 +57,13 @@ void Clear(void) {
     Disp.clearBuffer();
 }
 
+uint8_t DisplayFlashTick = 0;
 void Display(void) {
     //ESP.wdtFeed();
     Disp.sendBuffer();
+    OLED_ScreenshotPrint();
+
+    DisplayFlashTick++;
     //printf("d\n");
 }
 
@@ -222,4 +226,43 @@ void DrawMsgBox(char* s) {
     Disp.setDrawColor(0);
     Draw_Utf(x + 1 , y - 1, s);
     Disp.setDrawColor(1);
+}
+
+/*** 
+ * @description: 绘制温度状态条
+ * @param bool color 颜色
+ * @return {*}
+ */
+void DrawStatusBar(bool color) {
+    Disp.setDrawColor(color);
+    //温度条
+    //框
+    Disp.drawFrame(0, 53, 103, 11);
+    //条
+    if (TipTemperature <= 500) Disp.drawBox(0, 53, map(TipTemperature, 0, 500, 2, 103), 11);
+
+    //功率条
+    Disp.drawFrame(104, 53, 23, 11);
+    Disp.drawBox(104, 53, map(POWER, 0, 255, 0, 23), 11);
+
+    Disp.drawHLine(117, 51, 11);
+    Disp.drawPixel(103, 52);
+    Disp.drawPixel(127, 52);
+
+    //////////////进入反色////////////////////////////////
+    Disp.setDrawColor(2);
+
+    //画指示针
+    Draw_Slow_Bitmap(map(PID_Setpoint, 0, 500, 2, 103) - 4, 54, PositioningCursor, 8, 8);
+
+    Disp.setCursor(2,53);
+    Disp.printf("%.0f",PID_Setpoint);
+
+    Disp.setCursor(105, 53);
+    Disp.printf("%d%%", map(POWER, 0, 255, 0, 100));
+
+    
+
+    // arduboy.setCursor(105, 55); arduboy.print(map(PID_Output, 255, 0, 0, 100)); arduboy.print(F("%")); //功率百分比
+    Disp.setDrawColor(color);
 }

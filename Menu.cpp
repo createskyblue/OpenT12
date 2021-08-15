@@ -46,6 +46,8 @@ enum Switch_space_Obj{
     SwitchSpace_HandleTrigger,
     SwitchSpace_Language,
 
+    SwitchSpace_TipID,
+
 };
 uint8_t *Switch_space[] = {
     &SmoothAnimation_Flag,
@@ -58,6 +60,8 @@ uint8_t *Switch_space[] = {
     &RotaryDirection,
     &HandleTrigger,
     &Language,
+
+    &TipID,
 };
 
 /*
@@ -121,10 +125,10 @@ struct Slide_Bar Slide_space[] = {
 */
 #define Smooth_Animation_Num sizeof(Menu_Smooth_Animation)/sizeof(Menu_Smooth_Animation[0])
 struct Smooth_Animation Menu_Smooth_Animation[] = {
-    {0,0,0,0.4,1,0}, //菜单项目滚动动画
-    {0,0,0,0.3,1,0}, //滚动条平滑动画
-    {0,0,0,0.3,1,0}, //菜单选项条长度平滑动画
-    {0,0,0,0.4,0,0}, //项目归位动画
+    {0,0,0,0.3,1,0}, //菜单项目滚动动画
+    {0,0,0,0.15,1,0}, //滚动条平滑动画
+    {0,0,0,0.15,1,0}, //菜单选项条长度平滑动画
+    {0,0,0,0.2,0,0}, //项目归位动画
 };
 
 
@@ -160,6 +164,8 @@ struct Menu_Level_System MenuLevel[] = {
     {12,0,0,2,Menu_HAVE_IMG},
     {13,0,0,1,Menu_HAVE_IMG},
     {14,0,0,2,Menu_HAVE_IMG},
+
+    {15,0,0, MaxTipConfig ,Menu_NULL_IMG},
 };
 
 /*
@@ -201,12 +207,12 @@ struct Menu_System Menu[] = {
     {1,5,       Jump_Menu_Op,          "返回",                Set7,              0,                                  1,          Menu_NULL_F},
 
     {2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
-    {2,1,       Jump_Menu_Op,          "切换配置",           Set8,              0,                                  0,          Menu_NULL_F},
-    {2,2,       Jump_Menu_Op,          "校准",               Set9,              0,                                  0,          *CalibrationTemperature},
-    {2,3,       Jump_Menu_Op,          "新建",               IMG_Files,              0,                                  0,          Menu_NULL_F},
-    {2,4,       Jump_Menu_Op,          "重命名",             IMG_Pen2,              0,                                  0,          Menu_NULL_F},
-    {2,5,       Jump_Menu_Op,          "删除",               Set10,              0,                                  0,          Menu_NULL_F},
-    {2,6,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          Menu_NULL_F},
+    {2,1,       Jump_Menu_Op,          "切换配置",           Set8,              15,                                  0,          *FlashTipMenu},
+    {2,2,       F_Menu_Op,             "校准",               Set9,              0,                                  0,          *CalibrationTemperature},
+    {2,3,       F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
+    {2,4,       F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
+    {2,5,       F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
+    {2,6,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          *SaveTipConfig},
 
     {3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
     {3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},
@@ -277,13 +283,21 @@ struct Menu_System Menu[] = {
     {14,1,       SingleBox_Menu_Op,     "震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
     {14,2,       SingleBox_Menu_Op,     "干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
 
-
-
-
+    {15,0,       Title_Menu_Op,         "烙铁头列表",             Menu_NULL_IMG,              2,                                  1,          *LoadTipConfig},
+    {15,1,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          0,        *JumpWithTitle},
+    {15,2,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          1,       *JumpWithTitle},
+    {15,3,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          2,       *JumpWithTitle},
+    {15,4,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          3,       *JumpWithTitle},
+    {15,5,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          4,       *JumpWithTitle},
+    {15,6,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          5,       *JumpWithTitle},
+    {15,7,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          6,       *JumpWithTitle},
+    {15,8,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          7,       *JumpWithTitle},
+    {15,9,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          8,       *JumpWithTitle},
+    {15,10,      SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          9,          *JumpWithTitle},
 };
 int deg=0;
 void System_UI_Init(void) {
-    sys_Counter_Set(150, 400, 5, 320);
+    sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, TipMinTemp);
 }
 //系统UI
 void System_UI(void) {
@@ -292,25 +306,84 @@ void System_UI(void) {
     //睡眠模式屏保入口
     if (SleepEvent) RunSleepLoop();
     else {
-        char buffer[50];
-        for (uint8_t i = 0;i < 5;i++) {
-            Disp.setCursor(0, 12 * i + 1);
+        // char buffer[50];
+        // for (uint8_t i = 0;i < 5;i++) {
+        //     Disp.setCursor(0, 12 * i + 1);
 
-            switch (i) {
-            case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
-            case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
-            case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
-            case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
-            case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+        //     switch (i) {
+        //     case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
+        //     case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
+        //     case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
+        //     case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
+        //     case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+        //     }
+        //     Disp.print(buffer);
+        // }
+       
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        //显示烙铁头名称
+        Disp.drawUTF8(0, 1, TipName);
+
+        //温度控制状态图标
+        Draw_Slow_Bitmap(74, 37, C_table[TempCTRL_Status], 14, 14);
+        //显示中文状态信息
+        Disp.drawUTF8(91, 40, TempCTRL_Status_Mes[TempCTRL_Status]);
+
+        //欠压警报
+        if (UnderVoltageEvent) {
+            if ((millis() / 1000) % 2) {
+                //欠压告警图标
+                Draw_Slow_Bitmap(74, 21, Battery_NoPower, 14, 14);
+            }else{
+                //主电源电压
+                Disp.setCursor(74, 24);
+                Disp.printf("%.1fV", Get_MainPowerVoltage());
             }
-            Disp.print(buffer);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        //显示当前温度
+        Disp.setFont(u8g2_font_logisoso38_tr);
+        Disp.setCursor(0,12);
+
+        if (TempCTRL_Status == TEMP_STATUS_ERROR) {
+            if ((millis() / 250) % 2) Disp.print("---");
+        }else Disp.printf("%.0f",TipTemperature);    //显示温度
+
+        Disp.setFont(u8g2_font_wqy12_t_gb2312);
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        //右上角运行指示角标
+        if (POWER>0) {
+            uint8_t TriangleSize = map(POWER,0,255,6,0);
+            Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
+            //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
         }
 
 
-        //温度控制状态图标
-        Draw_Slow_Bitmap(74, 1, C_table[TempCTRL_Status], 14, 14);
-        //欠压告警图标
-        if (UnderVoltageEvent && (millis() / 1000) % 2) Draw_Slow_Bitmap(58, 1, Set6 + 1, 14, 14);
+        Disp.setDrawColor(2);
+        //烙铁头配置序号角标
+        Disp.setCursor(115,2);
+        Disp.printf("%02d",TipID);
+        
+        /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
+        //几何图形切割
+        Disp.drawBox(0, 12, 96, 40);
+        Disp.drawTriangle(96,12,96,52,125,42);
+        Disp.drawTriangle(125,42,96,52,118,52);
+        Disp.setDrawColor(1);
+
+        //绘制底部状态条
+        DrawStatusBar(1);
+
+        //如果当前是处于爆发技能，则显示技能剩余时间进度条
+        if (TempCTRL_Status == TEMP_STATUS_BOOST && DisplayFlashTick % 2) {
+            uint8_t BoostTimeBar = map(millis() - BoostTimer, 0, BoostTime * 1000, 0, 14);
+            Disp.drawBox(74, 37, 14, BoostTimeBar);
+
+        }
+
     }
     Display();
 
@@ -567,7 +640,8 @@ int Get_Menu_Id(uint8_t lid, uint8_t id) {
 void MenuSYS_SetCounter() {
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
         //设置编码器滚动范围
-        sys_Counter_Set(Slide_space[Slide_space_Scroll].min, Slide_space[Slide_space_Scroll].max + 1, 1, *Slide_space[Slide_space_Scroll].x);
+        uint8_t MinimumScrolling = min(Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
+        sys_Counter_Set(Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, *Slide_space[Slide_space_Scroll].x);
     } else {
         printf("Next_Menu:图标模式\n");
         if (Menu[Get_Menu_Id(real_Level_Id, 0)].x) MenuLevel[real_Level_Id].min = 1; //当前处在图标模式 如果目标层菜单的第一项为标题，则给予屏蔽
@@ -696,7 +770,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     case 1:
         Pop_Windows("正在处理");
         if (Menu[Id].function) Menu[Id].function();
-        sys_Counter_Set(Slide_space[Slide_space_Scroll].min, Slide_space[Slide_space_Scroll].max, 1, *Slide_space[Slide_space_Scroll].x + 1);
+        MenuSYS_SetCounter();
         break;
     case 3:
         *Switch_space[Menu[Id].a] = !*Switch_space[Menu[Id].a];

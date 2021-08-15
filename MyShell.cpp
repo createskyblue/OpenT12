@@ -29,6 +29,35 @@ void SetK_R(int argc, char** argv) {
 // void SetEventTimer(int argc, char** argv) {
 //     TimerEventTimer = atof(argv[1]);
 // }
+//////////////////////////////////////////////////////////////////////////
+uint8_t EasyCursor[10][2]={
+    {74,37}, //温度状态图标
+    {91,40}, //状态秒速文字
+};
+void SetEasyCursor(int argc, char** argv) {
+    uint8_t id = atof(argv[1]);
+    if (id >=10) return;
+    EasyCursor[id][0] = atof(argv[2]);
+    EasyCursor[id][1] = atof(argv[3]);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//截图工具
+uint8_t OLED_ScreenshotFlag = 0;
+void OLED_ScreenshotInit(void) {
+    OLED_ScreenshotFlag = 1;
+}
+void OLED_ScreenshotPrint(void) {
+    if (!OLED_ScreenshotFlag) return;
+
+    Serial.print("OLED_ScreenshotInit\r\n"); //固定请求头
+    uint8_t* p = (uint8_t*)Disp.getBufferPtr();
+    for (uint32_t i = 0;i < SCREEN_PAGE_NUM * SCREEN_COLUMN;i++) {
+        Serial.write(*p++);
+    }
+    OLED_ScreenshotFlag = 0;
+}
+//////////////////////////////////////////////////////////////////////////
 
 void shellInit(void) {
     shell_init(shell_reader, shell_writer, 0);
@@ -43,6 +72,8 @@ void shellInit(void) {
     shell_register(SetK_Q, PSTR("SetK_Q"));
     shell_register(SetK_R, PSTR("SetK_R"));
 
+    shell_register(SetEasyCursor, PSTR("SetEasyCursor"));
+    shell_register(OLED_ScreenshotInit, PSTR("OLED_ScreenshotInit"));
     // shell_register(SetEventTimer, PSTR("SetEventTimer"));
 
 }
@@ -69,6 +100,7 @@ int shell_reader(char* data)
  */
 void shell_writer(char data)
 {
+    return; //阻止不干净的输出
     // Wrapper for Serial.write() method
     Serial.write(data);
 }

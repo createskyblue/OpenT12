@@ -75,10 +75,48 @@ void FlashTipMenu(void){
  */
 void NewTipConfig(void) {
     if (TipTotal < MaxTipConfig) {
+
+        // char NewName = "---未命名---";
+        strcpy(MyTip[TipTotal].name, "---未命名---");
+
+        for (uint8_t i = 0;i < 4;i++) {
+            MyTip[TipID].PTemp[i] = 0;
+        }
+
+        MyTip[TipID].PID[0][0] = 0;
+        MyTip[TipID].PID[0][1] = 0;
+        MyTip[TipID].PID[0][2] = 0;
+        MyTip[TipID].PID[1][0] = 0;
+        MyTip[TipID].PID[1][1] = 0;
+        MyTip[TipID].PID[1][2] = 0;
+
         TipTotal++;
-    }
+        Pop_Windows("新建成功");
+    }else Pop_Windows("达到上限");
 }
 
+/*** 
+ * @description: 重命名当前的配置
+ * @param {*}
+ * @return {*}
+ */
 void TipRename(void) {
+    Pop_Windows("这里是重命名");
+}
+
+/*** 
+ * @description: 删除配置
+ * @param {*}
+ * @return {*}
+ */
+void TipDel(void) {
+    if (TipTotal > 1) {
+        //覆盖并移动配置
+        for (uint8_t i=TipID;i<TipTotal-1;i++) {
+            MyTip[i] = MyTip[i+1];
+        }
+        TipTotal--;
+        Pop_Windows("删除成功");
+    }else Pop_Windows("这是最后一个配置");
     
 }
