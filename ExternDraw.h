@@ -5,6 +5,8 @@
 void EnterLogo(void);
 void ShowBootMsg(void);
 
+
+extern uint8_t DisplayFlashTick;
 void Clear(void);
 void Display(void);
 
@@ -18,4 +20,5 @@ void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t* bitmap, int w1, int h1, int 
 void DrawIntensiveComputingLine(void);
 void DrawIntensiveComputing(void);
 void DrawMsgBox(char* s);
+void DrawStatusBar(bool color);
 #endif

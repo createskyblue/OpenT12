@@ -16,8 +16,8 @@ void TimerUpdateEvent(void) {
  * @param {*}
  * @return {*}
  */
+uint32_t BoostTimer = 0;
 void BoostButton_EventLoop(void) {
-    static uint32_t BoostTimer = 0;
     //单击 进行短时功率爆发
     if (SYSKey == 1) {
         if (!BoostEvent) {
@@ -56,7 +56,7 @@ void TimerEventLoop(void) {
         SleepEvent = false;
         ShutdownEvent = false;
     }
-    printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
+    //printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
     
 }
 

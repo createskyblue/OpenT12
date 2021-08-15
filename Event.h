@@ -2,6 +2,8 @@
 #define SYSEvent_H
 #include "Type.h"
 
+extern uint32_t BoostTimer;
+
 extern uint32_t EventTimerUpdate;
 void TimerUpdateEvent(void);
 

@@ -3,16 +3,14 @@
 #include <stdint.h>
 #include "Type.h"
 
-#define CNSize 12
-#define SCREEN_COLUMN 128
-#define SCREEN_ROW    64
-#define SCREEN_PAGE_NUM 8
-#define SCREEN_FONT_ROW 4
-
 extern uint32_t pages_Tip_Display_timer;
 
 void System_UI_Init(void);
 void System_UI(void);
+
+int Get_Real_Menu_Level_Id(uint8_t id);
+int Get_Menu_Id(uint8_t lid, uint8_t id);
+
 
 void Menu_Control(void);
 void Draw_APP(int x,int y,char* bitmap);
@@ -88,5 +86,7 @@ struct Menu_System {
 	void (*function)();
 };
 
+extern struct Menu_System Menu[];
+extern struct Menu_Level_System MenuLevel[];
 
 #endif

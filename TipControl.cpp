@@ -121,6 +121,8 @@ void TemperatureControlLoop(void) {
         PID_Setpoint = SleepTemp;
     }
 
+    PID_Setpoint = constrain(PID_Setpoint, TipMinTemp, TipMaxTemp);
+
     //尝试访问ADC
     ADC = GetADC0();
     if (ADC != -1) {
@@ -149,7 +151,7 @@ void TemperatureControlLoop(void) {
             else PID_Output = 0;
         }
         //串口打印温度
-        printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
+        //printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
     }
     //烙铁检测错误
     if (TipTemperature > 500) ERROREvent = true;
