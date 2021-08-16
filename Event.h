@@ -10,6 +10,9 @@ void TimerUpdateEvent(void);
 void BoostButton_EventLoop(void);
 void ShutdownEventLoop(void);
 
+bool EnterPasswd(void);
+void SetPasswd(void);
+
 void TimerEventLoop(void);
 void SYS_StateCode_Update(void);
 #endif

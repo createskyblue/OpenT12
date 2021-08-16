@@ -98,7 +98,7 @@ extern uint8_t HandleTrigger;
 
 extern double SYS_Voltage;
 extern float  UndervoltageAlert;
-extern float  BootPasswd;
+extern char BootPasswd[20];
 extern uint8_t Language;
 
 extern double Get_MainPowerVoltage(void);

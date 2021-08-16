@@ -90,7 +90,6 @@ enum Slide_space_Obj{
     Slide_space_BoostTime,
 
     Slide_space_UndervoltageAlert,
-    Slide_space_BootPasswd,
 
     Slide_space_PID_AP,
     Slide_space_PID_AI,
@@ -113,7 +112,6 @@ struct Slide_Bar Slide_space[] = {
     {(float*)&BoostTime,0,600,1},
 
     {(float*)&UndervoltageAlert,0,36,0.25},
-    {(float*)&BootPasswd,0,999,1},
 
     {(float*)&aggKp,0,50,0.1},
     {(float*)&aggKi,0,50,0.1},
@@ -247,7 +245,7 @@ struct Menu_System Menu[] = {
     { 5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
     { 5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
     { 5,2,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
-    { 5,3,       Progress_Bar_Menu_Op,  "开机密码",             Lock,              Slide_space_BootPasswd,              0,          Menu_NULL_F},
+    { 5,3,       F_Menu_Op,             "开机密码",             Lock,              0,              0,                   *SetPasswd},
     { 5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
     { 5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              0,                                  0,          Menu_NULL_F},
     { 5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
@@ -458,13 +456,6 @@ void Update_OLED_Light_Level(void) {
 void Update_OLED_Flip(void) {
     Disp.setFlipMode(ScreenFlip);
     PopMsg_ScreenFlip();
-}
-
-void PopMsg_BootPasswd(void) {
-    char buffer[20];
-    sprintf(buffer, "密码:%d", BootPasswd);
-    Pop_Windows(buffer);
-    delay(500);
 }
 
 void PopMsg_RotaryDirection(void) {

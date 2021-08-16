@@ -41,7 +41,7 @@ uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
 double  SYS_Voltage = 3.3;
 float   UndervoltageAlert = 3;
-float   BootPasswd = false;
+char    BootPasswd[20] = { 0 };
 uint8_t Language = LANG_Chinese;
 
 //面板状态条
@@ -100,6 +100,11 @@ void setup() {
 
     //初始化命令解析器
     shellInit();
+
+    //开机密码
+    while (!EnterPasswd()) {
+        Pop_Windows("身份验证失败");
+    }
 
     //初始化UI
     System_UI_Init();

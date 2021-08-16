@@ -132,3 +132,33 @@ void ShutdownEventLoop(void) {
         Display();
     }
 }
+
+bool EnterPasswd(void) {
+    //空密码无需授权
+    if (strlen(BootPasswd)==0) return 1;
+
+    char passwdBuffer[20] = { 0 };
+    TextEditor("[需要授权]", passwdBuffer);
+
+    if (strcmp(passwdBuffer, BootPasswd)) return 0;
+    return 1;
+}
+
+void SetPasswd(void) {
+    if (!EnterPasswd()) {
+        Pop_Windows("身份验证失败");
+        return;
+    }
+
+    char passwdBuffer[2][20] = {0};
+    TextEditor("[设置新密码]", passwdBuffer[0]);
+    TextEditor("[确认密码]", passwdBuffer[1]);
+
+    if (strcmp(passwdBuffer[0], passwdBuffer[1])) {
+        Pop_Windows("两次密码不一致");
+        return;
+    }
+
+    strcpy(BootPasswd, passwdBuffer[0]);
+    Pop_Windows("密码已更新");
+}

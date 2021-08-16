@@ -111,7 +111,7 @@ void NewTipConfig(void) {
  * @return {*}
  */
 void TipRename(void) {
-    TextEditor(MyTip[TipID].name, MyTip[TipID].name);
+    TextEditor("[重命名]", MyTip[TipID].name);
 }
 
 /*** 
