@@ -28,12 +28,7 @@ void ShowBootMsg(void) {
     //     Disp.drawUTF8(128 - 12 * 2, 64 - 12, "调试");
     // }
     char buffer[50];
-    uint64_t ChipMAC = ESP.getEfuseMac();
-    char ChipMAC_S[19]={0};
-
-    for (uint8_t i=0;i<6;i++) {
-        sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
-    }
+    
 
     for (uint8_t i = 0;i < 5;i++) {
         Disp.setCursor(0, 12 * i + 1);
@@ -225,6 +220,18 @@ void DrawMsgBox(char* s) {
     Disp.setDrawColor(0);
     Draw_Utf(x + 1 , y - 1, s);
     Disp.setDrawColor(1);
+}
+
+void ShowLog(MESSAGETYPE type, char* s) {
+    switch (type) {
+        case MSG_INFO: printf("[INFO]"); break;
+        case MSG_OK: printf("[OK]"); break;
+        case MSG_FAILED: printf("[FAILED]"); break;
+        case MSG_WARNING: printf("[WARNING]"); break;
+        case MSG_ERROR: printf("[ERROR]"); break;
+    }
+    printf("%s\n",s);
+    //Pop_Windows(s);
 }
 
 /*** 

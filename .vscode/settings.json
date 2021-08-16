@@ -32,6 +32,7 @@
         "iterator": "cpp",
         "serstream": "cpp",
         "sstream": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "fstream": "cpp"
     }
 }

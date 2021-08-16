@@ -490,14 +490,9 @@ void SYS_About(void) {
 uint8_t CheckBoxSelection[] = { 0xff,0xc0,0x80,0x40,0x80,0xc0,0x81,0xc0,0x81,0xc0,0x83,0x40,0x9b,0x40,0x8e,0x40,0x86,0x40,0xff,0xc0 };
 
 void Save_Exit_Menu_System() {
-    Pop_Windows("保存中 请勿切断电源");
+    
 
-    //保存图标
-    Draw_Slow_Bitmap_Resize(128 - 28 -4, 64 - 28 -4, Save + 1, Save[0], Save[0], 28, 28);
-    Display();
-
-    //这里放读写flash的代码
-    delay(1000);
+    SYS_Save();
 
     Exit_Menu_System();
 }
