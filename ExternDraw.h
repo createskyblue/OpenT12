@@ -21,4 +21,6 @@ void DrawIntensiveComputingLine(void);
 void DrawIntensiveComputing(void);
 void DrawMsgBox(char* s);
 void DrawStatusBar(bool color);
+
+void TextEditor(char* title, char* text);
 #endif
