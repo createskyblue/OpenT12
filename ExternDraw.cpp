@@ -272,8 +272,8 @@ void DrawStatusBar(bool color) {
  * @return {*}
  */
 void TextEditor(char* title, char* text) {
-    Pop_Windows("双击保存 长按退出");
-    delay(1000);
+    // Pop_Windows("双击保存 长按退出");
+    // delay(1000);
     char newText[20] = { 0 };
     strcpy(newText, text);
 
@@ -329,7 +329,13 @@ void TextEditor(char* title, char* text) {
 
         //反色显示光标
         Disp.setDrawColor(2);
-        Disp.drawBox(charCounter * 6, 12, 6, 12);
+        if (editFlag) {
+            //选择字符时光标闪烁
+            if ((millis() / 250) % 2) Disp.drawBox(charCounter * 6, 12, 6, 12);
+        }else Disp.drawBox(charCounter * 6, 12, 6, 12);
+        
+
+        //字符选择区反色高亮
         Disp.drawBox(0, 32, 32, 32);
 
         Display();
@@ -342,11 +348,11 @@ void TextEditor(char* title, char* text) {
             //单击切换编辑器状态
         case 1: editFlag = !editFlag; break;
 
-            //双击：保存并退出      长按：不保存退出
-        case 3:
-            strcpy(text, newText);
-            Pop_Windows("已保存");
         case 2:
+        case 3:
+            //保存并退出
+            strcpy(text, newText);
+            //Pop_Windows("已保存");
             exitRenameGUI = true;
             break;
         }

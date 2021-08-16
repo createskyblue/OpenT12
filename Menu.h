@@ -29,7 +29,6 @@ void Smooth_Animation_System(void);
 void Update_OLED_Light_Level(void);
 void Update_OLED_Flip(void);
 
-void PopMsg_BootPasswd(void);
 void PopMsg_RotaryDirection(void);
 void PopMsg_ScreenFlip(void);
 void SYS_About(void);
