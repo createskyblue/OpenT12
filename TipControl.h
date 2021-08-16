@@ -20,7 +20,7 @@ extern uint8_t PWMOutput_Lock;
 void TipControlInit(void);
 void PWMOutput(uint8_t pin, uint8_t pwm);
 int GetADC0(void);
-double CalculateTemp(double ADC);
+double CalculateTemp(double ADC, double P[]);
 void SetPOWER(uint8_t POWER);
 
 void TemperatureControlLoop(void);

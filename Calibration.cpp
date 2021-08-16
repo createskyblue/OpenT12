@@ -17,15 +17,57 @@ void ShowCurveCoefficient(void) {
     while (!sys_KeyProcess()) {
         //ESP.wdtFeed();
     }
+
+    DrawTempCurve();
+}
+
+//绘制温度曲线
+void DrawTempCurve(void) {
+    int x;
+    int count;
+    sys_Counter_Set(0, 63, 1, 0);
+    while (!sys_KeyProcess()) {
+        Clear();
+        count = sys_Counter_Get();
+
+        //绘制参考文字
+        char buffer[20];
+        sprintf(buffer, "ADC %d", count * 64);
+        DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 36, buffer);
+
+        sprintf(buffer, "温度 %.1lf", CalculateTemp(count * 64,PTemp));
+        DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 51, buffer);
+
+        //绘制曲线
+        Disp.setDrawColor(2);
+        for (int y = 0; y < 64; y++) {
+            x = map(CalculateTemp(y * 64, PTemp), 0, CalculateTemp(4095, PTemp), 0, 127);
+            Disp.drawPixel(x, 63 - y);
+
+            //画指示针
+            if (y == count)
+                Draw_Slow_Bitmap(x - 4, 63 - y -4,PositioningCursor, 8, 8);
+
+        }
+        Disp.setDrawColor(1);
+
+        //利用抖动产生灰度 绘制底部参考网格
+        if (DisplayFlashTick % 2)
+            for (int yy = 0; yy < 64; yy += 8)
+                for (int xx = 0; xx < 128; xx += 8) Disp.drawPixel(xx + 2, yy + 4);
+
+        
+        Display();
+    }
 }
 
 //校准界面
 void CalibrationTemperature(void) {
     Clear();
-    char buffer[50];
-    uint8_t key;
+    char buffer[20];
     uint16_t SetADC = 0;
     int ADC,LastADC;
+    double TmpP[FixNum] = {0.0};
     sys_Counter_Set(0, 4095, 1, 0);
     for (uint8_t i = 0;i < FixNum;) {
         Clear();
@@ -41,27 +83,35 @@ void CalibrationTemperature(void) {
             else SetPOWER(0);
         }
         
+        //绘制参考文字
 
-        sprintf(buffer, "运行时间:%ld", millis());
-        Disp.setCursor(0, 1);
-        Disp.print(buffer);
+        sprintf(buffer, "目标:%ld°C", Calibration_Base[i]);
+        DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 21, buffer);
 
-        sprintf(buffer, "设定：%d 目标:%d", SetADC, Calibration_Base[i]);
-        Disp.setCursor(0, 13);
-        Disp.print(buffer);
+        sprintf(buffer, "采样ADC %d", LastADC);
+        DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 36, buffer);
 
-        sprintf(buffer, "ADC:%d", LastADC);
-        Disp.setCursor(0, 25);
-        Disp.print(buffer);
+        sprintf(buffer, "设定ADC：%d", SetADC);
+        DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 51, buffer);
 
-        //Progress_Bar(i, 0, FixNum, 0, 64-8, 128, 8, 1);
+        Disp.setDrawColor(2);
+        //绘制进度条
+        Disp.drawBox(0, 0, map(i, 0, FixNum-1,0,128),4);
+        //绘制曲线
+        uint8_t x;
+        for (int y = 0; y < 64; y++) {
+            x = map(CalculateTemp(y * 64, TmpP), 0, CalculateTemp(4095, TmpP), 0, 127);
+            Disp.drawPixel(x, 63 - y);
+        }
+        Disp.setDrawColor(1);
 
         Display();
 
-
+        //处理按键
         if (sys_KeyProcess()) {
             delay(50);
             Calibration_Input[i] = SetADC;
+            polyfit(i + 1, Calibration_Input, Calibration_Base, 3, TmpP);
             i++;
         }
     }

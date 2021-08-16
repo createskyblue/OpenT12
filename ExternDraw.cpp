@@ -50,6 +50,8 @@ void ShowBootMsg(void) {
 
 void Clear(void) {
     Disp.clearBuffer();
+    //命令解析器
+    while (Serial.available()) shell_task();
 }
 
 uint8_t DisplayFlashTick = 0;
@@ -220,6 +222,28 @@ void DrawMsgBox(char* s) {
     Disp.setDrawColor(0);
     Draw_Utf(x + 1 , y - 1, s);
     Disp.setDrawColor(1);
+}
+/*** 
+ * @description: 绘制高亮文本
+ * @param {int} x
+ * @param {int} y
+ * @param {char} *s
+ * @return {*}
+ */
+void DrawHighLightText(int x,int y,char *s) {
+    int TextWidth = Disp.getUTF8Width(s);
+    int TextHigh  = Disp.getMaxCharHeight();
+    uint8_t color = Disp.getDrawColor();
+
+    if (color==2) {
+        Disp.drawUTF8(x + 1, y + 2, s);
+        Disp.drawRBox(x, y, TextWidth + 2, TextHigh,3);
+    }else{
+        Disp.drawRBox(x, y, TextWidth + 2, TextHigh, 3);
+        Disp.setDrawColor(!color);
+        Disp.drawUTF8(x + 1, y + 2, s);
+        Disp.setDrawColor(color);
+    }
 }
 
 void ShowLog(MESSAGETYPE type, char* s) {

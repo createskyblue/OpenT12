@@ -162,7 +162,7 @@ struct Smooth_Animation Menu_Smooth_Animation[] = {
 struct Menu_Level_System MenuLevel[] = {
     {0,0,0,3,Menu_NULL_IMG},
     {1,0,0,5,Menu_HAVE_IMG},
-    {2,0,0,7,Menu_HAVE_IMG},
+    {2,0,0,8,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
     {4,0,0,4,Menu_HAVE_IMG},
     {5,0,0,6,Menu_HAVE_IMG},
@@ -223,12 +223,13 @@ struct Menu_System Menu[] = {
  
     { 2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
     { 2,1,       Jump_Menu_Op,          "切换配置",           Set8,              15,                                  0,          *FlashTipMenu},
-    { 2,2,       F_Menu_Op,             "校准",               Set9,              0,                                  0,          *CalibrationTemperature},
-    { 2,3,       Jump_Menu_Op,          "PID参数",                 Set3,              16,                                  0,    Menu_NULL_F},
-    { 2,4,     F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
-    { 2,5,     F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
-    { 2,6,     F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
-    { 2,7,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          *SaveTipConfig},
+    { 2,2,       F_Menu_Op,             "查看温度曲线",           Set0,              0,                                  0,          *ShowCurveCoefficient},
+    { 2,3,       F_Menu_Op,             "校准温度",               Set9,              0,                                  0,          *CalibrationTemperature},
+    { 2,4,       Jump_Menu_Op,          "PID参数",                 Set3,              16,                                  0,    Menu_NULL_F},
+    { 2,5,     F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
+    { 2,6,     F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
+    { 2,7,     F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
+    { 2,8,       Jump_Menu_Op,          "保存",               Save,              1,                                  1,          *SaveTipConfig},
  
     { 3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
     { 3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},

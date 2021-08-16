@@ -7,6 +7,7 @@
 #include <U8g2lib.h>
 #include <Ticker.h>
 #include <OneButton.h>
+#include "BluetoothSerial.h"
 #include "Type.h"
 #include "serial_putc.h"
 #include "MyShell.h"
@@ -77,6 +78,7 @@ extern uint64_t ChipMAC;
 extern char ChipMAC_S[19];
 extern char CompileTime[20];
 
+extern BluetoothSerial SerialBT;
 extern OneButton RButton;
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
 extern PID MyPID;

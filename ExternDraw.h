@@ -22,7 +22,7 @@ void DrawIntensiveComputingLine(void);
 void DrawIntensiveComputing(void);
 
 void DrawMsgBox(char* s);
-
+void DrawHighLightText(int x, int y, char* s);
 
 
 void TextEditor(char* title, char* text);
