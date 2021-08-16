@@ -10,7 +10,7 @@ extern uint8_t TipTotal;    //有效烙铁头配置总数
 struct TIPCONFIG
 {
     double PTemp[4];    //温度系数
-    double PID[2][3];   //PID系数{远PID，近PID}
+    float PID[2][3];   //PID系数{远PID，近PID}
     char   name[20];    //名称
 };
 

@@ -20,6 +20,7 @@
 #include "Beep.h"
 #include "Bezier.h"
 #include "TipManager.h"
+#include "FilesSystem.h"
 
 //注意Pin36与Pin39连接了内部霍尔传感器,不建议复用高敏感用途
 //另外，建议给ADC输入串联一个0.1uF的电容，有利于减少噪声
@@ -60,6 +61,21 @@ enum HANDLETRIGGER {
     HANDLETRIGGER_VibrationSwitch = 0,
     HANDLETRIGGER_ReedSwitch,
 };
+
+enum MESSAGETYPE {
+    MSG_INFO = 0,
+    MSG_OK,
+    MSG_FAILED,
+    MSG_WARNING,
+    MSG_ERROR,
+};
+
+void ShowLog(MESSAGETYPE type, char* s);
+
+extern const char* SYS_SVAE_PATH;
+extern uint64_t ChipMAC;
+extern char ChipMAC_S[19];
+extern char CompileTime[20];
 
 extern OneButton RButton;
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;

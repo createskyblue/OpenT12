@@ -12,8 +12,8 @@ extern double PID_Setpoint;
 extern double TempGap;
 extern uint16_t PIDSampleTime;
 
-extern double aggKp, aggKi, aggKd;
-extern double consKp, consKi, consKd;
+extern float aggKp, aggKi, aggKd;
+extern float consKp, consKi, consKd;
 
 extern uint8_t PWMOutput_Lock;
 

@@ -10,7 +10,10 @@ OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
-char* TipName = "默认";
+//存档路径
+const char* SYS_SVAE_PATH = "/OpenT12.sav";
+
+char* TipName = "文件系统错误：请上报";
 
 float BootTemp  = 300;
 float SleepTemp = 250;
@@ -20,19 +23,19 @@ float ShutdownTime = 0;
 float SleepTime    = 5;
 float BoostTime    = 30;
 
-bool ERROREvent = false;
-bool ShutdownEvent = false;
-bool SleepEvent = false;
-bool BoostEvent = false;
+bool ERROREvent        = false;
+bool ShutdownEvent     = false;
+bool SleepEvent        = false;
+bool BoostEvent        = false;
 bool UnderVoltageEvent = false;
 
 uint8_t DEBUG_MODE = true;
-uint8_t PIDMode = true;
 
-uint8_t PanelSettings = PANELSET_Detailed;
-uint8_t ScreenFlip = false;
-uint8_t SmoothAnimation_Flag = true;
-float   ScreenBrightness = 128;
+uint8_t PIDMode                     = true;
+uint8_t PanelSettings               = PANELSET_Detailed;
+uint8_t ScreenFlip                  = false;
+uint8_t SmoothAnimation_Flag        = true;
+float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
 uint8_t Volume = 0;
@@ -56,10 +59,21 @@ char* TempCTRL_Status_Mes[]={
     "加热",
     "维持",
 };
+
+//系统信息
+uint64_t ChipMAC;
+char ChipMAC_S[19] = { 0 };
+char CompileTime[20];
 /////////////////////////////////////////////////////////////////
 
 //先初始化硬件->显示LOGO->初始化软件
 void setup() {
+
+    //获取系统信息
+    ChipMAC = ESP.getEfuseMac();
+    sprintf(CompileTime, "%s %s", __DATE__, __TIME__);
+    for (uint8_t i = 0;i < 6;i++)  sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
+
     //初始化串口
     Serial.begin(115200);
 
@@ -100,6 +114,9 @@ void setup() {
 
     //初始化命令解析器
     shellInit();
+
+    //启动文件系统，并读取存档
+    FilesSystemInit();
 
     //开机密码
     while (!EnterPasswd()) {

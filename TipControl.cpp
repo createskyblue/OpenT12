@@ -22,8 +22,8 @@ double TempGap = 0;
 uint16_t PIDSampleTime = 10;
 uint32_t ADCSamplingInterval; //ADC采样间隔(ms)
 //PID
-double aggKp = 30.0, aggKi = 0, aggKd = 0.5;
-double consKp = 20.0, consKi = 1, consKd = 0.5;
+float aggKp = 30.0, aggKi = 0, aggKd = 0.5;
+float consKp = 20.0, consKi = 1, consKd = 0.5;
 
 //初始化烙铁头温控系统
 void TipControlInit(void) {
