@@ -26,6 +26,7 @@ extern uint32_t Calibration_Base[FixNum];
 extern uint32_t Calibration_Input[FixNum];
 
 void ShowCurveCoefficient(void);
+void DrawTempCurve(void);
 void CalibrationTemperature(void);
 void gauss_solve(long n, double A[], double x[], double b[]);
 void polyfit(long n, long x[], long y[], long poly_n, double p[]);

@@ -5,7 +5,16 @@
 样样有！
 */
 
+//重设蓝牙串口缓冲区大小
+// #define RX_QUEUE_SIZE 2048
+// #define TX_QUEUE_SIZE 2048
+
 /////////////////////////////////////////////////////////////////
+BluetoothSerial SerialBT;
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
 OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
@@ -69,6 +78,7 @@ char CompileTime[20];
 //先初始化硬件->显示LOGO->初始化软件
 void setup() {
 
+    ////////////////////////////初始化硬件/////////////////////////////
     //获取系统信息
     ChipMAC = ESP.getEfuseMac();
     sprintf(CompileTime, "%s %s", __DATE__, __TIME__);
@@ -76,13 +86,14 @@ void setup() {
 
     //初始化串口
     Serial.begin(115200);
+    SerialBT.begin("OpenT12");
 
-    //初始化GPIO
-    BeepInit();
-    pinMode(POWER_ADC_PIN, INPUT);
+    // //初始化GPIO
+    // BeepInit();
+    // pinMode(POWER_ADC_PIN, INPUT);
 
-    //初始化烙铁头
-    TipControlInit();
+    // //初始化烙铁头
+    // TipControlInit();
 
     //初始化编码器
     sys_RotaryInit();
@@ -97,7 +108,7 @@ void setup() {
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
 
-
+    ////////////////////////////初始化软件/////////////////////////////
     SetNote(NOTE_B, 7);
     delay(150);
     SetNote(NOTE_B, 9);
@@ -135,8 +146,7 @@ void setup() {
 }
 
 void loop() {
-    //命令解析器
-    while (Serial.available()) shell_task();
+    //获取按键
     sys_KeyProcess();
     //温度闭环控制
     TemperatureControlLoop(); 

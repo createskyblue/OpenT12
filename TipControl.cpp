@@ -40,8 +40,8 @@ void TipControlInit(void) {
 }
 
 //计算实际温度
-double CalculateTemp(double ADC) {
-    TipTemperature = PTemp[0] + ADC * PTemp[1] + ADC * ADC * PTemp[2] + ADC * ADC * ADC * PTemp[3];
+double CalculateTemp(double ADC,double P[]) {
+    TipTemperature = P[0] + ADC * P[1] + ADC * ADC * P[2] + ADC * ADC * ADC * P[3];
     return TipTemperature;
 }
 
@@ -127,7 +127,7 @@ void TemperatureControlLoop(void) {
     ADC = GetADC0();
     if (ADC != -1) {
         LastADC = ADC;
-        TipTemperature = CalculateTemp((double)LastADC);
+        TipTemperature = CalculateTemp((double)LastADC, PTemp);
         TempGap = abs(PID_Setpoint - TipTemperature);
 
         /////////////////////////////////////////////////////////////////////////

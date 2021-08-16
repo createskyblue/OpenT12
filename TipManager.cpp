@@ -13,7 +13,6 @@ TIPCONFIG MyTip[MaxTipConfig] = {
  * @return {*}
  */
 void LoadTipConfig(void) {
-    Pop_Windows("载入烙铁头配置");
     //载入温度系数
     for (uint8_t i=0;i<4;i++) {
         PTemp[i] = MyTip[TipID].PTemp[i];
@@ -50,8 +49,6 @@ void SaveTipConfig(void) {
     MyTip[TipID].PID[1][2] = consKd;
     
     //由于名称是用指针传递，所以不需要重新赋值
-
-    Pop_Windows("烙铁头配置已保存");
 }
 
 /*** 
