@@ -322,13 +322,13 @@ struct Menu_System Menu[] = {
     { 17,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_AP,                 0,          Menu_NULL_F },
     { 17,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_AI,                 0,          Menu_NULL_F },
     { 17,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_AD,                 0,          Menu_NULL_F },
-    { 17,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 1,          *SaveTipConfig },
+    { 17,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,           16,                                 1,          *SaveTipConfig },
 
     { 18,0,       Title_Menu_Op,         "PID接近期",             Menu_NULL_IMG,            16,                                 2,          *SaveTipConfig },
     { 18,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_CP,                 0,          Menu_NULL_F },
     { 18,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_CI,                 0,          Menu_NULL_F },
     { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
-    { 18,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
+    { 18,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
 };
 int deg=0;
 void System_UI_Init(void) {
