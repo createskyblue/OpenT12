@@ -31,6 +31,9 @@ float ShutdownTime = 0;
 float SleepTime    = 5;
 float BoostTime    = 30;
 
+//烙铁头事件
+bool TipInstallEvent   = true;
+//温控系统状态
 bool ERROREvent        = false;
 bool ShutdownEvent     = false;
 bool SleepEvent        = false;

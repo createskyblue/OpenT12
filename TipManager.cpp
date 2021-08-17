@@ -31,7 +31,10 @@ void LoadTipConfig(void) {
     TipName = MyTip[TipID].name;
 
     //已完成动作，修改动作标志位
-    TipManagerAction_flag = false;
+    if (TipManagerAction_flag) {
+        TipManagerAction_flag = false;
+        Exit_Menu_System();
+    }
 }
 
 /***

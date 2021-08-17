@@ -6,6 +6,7 @@
 extern uint8_t Menu_System_State;
 extern uint32_t pages_Tip_Display_timer;
 
+void System_TipMenu_Init(void);
 void System_Menu_Init(void);
 void System_UI_Init(void);
 void System_UI(void);
