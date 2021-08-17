@@ -64,14 +64,14 @@ enum HANDLETRIGGER {
 };
 
 enum MESSAGETYPE {
-    MSG_INFO = 0,
-    MSG_OK,
-    MSG_FAILED,
-    MSG_WARNING,
-    MSG_ERROR,
+    LOG_INFO = 0,
+    LOG_OK,
+    LOG_FAILED,
+    LOG_WARNING,
+    LOG_ERROR,
 };
 
-void ShowLog(MESSAGETYPE type, char* s);
+void Log(MESSAGETYPE type, char* s);
 
 extern const char* SYS_SVAE_PATH;
 extern uint64_t ChipMAC;

@@ -167,7 +167,7 @@ void SYS_Save(void) {
 
     File file = SPIFFS.open(SYS_SVAE_PATH,FILE_WRITE);
     if (!file) {
-        ShowLog(MSG_ERROR, "存档写入失败!");
+        Log(LOG_ERROR, "存档写入失败!");
         Pop_Windows("写入失败");
         return;
     }
@@ -206,7 +206,7 @@ void SYS_Save(void) {
     file.write((uint8_t*)&TipTotal, sizeof(TipTotal));
 
     file.close();
-    ShowLog(MSG_OK, "存档保存成功!");
+    Log(LOG_OK, "存档保存成功!");
 }
 
 void SYS_Load(void) {
@@ -216,7 +216,7 @@ void SYS_Load(void) {
 
     File file = SPIFFS.open(SYS_SVAE_PATH);
     if (!file.available()) {
-        ShowLog(MSG_ERROR,"存档不存在！");
+        Log(LOG_ERROR,"存档不存在！");
         Pop_Windows("存档不存在！");
         file.close();
         return;
@@ -231,7 +231,7 @@ void SYS_Load(void) {
 
     //判断存档版本，载入不同版本的存档可能会导致致命错误
     if (memcmp(CompileTime, FSCompileTime, sizeof(FSCompileTime))) {
-        ShowLog(MSG_ERROR, "存档版本不一致，拒绝加载存档！");
+        Log(LOG_ERROR, "存档版本不一致，拒绝加载存档！");
         Pop_Windows("存档版本不一致");
         return;
     }
@@ -270,15 +270,15 @@ void SYS_Load(void) {
     Update_OLED_Flip();
     Update_OLED_Light_Level();
 
-    ShowLog(MSG_OK, "存档读取成功!");
+    Log(LOG_OK, "存档读取成功!");
 }
 
 void FilesSystemInit(void) {
     if (!SPIFFS.begin(false)) {
-        ShowLog(MSG_ERROR, "文件系统打开失败，自动格式化\n");
-        ShowLog(MSG_INFO,"格式化...");
+        Log(LOG_ERROR, "文件系统打开失败，自动格式化\n");
+        Log(LOG_INFO,"格式化...");
         SPIFFS.format();
-        ShowLog(MSG_OK,"文件系统初始化完成！");
+        Log(LOG_OK,"文件系统初始化完成！");
     }
     printf("[OK]文件系统\n");
 

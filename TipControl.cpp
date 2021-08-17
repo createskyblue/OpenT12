@@ -152,17 +152,28 @@ void TemperatureControlLoop(void) {
         }
         //串口打印温度
         //printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
-    }
-    //烙铁检测错误
-    if (TipTemperature > 500 || ADC > 3500) {
-        ERROREvent = true;
-        TipInstallEvent = false;
-    }else{
-        if (!TipInstallEvent) {
-            //安装烙铁头
-            TipInstallEvent = true;
-            //弹出配置选择菜单
-            System_TipMenu_Init();
+        if (TipTemperature == 0 || TipTemperature >= 500) {
+            ERROREvent = true;
+            
+            if (TipInstallEvent) {
+                char logbuf[50];
+                sprintf(logbuf, "烙铁头移除 烙铁头温度：%lf", TipTemperature);
+                Log(LOG_INFO, logbuf);
+
+                TipInstallEvent = false;
+            }
+        }else {
+            ERROREvent = false;
+
+            if (!TipInstallEvent) {
+                //烙铁插入，如果有多个配置则弹出菜单以供选择
+                if (TipTotal > 1) {
+                    //安装烙铁头
+                    TipInstallEvent = true;
+                    //弹出配置选择菜单
+                    System_TipMenu_Init();
+                }
+            }
         }
     }
 }
