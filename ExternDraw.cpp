@@ -245,13 +245,13 @@ void DrawHighLightText(int x,int y,char *s) {
     }
 }
 
-void ShowLog(MESSAGETYPE type, char* s) {
+void Log(MESSAGETYPE type, char* s) {
     switch (type) {
-        case MSG_INFO: printf("[INFO]"); break;
-        case MSG_OK: printf("[OK]"); break;
-        case MSG_FAILED: printf("[FAILED]"); break;
-        case MSG_WARNING: printf("[WARNING]"); break;
-        case MSG_ERROR: printf("[ERROR]"); break;
+        case LOG_INFO: printf("[INFO]"); break;
+        case LOG_OK: printf("[OK]"); break;
+        case LOG_FAILED: printf("[FAILED]"); break;
+        case LOG_WARNING: printf("[WARNING]"); break;
+        case LOG_ERROR: printf("[ERROR]"); break;
     }
     printf("%s\n",s);
     //Pop_Windows(s);

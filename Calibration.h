@@ -22,8 +22,8 @@
 
 #define FixNum 10
 extern double   PTemp[FixNum]; //温度拟合系数
-extern uint32_t Calibration_Base[FixNum];
-extern uint32_t Calibration_Input[FixNum];
+extern long     Calibration_Base[FixNum];
+extern long     Calibration_Input[FixNum];
 
 void ShowCurveCoefficient(void);
 void DrawTempCurve(void);

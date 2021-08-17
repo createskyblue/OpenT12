@@ -85,8 +85,6 @@ void SYS_StateCode_Update(void) {
         TempCTRL_Status = TEMP_STATUS_ERROR;
         //强制关闭输出
         PID_Output = 0;
-        //暂时消除本次的状态码
-        ERROREvent = false;
     }else if (BoostEvent) {
         //快速升温事件
         TempCTRL_Status = TEMP_STATUS_BOOST;

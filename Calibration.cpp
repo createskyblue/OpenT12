@@ -1,8 +1,8 @@
 #include "OpenT12.h"
 
 double   PTemp[FixNum] = { TempP1, TempP2, TempP3, TempP4 }; //温度拟合系数
-uint32_t Calibration_Base[FixNum] = { 150, 200, 250, 300, 325 ,350, 375,400, 425,450 };
-uint32_t Calibration_Input[FixNum] = { 0 };
+long     Calibration_Base[FixNum] = { 150, 200, 250, 300, 325 ,350, 375,400, 425,450 };
+long     Calibration_Input[FixNum] = { 0 };
 
 //显示曲线系数
 void ShowCurveCoefficient(void) {
@@ -41,7 +41,7 @@ void DrawTempCurve(void) {
         //绘制曲线
         Disp.setDrawColor(2);
         for (int y = 0; y < 64; y++) {
-            x = map(CalculateTemp(y * 64, PTemp), 0, CalculateTemp(4095, PTemp), 0, 127);
+            x = map(CalculateTemp(y * 64, PTemp), 0, CalculateTemp(4095, PTemp) + 1, 0, 127);
             Disp.drawPixel(x, 63 - y);
 
             //画指示针
@@ -100,7 +100,7 @@ void CalibrationTemperature(void) {
         //绘制曲线
         uint8_t x;
         for (int y = 0; y < 64; y++) {
-            x = map(CalculateTemp(y * 64, TmpP), 0, CalculateTemp(4095, TmpP), 0, 127);
+            x = map(CalculateTemp(y * 64, TmpP), 0, CalculateTemp(4095, TmpP) + 1, 0, 127);
             Disp.drawPixel(x, 63 - y);
         }
         Disp.setDrawColor(1);
