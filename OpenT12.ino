@@ -6,8 +6,8 @@
 */
 
 //重设蓝牙串口缓冲区大小
-// #define RX_QUEUE_SIZE 2048
-// #define TX_QUEUE_SIZE 2048
+#define RX_QUEUE_SIZE 2048
+#define TX_QUEUE_SIZE 2048
 
 /////////////////////////////////////////////////////////////////
 BluetoothSerial SerialBT;
@@ -21,7 +21,6 @@ PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRE
 /////////////////////////////////////////////////////////////////
 //存档路径
 const char* SYS_SVAE_PATH = "/OpenT12.sav";
-
 char* TipName = "文件系统错误：请上报";
 
 float BootTemp  = 300;
@@ -73,6 +72,8 @@ char* TempCTRL_Status_Mes[]={
 uint64_t ChipMAC;
 char ChipMAC_S[19] = { 0 };
 char CompileTime[20];
+//定时器
+hw_timer_t* ShellTimer = NULL;
 /////////////////////////////////////////////////////////////////
 
 //先初始化硬件->显示LOGO->初始化软件
@@ -85,15 +86,15 @@ void setup() {
     for (uint8_t i = 0;i < 6;i++)  sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
 
     //初始化串口
-    Serial.begin(115200);
+    Serial.begin(921600);
     SerialBT.begin("OpenT12");
 
-    // //初始化GPIO
-    // BeepInit();
-    // pinMode(POWER_ADC_PIN, INPUT);
+    //初始化GPIO
+    BeepInit();
+    pinMode(POWER_ADC_PIN, INPUT);
 
-    // //初始化烙铁头
-    // TipControlInit();
+    //初始化烙铁头
+    TipControlInit();
 
     //初始化编码器
     sys_RotaryInit();
@@ -125,6 +126,10 @@ void setup() {
 
     //初始化命令解析器
     shellInit();
+    // ShellTimer = timerBegin(0, 240, true);
+    // timerAttachInterrupt(ShellTimer, &ShellLoop, true);
+    // timerAlarmWrite(ShellTimer, 10000, true);
+    // timerAlarmEnable(ShellTimer);
 
     //启动文件系统，并读取存档
     FilesSystemInit();
@@ -146,18 +151,23 @@ void setup() {
 }
 
 void loop() {
+    
     //获取按键
     sys_KeyProcess();
-    //温度闭环控制
-    TemperatureControlLoop(); 
-    //更新系统事件：：系统事件可能会改变功率输出
-    TimerEventLoop();
-    //更新状态码
-    SYS_StateCode_Update();
+
+    if (!Menu_System_State) {
+        //温度闭环控制
+        TemperatureControlLoop(); 
+        //更新系统事件：：系统事件可能会改变功率输出
+        TimerEventLoop();
+        //更新状态码
+        SYS_StateCode_Update();
+        //设置输出功率
+        SetPOWER(PID_Output);
+    }
+
     //刷新UI
     System_UI();
-    //设置输出功率
-    SetPOWER(PID_Output);
 }
 /**
  * @description: 计算主电源电压
