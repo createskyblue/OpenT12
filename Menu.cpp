@@ -327,6 +327,22 @@ struct Menu_System Menu[] = {
     { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
     { 18,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
 };
+/***
+ * @description: 初始化烙铁列表
+ * @param {*}
+ * @return {*}
+ */
+void System_TipMenu_Init(void) {
+    //关闭功率管输出
+    SetPOWER(0);
+    //初始化菜单
+    FlashTipMenu();                 //刷新菜单系统烙铁列表
+    TipManagerAction_flag = true;   //将会在烙铁头选择完成后被设置为false届时可以结束菜单循环
+    MenuLevel[15].x = 0;  //复位第一层菜单的位置
+    MenuLevelId = 15;       //设定跳转目标
+    *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
+    Next_Menu();
+}
 
 /*** 
  * @description: 初始化菜单
@@ -338,6 +354,7 @@ void System_Menu_Init(void) {
     SetPOWER(0);
     //初始化菜单
     MenuLevel[0].x = 0;  //复位第一层菜单的位置
+    MenuLevelId = 0;       //设定跳转目标
     *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
     Next_Menu();
 }
@@ -501,16 +518,15 @@ void SYS_About(void) {
 /*复选框选中 10*10*/
 uint8_t CheckBoxSelection[] = { 0xff,0xc0,0x80,0x40,0x80,0xc0,0x81,0xc0,0x81,0xc0,0x83,0x40,0x9b,0x40,0x8e,0x40,0x86,0x40,0xff,0xc0 };
 
-void Save_Exit_Menu_System() {
+void Save_Exit_Menu_System(void) {
     
     //保存配置
     SYS_Save();
-    
 
     Exit_Menu_System();
 }
 
-void Exit_Menu_System() {
+void Exit_Menu_System(void) {
     Menu_System_State = 0;
     //过渡离开
     Disp.setDrawColor(0);
@@ -807,7 +823,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
         }
         //按需求跳转完成后执行函数
         if (Menu[Id].function) Menu[Id].function();
-        Next_Menu();
+        if (Menu_System_State) Next_Menu();         //由于执行函数可能会导致菜单状态被更改，所以这里需要确定菜单状态
         break;
     case 1:
         Pop_Windows("正在处理");

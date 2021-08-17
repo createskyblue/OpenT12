@@ -154,6 +154,16 @@ void TemperatureControlLoop(void) {
         //printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
     }
     //烙铁检测错误
-    if (TipTemperature > 500) ERROREvent = true;
+    if (TipTemperature > 500 || ADC > 3500) {
+        ERROREvent = true;
+        TipInstallEvent = false;
+    }else{
+        if (!TipInstallEvent) {
+            //安装烙铁头
+            TipInstallEvent = true;
+            //弹出配置选择菜单
+            System_TipMenu_Init();
+        }
+    }
 }
 

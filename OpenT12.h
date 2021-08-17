@@ -96,6 +96,8 @@ extern float ShutdownTime;
 extern float SleepTime;
 extern float BoostTime;
 
+extern bool TipInstallEvent;
+
 extern bool ERROREvent;
 extern bool ShutdownEvent;
 extern bool SleepEvent;
