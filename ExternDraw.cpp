@@ -50,15 +50,14 @@ void ShowBootMsg(void) {
 
 void Clear(void) {
     Disp.clearBuffer();
-    //命令解析器
-    while (Serial.available()) shell_task();
 }
 
 uint8_t DisplayFlashTick = 0;
 void Display(void) {
     //ESP.wdtFeed();
-    Disp.sendBuffer();
+    ShellLoop();
     OLED_ScreenshotPrint();
+    Disp.sendBuffer();
 
     DisplayFlashTick++;
     //printf("d\n");

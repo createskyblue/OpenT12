@@ -49,12 +49,12 @@ void OLED_ScreenshotInit(void) {
 }
 void OLED_ScreenshotPrint(void) {
     if (!OLED_ScreenshotFlag) return;
-
     Serial.print("OLED_ScreenshotInit\r\n"); //固定请求头
+    //SerialBT.print("OLED_ScreenshotInit\r\n"); //固定请求头
     uint8_t* p = (uint8_t*)Disp.getBufferPtr();
     for (uint32_t i = 0;i < SCREEN_PAGE_NUM * SCREEN_COLUMN;i++) {
-        //Serial.write(*p++);
-        SerialBT.write(*p++);
+        Serial.write(*p++);
+        //SerialBT.write(*p++);
     }
     OLED_ScreenshotFlag = 0;
 }
@@ -78,6 +78,10 @@ void shellInit(void) {
     // shell_register(SetEventTimer, PSTR("SetEventTimer"));
 
 }
+void ICACHE_RAM_ATTR ShellLoop(void) {
+    //命令解析器
+    while (Serial.available()) shell_task();
+}
 
 /**
  * Function to read data from serial port
@@ -86,16 +90,14 @@ void shellInit(void) {
  */
 int shell_reader(char* data)
 {
-    Wrapper for Serial.read() method
     if (Serial.available()) {
         *data = Serial.read();
         return 1;
     }
-    if (SerialBT.available()) {
-        *data = SerialBT.read();
-        printf("蓝牙：%02x",*data);
-        return 1;
-    }
+    // if (SerialBT.available()) {
+    //     *data = SerialBT.read();
+    //     return 1;
+    // }
     return 0;
 }
 
@@ -106,7 +108,7 @@ int shell_reader(char* data)
  */
 void shell_writer(char data)
 {
-    // return; //阻止不干净的输出
+    return; //阻止不干净的输出
     Serial.write(data);
     SerialBT.write(data);
 }

@@ -13,9 +13,9 @@ void ShowCurveCoefficient(void) {
         Disp.setCursor(12, i * 12 + 8);
         Disp.print(buffer);
     }
-    Display();
+    
     while (!sys_KeyProcess()) {
-        //ESP.wdtFeed();
+        Display();
     }
 
     DrawTempCurve();

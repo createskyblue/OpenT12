@@ -1,6 +1,4 @@
 #include "OpenT12.h"
-extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
-
 
 //菜单系统状态 0:自动退出 1:运行菜单系统
 uint8_t Menu_System_State = 0;
@@ -329,113 +327,126 @@ struct Menu_System Menu[] = {
     { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
     { 18,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
 };
-int deg=0;
+
+/*** 
+ * @description: 初始化菜单
+ * @param {*}
+ * @return {*}
+ */
+void System_Menu_Init(void) {
+    //关闭功率管输出
+    SetPOWER(0);
+    //初始化菜单
+    MenuLevel[0].x = 0;  //复位第一层菜单的位置
+    *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
+    Next_Menu();
+}
+/*** 
+ * @description: 初始化主界面
+ * @param {*}
+ * @return {*}
+ */
 void System_UI_Init(void) {
-    sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, TipMinTemp);
+    sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, PID_Setpoint);
 }
 //系统UI
 void System_UI(void) {
     Clear();
 
-    //睡眠模式屏保入口
-    if (SleepEvent) RunSleepLoop();
-    else {
-        // char buffer[50];
-        // for (uint8_t i = 0;i < 5;i++) {
-        //     Disp.setCursor(0, 12 * i + 1);
+    if (Menu_System_State) {
+        Menu_Control();
+    }else{
 
-        //     switch (i) {
-        //     case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
-        //     case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
-        //     case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
-        //     case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
-        //     case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
-        //     }
-        //     Disp.print(buffer);
-        // }
-       
-        ///////////////////////////////////////////////////////////////////////////////////
+        //睡眠模式屏保入口
+        if (SleepEvent) RunSleepLoop();
+        else {
+            // char buffer[50];
+            // for (uint8_t i = 0;i < 5;i++) {
+            //     Disp.setCursor(0, 12 * i + 1);
 
-        //显示烙铁头名称
-        Disp.drawUTF8(0, 1, TipName);
-
-        //温度控制状态图标
-        Draw_Slow_Bitmap(74, 37, C_table[TempCTRL_Status], 14, 14);
-        //显示中文状态信息
-        Disp.drawUTF8(91, 40, TempCTRL_Status_Mes[TempCTRL_Status]);
-
-        //欠压警报
-        if (UnderVoltageEvent) {
-            if ((millis() / 1000) % 2) {
-                //欠压告警图标
-                Draw_Slow_Bitmap(74, 21, Battery_NoPower, 14, 14);
-            }else{
-                //主电源电压
-                Disp.setCursor(74, 24);
-                Disp.printf("%.1fV", Get_MainPowerVoltage());
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////
-        //显示当前温度
-        Disp.setFont(u8g2_font_logisoso38_tr);
-        Disp.setCursor(0,12);
-
-        if (TempCTRL_Status == TEMP_STATUS_ERROR) {
-            if ((millis() / 250) % 2) Disp.print("---");
-        }else Disp.printf("%.0f",TipTemperature);    //显示温度
-
-        Disp.setFont(u8g2_font_wqy12_t_gb2312);
-        ///////////////////////////////////////////////////////////////////////////////////
-
-        //右上角运行指示角标
-        if (POWER>0) {
-            uint8_t TriangleSize = map(POWER,0,255,6,0);
-            Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
-            //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
-        }
-
-
-        Disp.setDrawColor(2);
-        //烙铁头配置序号角标
-        Disp.setCursor(115,2);
-        Disp.printf("%02d",TipID);
+            //     switch (i) {
+            //     case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
+            //     case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
+            //     case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
+            //     case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
+            //     case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+            //     }
+            //     Disp.print(buffer);
+            // }
         
-        /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
-        //几何图形切割
-        Disp.drawBox(0, 12, 96, 40);
-        Disp.drawTriangle(96,12,96,52,125,42);
-        Disp.drawTriangle(125,42,96,52,118,52);
-        Disp.setDrawColor(1);
+            ///////////////////////////////////////////////////////////////////////////////////
 
-        //绘制底部状态条
-        DrawStatusBar(1);
+            //显示烙铁头名称
+            Disp.drawUTF8(0, 1, TipName);
 
-        //如果当前是处于爆发技能，则显示技能剩余时间进度条
-        if (TempCTRL_Status == TEMP_STATUS_BOOST && DisplayFlashTick % 2) {
-            uint8_t BoostTimeBar = map(millis() - BoostTimer, 0, BoostTime * 1000, 0, 14);
-            Disp.drawBox(74, 37, 14, BoostTimeBar);
+            //温度控制状态图标
+            Draw_Slow_Bitmap(74, 37, C_table[TempCTRL_Status], 14, 14);
+            //显示中文状态信息
+            Disp.drawUTF8(91, 40, TempCTRL_Status_Mes[TempCTRL_Status]);
+
+            //欠压警报
+            if (UnderVoltageEvent) {
+                if ((millis() / 1000) % 2) {
+                    //欠压告警图标
+                    Draw_Slow_Bitmap(74, 21, Battery_NoPower, 14, 14);
+                }else{
+                    //主电源电压
+                    Disp.setCursor(74, 24);
+                    Disp.printf("%.1fV", Get_MainPowerVoltage());
+                }
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////
+            //显示当前温度
+            Disp.setFont(u8g2_font_logisoso38_tr);
+            Disp.setCursor(0,12);
+
+            if (TempCTRL_Status == TEMP_STATUS_ERROR) {
+                if ((millis() / 250) % 2) Disp.print("---");
+            }else Disp.printf("%.0f",TipTemperature);    //显示温度
+
+            Disp.setFont(u8g2_font_wqy12_t_gb2312);
+            ///////////////////////////////////////////////////////////////////////////////////
+
+            //右上角运行指示角标
+            if (POWER>0) {
+                uint8_t TriangleSize = map(POWER,0,255,6,0);
+                Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
+                //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
+            }
+
+
+            Disp.setDrawColor(2);
+            //烙铁头配置序号角标
+            Disp.setCursor(115,2);
+            Disp.printf("%02d",TipID);
+            
+            /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
+            //几何图形切割
+            Disp.drawBox(0, 12, 96, 40);
+            Disp.drawTriangle(96,12,96,52,125,42);
+            Disp.drawTriangle(125,42,96,52,118,52);
+            Disp.setDrawColor(1);
+
+            //绘制底部状态条
+            DrawStatusBar(1);
+
+            //如果当前是处于爆发技能，则显示技能剩余时间进度条
+            if (TempCTRL_Status == TEMP_STATUS_BOOST && DisplayFlashTick % 2) {
+                uint8_t BoostTimeBar = map(millis() - BoostTimer, 0, BoostTime * 1000, 0, 14);
+                Disp.drawBox(74, 37, 14, BoostTimeBar);
+
+            }
 
         }
-
+        Display();
+        //编码器长按按键进入菜单
+        if (SYSKey == 2) {
+            //初始化菜单
+            System_Menu_Init();
+        }
     }
-    Display();
 
-    //printf("ERROREvent:%d 状态:%s \n", ERROREvent, TempCTRL_Status_Mes[TempCTRL_Status]);
-    
-
-    //编码器长按按键进入菜单
-    if (SYSKey == 2) {
-        //关闭功率管输出
-        SetPOWER(0);
-        //初始化菜单
-        MenuLevel[0].x = 0;  //复位第一层菜单的位置
-        *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
-        Next_Menu();
-        while (Menu_System_State) Menu_Control();
-        //退出菜单后重新初始化主界面
-        System_UI_Init();
-    }
 }
 
 /*/////////////////////////////////////////////////////////////////////
@@ -492,8 +503,9 @@ uint8_t CheckBoxSelection[] = { 0xff,0xc0,0x80,0x40,0x80,0xc0,0x81,0xc0,0x81,0xc
 
 void Save_Exit_Menu_System() {
     
-
+    //保存配置
     SYS_Save();
+    
 
     Exit_Menu_System();
 }
@@ -504,6 +516,8 @@ void Exit_Menu_System() {
     Disp.setDrawColor(0);
     Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 66 * *Switch_space[SwitchSpace_SmoothAnimation]);
     Disp.setDrawColor(1);
+    //退出菜单后重新初始化主界面
+    System_UI_Init();
 }
 
 //按照标题进行跳转 标题跳转 跳转标题
@@ -660,6 +674,8 @@ int Get_Menu_Id(uint8_t lid, uint8_t id) {
  * @return {*}
  */
 void MenuSYS_SetCounter() {
+    if (!Menu_System_State) return;
+    printf("菜单系统设置编码器\n");
     if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
         //设置编码器滚动范围
         uint8_t MinimumScrolling = min((int)Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
@@ -677,6 +693,9 @@ void MenuSYS_SetCounter() {
     @brief 多级菜单跳转初始化参数
 */
 void Next_Menu() {
+    printf("Next_Menu\n");
+    Menu_System_State = 1;
+
     real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);
     uint8_t Id = Get_Menu_Id(MenuLevel[real_Level_Id].id, 0);
 
@@ -695,7 +714,7 @@ void Next_Menu() {
         Menu_Smooth_Animation[3].last = 0;
         Menu_Smooth_Animation[3].val = 1;
     }
-    Menu_System_State = 1;
+    
 
     printf("退出Next_Menu \n");
 }
@@ -1014,7 +1033,7 @@ void Menu_Control() {
     }
     //编码器按下事件
     //菜单被选项激活 触发菜单被选项预设事件
-    switch(sys_KeyProcess()) {
+    switch(SYSKey) {
         case 1:
         case 3:
             //单击和双击则执行当前项目

@@ -2,6 +2,8 @@
 
 uint8_t TipID = 0;
 uint8_t TipTotal = 1;
+//如果需要从主界面唤起菜单中的烙铁头列表，这个标志位将会起到至关重要的作用
+uint8_t TipManagerAction_flag = false;
 
 TIPCONFIG MyTip[MaxTipConfig] = {
     {{51.6128997803,0.1443523616,0.0000061750,-0.0000000001},{{30.0,0,0.5},{20.0,1,0.5}},"深圳K-1"},
@@ -27,6 +29,9 @@ void LoadTipConfig(void) {
     consKd = MyTip[TipID].PID[1][2];
     //载入名称
     TipName = MyTip[TipID].name;
+
+    //已完成动作，修改动作标志位
+    TipManagerAction_flag = false;
 }
 
 /***
