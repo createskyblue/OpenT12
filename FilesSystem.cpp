@@ -269,6 +269,7 @@ void SYS_Load(void) {
     
     Update_OLED_Flip();
     Update_OLED_Light_Level();
+    PID_Setpoint = BootTemp;
 
     Log(LOG_OK, "存档读取成功!");
 }

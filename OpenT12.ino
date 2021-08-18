@@ -33,6 +33,8 @@ float BoostTime    = 30;
 
 //烙铁头事件
 bool TipInstallEvent   = true;
+//到温提示音播放完成
+bool TempToneFlag = false;
 //温控系统状态
 bool ERROREvent        = false;
 bool ShutdownEvent     = false;
@@ -57,6 +59,8 @@ double  SYS_Voltage = 3.3;
 float   UndervoltageAlert = 3;
 char    BootPasswd[20] = { 0 };
 uint8_t Language = LANG_Chinese;
+
+float ADC_PID_Cycle = 50;
 
 //面板状态条
 uint8_t TempCTRL_Status = TEMP_STATUS_OFF;
@@ -150,16 +154,19 @@ void setup() {
 }
 
 void loop() {
-    
-    //PlaySoundLoop();
-
     //获取按键
     sys_KeyProcess();
-    //温度闭环控制
-    TemperatureControlLoop();
 
-    //更新系统事件：：系统事件可能会改变功率输出
-    TimerEventLoop();
+    if (!Menu_System_State) {
+        //温度闭环控制
+        TemperatureControlLoop();
+        //更新BOOST提温事件
+        BoostButton_EventLoop();
+        //更新系统事件：：系统事件可能会改变功率输出
+        TimerEventLoop();
+    }
+
+    
     //更新状态码
     SYS_StateCode_Update();
     //设置输出功率

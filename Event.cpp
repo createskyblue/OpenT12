@@ -39,9 +39,6 @@ void BoostButton_EventLoop(void) {
 void TimerEventLoop(void) {
     //事件事件距离计时器
     uint32_t TimerEventTimer = millis() - EventTimerUpdate;
-
-    //更新BOOST提温事件
-    BoostButton_EventLoop();
     
     //更新休眠和停机时间
     if (ShutdownTime != 0 && TimerEventTimer > Minute2Millis(ShutdownTime)) {
@@ -66,6 +63,47 @@ void TimerEventLoop(void) {
  * @return {*}
  */
 void SYS_StateCode_Update(void) {
+    static uint32_t TipEventTimer = 0;  //烙铁安装移除事件计时器：防止事件临界抖动
+    if (LastADC > 3500) {
+
+        if (millis() - TipEventTimer > TipEvent_CoolTime) {
+
+            if (TipInstallEvent) {
+                //播放设备移除音效
+                SetSound(TipRemove);
+
+                //移除烙铁头
+                ERROREvent = true;
+                TipInstallEvent = false;
+                TimerUpdateEvent(); //刷新事件：外界环境变更
+                TipEventTimer = millis(); //重置烙铁安装移除事件计时器
+                Log(LOG_INFO, "烙铁头移除");
+            }
+        }
+    }
+    else
+    {
+        if (millis() - TipEventTimer > TipEvent_CoolTime) {
+            if (!TipInstallEvent) {
+                //播放设备安装音效
+                SetSound(TipInstall);
+
+                //安装烙铁头
+                ERROREvent = false;
+                TipInstallEvent = true;
+                TimerUpdateEvent(); //刷新事件：外界环境变更
+                TipEventTimer = millis(); //重置烙铁安装移除事件计时器
+                Log(LOG_INFO, "烙铁头安装");
+
+                //烙铁插入，如果有多个配置则弹出菜单以供选择
+                if (TipTotal > 1) {
+                    //弹出配置选择菜单
+                    System_TipMenu_Init();
+                }
+            }
+        }
+    }
+
     //更新状态码
     if (PID_Output > 180) {
         //加热状态
@@ -83,8 +121,6 @@ void SYS_StateCode_Update(void) {
     if (ERROREvent==true) {
         //系统错误
         TempCTRL_Status = TEMP_STATUS_ERROR;
-        //强制关闭输出
-        PID_Output = 0;
     }else if (BoostEvent) {
         //快速升温事件
         TempCTRL_Status = TEMP_STATUS_BOOST;
@@ -93,16 +129,28 @@ void SYS_StateCode_Update(void) {
     if (ShutdownEvent) {
         //烙铁进入停机模式
         TempCTRL_Status = TEMP_STATUS_OFF;
-        //关闭输出
-        SetPOWER(0);
         //进入关机事件
         ShutdownEventLoop();
     }else if (SleepEvent) {
         //烙铁进入休眠模式
         TempCTRL_Status = TEMP_STATUS_SLEEP;
-        //关闭输出
-        PID_Output = 0;
     }
+
+    //到温声效播放事件
+    static uint32_t TempToneStabilitytimer = 0; //到温稳定状态计时器，确保真正播放到温音效
+    //到达预定温度 并且足够稳定才能播放到温音效
+    if (TipTemperature > PID_Setpoint - 10 && TempCTRL_Status != TEMP_STATUS_ERROR && millis() - TempToneStabilitytimer > TempToneStabilitytime) {
+        //温差接近目标值：正常
+        if (!TempToneFlag) {
+            SetSound(Beep3);
+            TempToneFlag = true;
+        }
+    }else {
+        TempToneStabilitytimer = millis();
+        if (TempGap >= 50) TempToneFlag = false;
+    }
+    
+
 
     //欠压警告
     if (UndervoltageAlert!=0 && SYS_Voltage < UndervoltageAlert) UnderVoltageEvent = true;

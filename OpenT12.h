@@ -45,10 +45,12 @@
 
 //温度限制
 #define TipMaxTemp 450
-#define TipMinTemp 150
+#define TipMinTemp 0
 
 //烙铁安装移除事件计时器冷却时间：防止事件临界值抖动
-#define TipEvent_CoolTime 3000
+#define TipEvent_CoolTime 1500
+//到温提示声播放稳定期：防止温度没有稳定下来就播放到温音效
+#define TempToneStabilitytime 1000
 
 enum SYSLANG {
     LANG_English = 0,
@@ -102,6 +104,7 @@ extern float SleepTime;
 extern float BoostTime;
 
 extern bool TipInstallEvent;
+extern bool TempToneFlag;
 
 extern bool ERROREvent;
 extern bool ShutdownEvent;
@@ -125,6 +128,8 @@ extern double SYS_Voltage;
 extern float  UndervoltageAlert;
 extern char BootPasswd[20];
 extern uint8_t Language;
+
+extern float ADC_PID_Cycle;
 
 extern double Get_MainPowerVoltage(void);
 
