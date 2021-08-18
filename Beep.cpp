@@ -113,6 +113,25 @@ TONE TipRemove[]{
     {NOTE_MAX,0,0},
 };
 
+TONE Beep1[]{
+    {NOTE_D,CMT_8,50},
+    {NOTE_MAX,0,0},
+};
+
+TONE Beep2[]{
+    {NOTE_D,CMT_M,50},
+    {NOTE_D,CMT_NULL,50},
+    {NOTE_D,CMT_M,50},
+    {NOTE_MAX,0,0},
+};
+
+TONE Beep3[]{
+    {NOTE_D,CMT_7,50},
+    {NOTE_D,CMT_9,50},
+    {NOTE_D,CMT_M,50},
+    {NOTE_MAX,0,0},
+};
+
 void SetSound(TONE sound[]) {
     MySound = sound;
     PlayTones_Schedule = 0;

@@ -352,6 +352,8 @@ void System_TipMenu_Init(void) {
 void System_Menu_Init(void) {
     //关闭功率管输出
     SetPOWER(0);
+    //输出上锁
+    PWMOutput_Lock = true;
     //初始化菜单
     MenuLevel[0].x = 0;  //复位第一层菜单的位置
     MenuLevelId = 0;       //设定跳转目标
@@ -422,7 +424,11 @@ void System_UI(void) {
 
             if (TempCTRL_Status == TEMP_STATUS_ERROR) {
                 if ((millis() / 250) % 2) Disp.print("---");
-            }else Disp.printf("%.0f",TipTemperature);    //显示温度
+            }else {
+                //如果温度波动足够小，则显示当前温度为设定温度
+                if (TempCTRL_Status == TEMP_STATUS_WORKY) Disp.printf("%.0lf", PID_Setpoint);  //显示"假"温度(设定温度)
+                else Disp.printf("%.0lf", TipTemperature);    //显示真实温度
+            }
 
             Disp.setFont(u8g2_font_wqy12_t_gb2312);
             ///////////////////////////////////////////////////////////////////////////////////
@@ -461,9 +467,6 @@ void System_UI(void) {
         Display();
         //编码器长按按键进入菜单
         if (SYSKey == 2) {
-
-            //输出上锁
-            PWMOutput_Lock = true;
             //初始化菜单
             System_Menu_Init();
         }

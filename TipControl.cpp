@@ -49,7 +49,7 @@ double CalculateTemp(double ADC,double P[]) {
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
     //PWM锁
-    if (PWMOutput_Lock || ShutdownEvent) {
+    if (PWMOutput_Lock || ShutdownEvent || Menu_System_State) {
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
     }
@@ -86,8 +86,9 @@ int GetADC0(void) {
     uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
     //printf("%d,%d\r\n", ADC_RAW,ADC);
 
-    //解锁功率管输出
-    PWMOutput_Lock = false;
+    //解锁功率管输出：前提是没有打开菜单
+    if (!Menu_System_State)
+        PWMOutput_Lock = false;
 
     return ADC;
 }
