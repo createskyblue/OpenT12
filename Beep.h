@@ -29,6 +29,9 @@ extern TONE testSound[];
 extern TONE BootSound[];
 extern TONE TipInstall[];
 extern TONE TipRemove[];
+extern TONE Beep1[];
+extern TONE Beep2[];
+extern TONE Beep3[];
 
 extern uint32_t PlayTonesTimer;
 extern uint16_t PlayTonesDelayTime;

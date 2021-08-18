@@ -167,6 +167,7 @@ static uint8_t Read_RButton_FIFO(void) {
 void sys_Counter_click(void)
 {
     printf("触发单击事件\n");
+    SetSound(Beep1);
     Write_RButton_FIFO(1);
 }
 /*** 
@@ -177,6 +178,7 @@ void sys_Counter_click(void)
 void sys_Counter_longclick(void)
 {
     printf("触发长按事件\n");
+    SetSound(Beep2);
     Write_RButton_FIFO(2);
 }
 /*** 
@@ -187,6 +189,7 @@ void sys_Counter_longclick(void)
 void sys_Counter_doubleclick(void)
 {
     printf("触发双击事件\n");
+    SetSound(Beep2);
     Write_RButton_FIFO(3);
 }
 
