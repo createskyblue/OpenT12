@@ -49,7 +49,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = 0;
+uint8_t Volume = true;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -76,7 +76,7 @@ uint64_t ChipMAC;
 char ChipMAC_S[19] = { 0 };
 char CompileTime[20];
 //定时器
-hw_timer_t* ShellTimer = NULL;
+hw_timer_t* SoundTimer = NULL;
 /////////////////////////////////////////////////////////////////
 
 //先初始化硬件->显示LOGO->初始化软件
@@ -113,14 +113,6 @@ void setup() {
     Disp.setFontMode(1);
 
     ////////////////////////////初始化软件/////////////////////////////
-    SetNote(NOTE_B, 7);
-    delay(150);
-    SetNote(NOTE_B, 9);
-    delay(150);
-    SetNote(NOTE_B, 12);
-    delay(150);
-    SetTone(0);
-
     //显示启动信息
     ShowBootMsg();
 
@@ -129,10 +121,12 @@ void setup() {
 
     //初始化命令解析器
     shellInit();
-    // ShellTimer = timerBegin(0, 240, true);
-    // timerAttachInterrupt(ShellTimer, &ShellLoop, true);
-    // timerAlarmWrite(ShellTimer, 10000, true);
-    // timerAlarmEnable(ShellTimer);
+
+    //初始化定时器
+    // SoundTimer = timerBegin(0, 240, true);
+    // timerAttachInterrupt(SoundTimer, &PlaySoundLoop, true);
+    // timerAlarmWrite(SoundTimer, 10000, true);
+    // timerAlarmEnable(SoundTimer);
 
     //启动文件系统，并读取存档
     FilesSystemInit();
@@ -150,24 +144,26 @@ void setup() {
 
     //载入烙铁头配置
     LoadTipConfig();
+
+    
     
 }
 
 void loop() {
     
+    //PlaySoundLoop();
+
     //获取按键
     sys_KeyProcess();
+    //温度闭环控制
+    TemperatureControlLoop();
 
-    if (!Menu_System_State) {
-        //温度闭环控制
-        TemperatureControlLoop(); 
-        //更新系统事件：：系统事件可能会改变功率输出
-        TimerEventLoop();
-        //更新状态码
-        SYS_StateCode_Update();
-        //设置输出功率
-        SetPOWER(PID_Output);
-    }
+    //更新系统事件：：系统事件可能会改变功率输出
+    TimerEventLoop();
+    //更新状态码
+    SYS_StateCode_Update();
+    //设置输出功率
+    SetPOWER(PID_Output);
 
     //刷新UI
     System_UI();

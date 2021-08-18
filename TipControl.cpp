@@ -130,7 +130,7 @@ void TemperatureControlLoop(void) {
         TipTemperature = CalculateTemp((double)LastADC, PTemp);
         TempGap = abs(PID_Setpoint - TipTemperature);
 
-        /////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////
         //控温模式
         if (PIDMode) {
             //PID模式
@@ -152,26 +152,46 @@ void TemperatureControlLoop(void) {
         }
         //串口打印温度
         //printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        static uint32_t TipEventTimer = 0;  //烙铁安装移除事件计时器：防止事件临界抖动
         if (TipTemperature == 0 || TipTemperature >= 500) {
-            ERROREvent = true;
-            
-            if (TipInstallEvent) {
-                char logbuf[50];
-                sprintf(logbuf, "烙铁头移除 烙铁头温度：%lf", TipTemperature);
-                Log(LOG_INFO, logbuf);
 
-                TipInstallEvent = false;
+            if (millis() - TipEventTimer > TipEvent_CoolTime) {
+                
+                if (TipInstallEvent) {
+                    //播放设备移除音效
+                    SetSound(TipRemove);
+
+                    //移除烙铁头
+                    ERROREvent = true;
+                    TipInstallEvent = false;
+                    TimerUpdateEvent(); //刷新事件：外界环境变更
+                    TipEventTimer = millis(); //重置烙铁安装移除事件计时器
+                    Log(LOG_INFO, "烙铁头移除");
+                }
             }
-        }else {
-            ERROREvent = false;
+        }
+        else
+        {
+            if (millis() - TipEventTimer > TipEvent_CoolTime) {
+                if (!TipInstallEvent) {
+                    //播放设备安装音效
+                    SetSound(TipInstall);
 
-            if (!TipInstallEvent) {
-                //烙铁插入，如果有多个配置则弹出菜单以供选择
-                if (TipTotal > 1) {
                     //安装烙铁头
+                    ERROREvent = false;
                     TipInstallEvent = true;
-                    //弹出配置选择菜单
-                    System_TipMenu_Init();
+                    TimerUpdateEvent(); //刷新事件：外界环境变更
+                    TipEventTimer = millis(); //重置烙铁安装移除事件计时器
+                    Log(LOG_INFO, "烙铁头安装");
+
+                    //烙铁插入，如果有多个配置则弹出菜单以供选择
+                    if (TipTotal > 1) {
+                        //弹出配置选择菜单
+                        System_TipMenu_Init();
+                    }
                 }
             }
         }
