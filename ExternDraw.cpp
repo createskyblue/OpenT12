@@ -1,6 +1,7 @@
 #include "OpenT12.h"
 
 void EnterLogo(void) {
+    SetSound(BootSound); //播放音效
     for (int16_t x=-128;x<128;x+=12) {
         //绘制Logo
         Disp.setDrawColor(1);
@@ -55,6 +56,7 @@ void Clear(void) {
 uint8_t DisplayFlashTick = 0;
 void Display(void) {
     //ESP.wdtFeed();
+    PlaySoundLoop();
     ShellLoop();
     OLED_ScreenshotPrint();
     Disp.sendBuffer();

@@ -48,8 +48,107 @@ double GetNote(note_t note, uint8_t rp) {
     const uint8_t octave          = 4;
     const double  FreqRatio       = 1.059463094; // pow(2,1/12.0);
     const double  FreqRatioDouble = 1.122462048; // pow(2,1/6.0);
-    double noteFreq = ((double)noteFrequencyBase[note] / (double)(1 << (8 - octave))) * pow(FreqRatioDouble,rp);
+    double noteFreq = ((double)noteFrequencyBase[note] / (double)(1 << (8 - octave))) * pow(FreqRatio,rp);
     //SetTone(noteFreq);
     return noteFreq;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+uint32_t PlayTonesTimer = 0;
+uint16_t PlayTonesDelayTime = 0;
+uint16_t PlayTones_Schedule = 0;
+TONE     *MySound = NULL;
+
+// extern struct Slide_Bar Slide_space[];
+// void VolumeTest(void) {
+//     if (PlayTones(sound1, &PlayTones_Schedule, Slide_space[2].x)) {
+//         //播放完成，回到进度条起点循环播放
+//         PlayTones_Schedule = 0;
+//     }
+// }
+TONE testSound[] {
+    {NOTE_D,CMT_9,250},
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_5,250},
+    {NOTE_D,CMT_9,250},
+    {NOTE_D,CMT_8,250},
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_NULL,250},
+
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_5,250},
+    {NOTE_D,CMT_9,250},
+    {NOTE_D,CMT_4,250},
+    {NOTE_D,CMT_5,250},
+    {NOTE_D,CMT_NULL,250},
+    
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_5,250},
+    {NOTE_D,CMT_9,250},
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_M,250},
+    {NOTE_D,CMT_NULL,250},
+
+    {NOTE_MAX,255,0},
+};
+
+TONE BootSound[]{
+    {NOTE_D,CMT_5,230},
+    {NOTE_D,CMT_7,230},
+    {NOTE_D,CMT_9,215},
+    {NOTE_D,CMT_M,215},
+    {NOTE_MAX,0,0},
+};
+
+TONE TipInstall[]{
+    {NOTE_D,CMT_7,250},
+    {NOTE_D,CMT_M,250},
+    {NOTE_MAX,0,0},
+};
+
+TONE TipRemove[]{
+    {NOTE_D,CMT_9,250},
+    {NOTE_D,CMT_5,250},
+    {NOTE_MAX,0,0},
+};
+
+void SetSound(TONE sound[]) {
+    MySound = sound;
+    PlayTones_Schedule = 0;
+}
+
+void ICACHE_RAM_ATTR PlaySoundLoop(void) {
+
+    if (!Volume) MySound = NULL;
+    if (MySound==NULL) return;
+    
+    PlayTones(MySound, &PlayTones_Schedule);
+}
+
+
+uint8_t PlayTones(TONE* sound, uint16_t* Schedule) {
+
+    if (millis() - PlayTonesTimer > PlayTonesDelayTime) {
+
+        if (sound == NULL || Schedule == NULL || sound[*Schedule].note == NOTE_MAX || !Volume) {
+            if (Volume && sound[*Schedule].rp == 255) {
+                *Schedule = 0; //循环播放
+            }else{
+                SetTone(0);
+                return 1;
+            }
+        }
+
+        //下一个音符
+        if (sound[*Schedule].rp == CMT_NULL) SetTone(0);
+        else SetTone(GetNote(sound[*Schedule].note, sound[*Schedule].rp));
+        
+        PlayTonesTimer = millis();
+        //设置延时时间
+        PlayTonesDelayTime = sound[*Schedule].delay;
+        (*Schedule)++;
+    }
+
+    return 0;
+}

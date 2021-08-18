@@ -47,6 +47,9 @@
 #define TipMaxTemp 450
 #define TipMinTemp 150
 
+//烙铁安装移除事件计时器冷却时间：防止事件临界值抖动
+#define TipEvent_CoolTime 3000
+
 enum SYSLANG {
     LANG_English = 0,
     LANG_Chinese,
@@ -77,6 +80,8 @@ extern const char* SYS_SVAE_PATH;
 extern uint64_t ChipMAC;
 extern char ChipMAC_S[19];
 extern char CompileTime[20];
+
+extern hw_timer_t* SoundTimer;
 
 extern BluetoothSerial SerialBT;
 extern OneButton RButton;

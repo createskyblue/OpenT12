@@ -2,6 +2,9 @@
 ![](img/OLED_ScreenshotInit/爆发.png)
 主控ESP32,正式版将兼容ESP8266
 
+## 视频
+https://www.bilibili.com/video/BV1s64y1v7mY/
+
 ## 引脚定义
 屏幕SCL         ->22
 屏幕SDA         ->21

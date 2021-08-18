@@ -207,7 +207,7 @@ struct Menu_Level_System MenuLevel[] = {
 #define Menu_NULL_OP                6
 
 struct Menu_System Menu[] = {
-    { 0,0,       Title_Menu_Op,         "欢迎使用[朱雀]控制器",  Menu_NULL_IMG,              0,                                  0,          Menu_NULL_F},
+    { 0,0,       Title_Menu_Op,         "欢迎使用[朱雀]控制器",  Menu_NULL_IMG,              0,                                  0,       *Save_Exit_Menu_System},
     { 0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
     { 0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
     { 0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
@@ -365,6 +365,8 @@ void System_Menu_Init(void) {
  */
 void System_UI_Init(void) {
     sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, PID_Setpoint);
+    //输出解锁
+    PWMOutput_Lock = false;
 }
 //系统UI
 void System_UI(void) {
@@ -459,6 +461,9 @@ void System_UI(void) {
         Display();
         //编码器长按按键进入菜单
         if (SYSKey == 2) {
+
+            //输出上锁
+            PWMOutput_Lock = true;
             //初始化菜单
             System_Menu_Init();
         }
