@@ -8,7 +8,7 @@ enum MOS_Type{
 };
 //PWM
 uint8_t PWM_Freq = 2000;    // 频率
-uint8_t PWM_Channel = 1;    // 通道
+uint8_t PWM_Channel = 0;    // 通道
 uint8_t PWM_Resolution = 8;   // 分辨率
 //基础温控
 uint8_t MyMOS = PMOS;
@@ -20,7 +20,7 @@ double PID_Output = 0;
 double PID_Setpoint = 0;
 double TempGap = 0;
 uint16_t PIDSampleTime = 10;
-uint32_t ADCSamplingInterval; //ADC采样间隔(ms)
+uint32_t ADCSamplingInterval = 0; //ADC采样间隔(ms)
 //PID
 float aggKp = 30.0, aggKi = 0, aggKd = 0.5;
 float consKp = 20.0, consKi = 1, consKd = 0.5;
@@ -48,13 +48,22 @@ double CalculateTemp(double ADC,double P[]) {
 //PWM输出模块
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
+    static uint8_t LastPWM = 0;
     //PWM锁
-    if (PWMOutput_Lock || ShutdownEvent || Menu_System_State) {
+    if (PWMOutput_Lock || ShutdownEvent || Menu_System_State || ERROREvent) {
+        Log(LOG_INFO,"输出被限制");
+        printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
     }
-    if (pwm == 255) ledcWrite(PWM_Channel, 256);
-    else ledcWrite(PWM_Channel, pwm);
+    //printf("PWM:%d\n",pwm);
+    if (LastPWM != pwm) {
+        if (pwm == 255) ledcWrite(PWM_Channel, 256);
+        else ledcWrite(PWM_Channel, pwm);
+
+        LastPWM = pwm;
+    }
+    
 }
 
 /**
@@ -66,9 +75,10 @@ int GetADC0(void) {
     static uint32_t ADCSamplingTime = 0; //上次采样时间
     static uint32_t ADCReadCoolTimer = 0;
 
-    //记录采样间隔时间
     ADCSamplingInterval = ADCSamplingTime - millis();
-    ADCSamplingTime = millis();
+    if (ADCSamplingInterval < ADC_PID_Cycle / 20) return -1; //1/4周期后ADC不应该工作，应该把时间留给加热
+
+    
     
     //若原输出非关闭，则在关闭输出后等待一段时间，因为电热偶和加热丝是串在一起的，只有不加热的时候才能安全访问热偶温度
     if (PWMOutput_Lock == false) {
@@ -77,9 +87,11 @@ int GetADC0(void) {
         PWMOutput_Lock = true;
     }
 
-    if (millis() - ADCReadCoolTimer <= 2) {
+    if (millis() - ADCReadCoolTimer <= ADC_PID_Cycle / 20) {
         return -1; //数据未准备好
     }
+
+    
 
     //读取并平滑滤波经过运算放大器放大后的热偶ADC数据
     uint16_t ADC_RAW = analogRead(TIP_ADC_PIN);
@@ -90,21 +102,23 @@ int GetADC0(void) {
     if (!Menu_System_State)
         PWMOutput_Lock = false;
 
+    //记录采样间隔时间
+    ADCSamplingTime = millis();
+
     return ADC;
 }
 
 //设置输出功率
 void SetPOWER(uint8_t power) {
-    static uint8_t LastPWM = 0;
+    
     POWER = power;
     //MOS管分类处理
     if (MyMOS==PMOS) {
         //PMOS 低电平触发
         PWM = 255 - power;
     }
-    //printf("PWM:%d",PWM);
-    if (LastPWM!=PWM) PWMOutput(PWM);
-    LastPWM = PWM;
+    // printf("PWM:%d\n",PWM);
+    PWMOutput(PWM);
 }
 
 
@@ -123,7 +137,6 @@ void TemperatureControlLoop(void) {
     }
 
     PID_Setpoint = constrain(PID_Setpoint, TipMinTemp, TipMaxTemp);
-
     //尝试访问ADC
     ADC = GetADC0();
     if (ADC != -1) {
@@ -140,7 +153,8 @@ void TemperatureControlLoop(void) {
             if (TempGap < 30) MyPID.SetTunings(consKp, consKi, consKd);
             else MyPID.SetTunings(aggKp, aggKi, aggKd);
             //更新PID采样时间：采样时间可被Shell实时更改
-            MyPID.SetSampleTime(PIDSampleTime);
+            //MyPID.SetSampleTime(PIDSampleTime);
+            MyPID.SetSampleTime(ADC_PID_Cycle);
 
             //尝试计算PID
             //printf("计算PID：%d\n PID输出:%lf", MyPID.Compute(), PID_Output);
@@ -151,51 +165,12 @@ void TemperatureControlLoop(void) {
             if(TipTemperature < PID_Setpoint) PID_Output = 255;
             else PID_Output = 0;
         }
+
+        
         //串口打印温度
         //printf("Temp:%lf,%lf,%d\r\n", TipTemperature, PID_Setpoint, ADC);
 
         /////////////////////////////////////////////////////////////////////////////////////////////
-
-        static uint32_t TipEventTimer = 0;  //烙铁安装移除事件计时器：防止事件临界抖动
-        if (TipTemperature == 0 || TipTemperature >= 500) {
-
-            if (millis() - TipEventTimer > TipEvent_CoolTime) {
-                
-                if (TipInstallEvent) {
-                    //播放设备移除音效
-                    SetSound(TipRemove);
-
-                    //移除烙铁头
-                    ERROREvent = true;
-                    TipInstallEvent = false;
-                    TimerUpdateEvent(); //刷新事件：外界环境变更
-                    TipEventTimer = millis(); //重置烙铁安装移除事件计时器
-                    Log(LOG_INFO, "烙铁头移除");
-                }
-            }
-        }
-        else
-        {
-            if (millis() - TipEventTimer > TipEvent_CoolTime) {
-                if (!TipInstallEvent) {
-                    //播放设备安装音效
-                    SetSound(TipInstall);
-
-                    //安装烙铁头
-                    ERROREvent = false;
-                    TipInstallEvent = true;
-                    TimerUpdateEvent(); //刷新事件：外界环境变更
-                    TipEventTimer = millis(); //重置烙铁安装移除事件计时器
-                    Log(LOG_INFO, "烙铁头安装");
-
-                    //烙铁插入，如果有多个配置则弹出菜单以供选择
-                    if (TipTotal > 1) {
-                        //弹出配置选择菜单
-                        System_TipMenu_Init();
-                    }
-                }
-            }
-        }
     }
 }
 

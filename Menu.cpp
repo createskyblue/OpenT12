@@ -352,8 +352,9 @@ void System_TipMenu_Init(void) {
 void System_Menu_Init(void) {
     //关闭功率管输出
     SetPOWER(0);
-    //输出上锁
+    //关闭输出
     PWMOutput_Lock = true;
+    SetPOWER(0);
     //初始化菜单
     MenuLevel[0].x = 0;  //复位第一层菜单的位置
     MenuLevelId = 0;       //设定跳转目标

@@ -118,6 +118,11 @@ static uint8_t RButton_FIFO[RButton_FIFO_Size];
 //按键FIFO缓存区有效数据大小
 static uint8_t RButton_FIFO_BufferSize = 0;
 
+
+void Clear_RButton_FIFO(void){
+    RButton_FIFO_pread = RButton_FIFO_pwrite;
+    memset(RButton_FIFO, 0, RButton_FIFO_Size);
+}
 /*** 
  * @description: 写按键FIFO
  * @param uint8_t State 要写入FIFO的按键状态值
