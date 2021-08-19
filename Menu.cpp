@@ -268,7 +268,7 @@ struct Menu_System Menu[] = {
     { 5,2,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
     { 5,3,       F_Menu_Op,             "开机密码",             Lock,              0,              0,                   *SetPasswd},
     { 5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
-    { 5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              0,                                  0,          Menu_NULL_F},
+    { 5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              5,                                  5,          *About},
     { 5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
  
     { 6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
@@ -468,7 +468,7 @@ void System_UI(void) {
                 if ((millis() / 250) % 2) Disp.print("---");
             }else {
                 //如果温度波动足够小，则显示当前温度为设定温度
-                if (TempCTRL_Status == TEMP_STATUS_WORKY) Disp.printf("%.0lf", PID_Setpoint);  //显示"假"温度(设定温度)
+                if (TempGap < 10) Disp.printf("%.0lf", PID_Setpoint);  //显示"假"温度(设定温度)
                 else Disp.printf("%.0lf", TipTemperature);    //显示真实温度
             }
 
@@ -550,13 +550,6 @@ void PopMsg_ScreenFlip(void) {
     Pop_Windows(buffer);
     delay(500);
 }
-
-void SYS_About(void) {
-    Disp.clearBuffer();
-    Text_Reader("2019大学生电子设计竞赛Ｆ题纸张计数器\n程序：赖浩文\n硬件：周孜宁\n辅助：张家穗");
-    Display();
-}
-
 
 /*/////////////////////////////////////////////////////////////////////
 

@@ -11,7 +11,6 @@ extern double TipTemperature;
 extern double PID_Output;
 extern double PID_Setpoint;
 extern double TempGap;
-extern uint16_t PIDSampleTime;
 
 extern float SamplingRatioWork;
 extern float ADC_PID_Cycle_List[3];
