@@ -22,6 +22,12 @@
 #include "Bezier.h"
 #include "TipManager.h"
 #include "FilesSystem.h"
+#include "qrcode.h"
+
+#define setbit(x,y)       x|=(1<<y)
+#define clrbit(x,y)       x&=~(1<<y)
+#define reversebit(x,y)   x^=(1<<y)
+#define getbit(x,y)       ((x) >> (y)&1)
 
 //注意Pin36与Pin39连接了内部霍尔传感器,不建议复用高敏感用途
 //另外，建议给ADC输入串联一个0.1uF的电容，有利于减少噪声
@@ -78,6 +84,7 @@ enum MESSAGETYPE {
 
 void Log(MESSAGETYPE type, char* s);
 void SYS_Reboot(void);
+void About(void);
 
 extern const char* SYS_SVAE_PATH;
 extern uint64_t ChipMAC;

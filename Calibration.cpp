@@ -63,6 +63,8 @@ void DrawTempCurve(void) {
 
 //校准界面
 void CalibrationTemperature(void) {
+    //暂时解除菜单flag，安全机制在菜单开启的时候不允许加热
+    Menu_System_State = 0;
     Clear();
     char buffer[20];
     uint16_t SetADC = 0;
@@ -122,6 +124,8 @@ void CalibrationTemperature(void) {
     Pop_Windows("曲线拟合完成!");
     delay(800);
     ShowCurveCoefficient();
+
+    Menu_System_State = 1;
 }
 
 //********** 曲线拟合程序 **********

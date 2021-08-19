@@ -54,7 +54,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = true;
+uint8_t Volume = false;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -195,4 +195,38 @@ double Get_MainPowerVoltage(void) {
 
 void SYS_Reboot(void) {
     ESP.restart();
+}
+
+void About(void) {
+
+    QRCode qrcode;
+    uint8_t qrcodeData[qrcode_getBufferSize(3)];
+
+    switch (Language) {
+        case LANG_Chinese:
+            qrcode_initText(&qrcode, qrcodeData, 3, 0, "https://gitee.com/createskyblue/OpenT12");
+        break;
+
+        default:
+            qrcode_initText(&qrcode, qrcodeData, 3, 0, "https://github.com/createskyblue/OpenT12");
+        break;
+    }
+
+    Clear();
+
+    uint8_t x_offset = (SCREEN_COLUMN - qrcode.size*2)/2;
+    uint8_t y_offset = (SCREEN_ROW - qrcode.size*2)/2;
+    
+    for (uint8_t y=0;y<qrcode.size;y++)
+        for (uint8_t x=0;x<qrcode.size;x++)
+            if (qrcode_getModule(&qrcode, x, y)) Draw_Pixel_Resize(x + x_offset,y + y_offset,x_offset,y_offset,2,2);
+
+    Disp.setDrawColor(2);
+    Disp.drawBox(x_offset - 2 ,y_offset - 2 ,qrcode.size * 2 + 4,qrcode.size * 2 + 4);
+    Disp.setDrawColor(1);
+
+    while(!sys_KeyProcess()) {
+        Display();
+    }
+
 }

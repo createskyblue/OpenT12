@@ -135,6 +135,13 @@ void Draw_Num_Bar(float i, float a, float b, int x, int y, int w, int h, int c) 
     Disp.setDrawColor(1);
 }
 
+void Draw_Pixel_Resize(int x, int y, int ox,int oy,int w, int h) {
+    int xi = x - ox;
+    int yi = y - oy;
+
+    Disp.drawBox(ox + xi * w, oy + yi * h, w, h);
+}
+
 void Draw_Slow_Bitmap(int x, int y, const unsigned char* bitmap, unsigned char w, unsigned char h)
 {
     uint8_t color = Disp.getDrawColor();
@@ -164,7 +171,7 @@ void Draw_Slow_Bitmap_Resize(int x, int y, uint8_t *bitmap, int w1,int h1,int w2
 	int xi, yi, byteWidth = (w1 + 7) / 8;
 	for (yi = 0; yi < h1; yi++) {
 		for (xi = 0; xi < w1; xi++) {
-			if (pgm_read_byte(bitmap + yi * byteWidth + xi / 8) & (128 >> (xi & 7))) {
+			if (pgm_read_byte(bitmap + yi * byteWidth + xi / 8) & (1 << (7 - (xi & 7)))) {
 				Disp.drawBox(x + xi*mw, y + yi*mh, cmw, cmh);
             }else if (color != 2) {
                 Disp.setDrawColor(0);

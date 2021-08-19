@@ -5,7 +5,7 @@ void SetTargetTemperature(int argc, char** argv) {
 }
 
 void SetPIDSampleTime(int argc, char** argv) {
-    PIDSampleTime = atof(argv[1]);
+    ADC_PID_Cycle = atof(argv[1]);
 }
 
 void SetPID_P(int argc, char** argv) {
