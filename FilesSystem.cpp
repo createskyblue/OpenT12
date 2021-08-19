@@ -185,12 +185,16 @@ void SYS_Save(void) {
     file.write((uint8_t*)&BoostTime   , sizeof(BoostTime   ));
 
     file.write((uint8_t*)&PIDMode, sizeof(PIDMode));
-    file.write((uint8_t*)&PIDMode                    , sizeof(PIDMode                    ));
+    file.write((uint8_t*)&Use_KFP, sizeof(Use_KFP));
     file.write((uint8_t*)&PanelSettings              , sizeof(PanelSettings              ));
     file.write((uint8_t*)&ScreenFlip                 , sizeof(ScreenFlip                 ));
     file.write((uint8_t*)&SmoothAnimation_Flag       , sizeof(SmoothAnimation_Flag       ));
     file.write((uint8_t*)&ScreenBrightness           , sizeof(ScreenBrightness           ));
     file.write((uint8_t*)&OptionStripFixedLength_Flag, sizeof(OptionStripFixedLength_Flag));
+
+    file.write((uint8_t*)&KFP_Temp, sizeof(KFP_Temp));
+    file.write((uint8_t*)&ADC_PID_Cycle_List,sizeof(ADC_PID_Cycle_List));
+    file.write((uint8_t*)&SamplingRatioWork,sizeof(SamplingRatioWork));
 
     file.write((uint8_t*)&Volume, sizeof(Volume));
     file.write((uint8_t*)&RotaryDirection, sizeof(RotaryDirection));
@@ -245,12 +249,16 @@ void SYS_Load(void) {
     file.read((uint8_t*)&BoostTime, sizeof(BoostTime));
 
     file.read((uint8_t*)&PIDMode, sizeof(PIDMode));
-    file.read((uint8_t*)&PIDMode, sizeof(PIDMode));
+    file.read((uint8_t*)&Use_KFP, sizeof(Use_KFP));
     file.read((uint8_t*)&PanelSettings, sizeof(PanelSettings));
     file.read((uint8_t*)&ScreenFlip, sizeof(ScreenFlip));
     file.read((uint8_t*)&SmoothAnimation_Flag, sizeof(SmoothAnimation_Flag));
     file.read((uint8_t*)&ScreenBrightness, sizeof(ScreenBrightness));
     file.read((uint8_t*)&OptionStripFixedLength_Flag, sizeof(OptionStripFixedLength_Flag));
+
+    file.read((uint8_t*)&KFP_Temp, sizeof(KFP_Temp));
+    file.read((uint8_t*)&ADC_PID_Cycle_List, sizeof(ADC_PID_Cycle_List));
+    file.read((uint8_t*)&SamplingRatioWork, sizeof(SamplingRatioWork));
 
     file.read((uint8_t*)&Volume, sizeof(Volume));
     file.read((uint8_t*)&RotaryDirection, sizeof(RotaryDirection));

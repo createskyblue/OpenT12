@@ -14,6 +14,7 @@ uint8_t PWM_Resolution = 8;   // 分辨率
 uint8_t MyMOS = PMOS;
 uint8_t POWER = 0;
 uint8_t PWM = 0;
+uint8_t LastPWM = 0;
 uint16_t LastADC = 0;
 double TipTemperature = 0;
 double PID_Output = 0;
@@ -48,9 +49,10 @@ double CalculateTemp(double ADC,double P[]) {
 //PWM输出模块
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
-    static uint8_t LastPWM = 0;
+    PWM_WORKY = true;
     //PWM锁
     if (PWMOutput_Lock || ShutdownEvent || Menu_System_State || ERROREvent) {
+        PWM_WORKY = false;
         Log(LOG_INFO,"输出被限制");
         printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
@@ -69,16 +71,15 @@ void PWMOutput(uint8_t pwm) {
 /**
  *调用卡尔曼滤波器 实践
  */
-KFP KFP_Temp = { 0.02,0,0,0,0.01,7.0000};
+KFP KFP_Temp = { 0.02,0,0,0,0.01,7.0};
+float SamplingRatioWork = 10;           //采样/加热 比率
 //获取ADC读数
 int GetADC0(void) {
     static uint32_t ADCSamplingTime = 0; //上次采样时间
     static uint32_t ADCReadCoolTimer = 0;
 
-    ADCSamplingInterval = ADCSamplingTime - millis();
-    if (ADCSamplingInterval < ADC_PID_Cycle / 20) return -1; //1/4周期后ADC不应该工作，应该把时间留给加热
-
-    
+    ADCSamplingInterval = millis() - ADCSamplingTime;
+    if (ADCSamplingInterval < ADC_PID_Cycle * (9/10.0)) return LastADC; //9/10周期ADC不应该工作，应该把时间留给加热
     
     //若原输出非关闭，则在关闭输出后等待一段时间，因为电热偶和加热丝是串在一起的，只有不加热的时候才能安全访问热偶温度
     if (PWMOutput_Lock == false) {
@@ -87,15 +88,17 @@ int GetADC0(void) {
         PWMOutput_Lock = true;
     }
 
-    if (millis() - ADCReadCoolTimer <= ADC_PID_Cycle / 20) {
+    if (millis() - ADCReadCoolTimer <= ADC_PID_Cycle / 10) {
         return -1; //数据未准备好
     }
 
-    
-
     //读取并平滑滤波经过运算放大器放大后的热偶ADC数据
     uint16_t ADC_RAW = analogRead(TIP_ADC_PIN);
-    uint16_t ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
+    uint16_t ADC;
+    
+    //卡尔曼滤波器
+    if (Use_KFP) ADC = kalmanFilter(&KFP_Temp, (float)ADC_RAW);
+    else ADC = ADC_RAW;
     //printf("%d,%d\r\n", ADC_RAW,ADC);
 
     //解锁功率管输出：前提是没有打开菜单
@@ -105,7 +108,8 @@ int GetADC0(void) {
     //记录采样间隔时间
     ADCSamplingTime = millis();
 
-    return ADC;
+    LastADC = ADC;
+    return LastADC;
 }
 
 //设置输出功率
@@ -121,7 +125,7 @@ void SetPOWER(uint8_t power) {
     PWMOutput(PWM);
 }
 
-
+float ADC_PID_Cycle_List[3] = {200,100,50};
 //温度控制循环
 void TemperatureControlLoop(void) {
     Clear();
@@ -140,9 +144,14 @@ void TemperatureControlLoop(void) {
     //尝试访问ADC
     ADC = GetADC0();
     if (ADC != -1) {
-        LastADC = ADC;
+        
         TipTemperature = CalculateTemp((double)LastADC, PTemp);
         TempGap = abs(PID_Setpoint - TipTemperature);
+
+        //根据温差选择合适的ADC-PID采样周期
+        if (TempGap > 150) ADC_PID_Cycle = ADC_PID_Cycle_List[0];
+        else if (TempGap > 50) ADC_PID_Cycle = ADC_PID_Cycle_List[1];
+        else ADC_PID_Cycle = ADC_PID_Cycle_List[2];
 
         /////////////////////////////////////////////////////////////////////////////////////////////
         //控温模式

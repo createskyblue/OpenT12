@@ -37,6 +37,7 @@ enum Switch_space_Obj{
     SwitchSpace_OptionStripFixedLength,
 
     SwitchSpace_PIDMode,
+    SwitchSpace_KFP,
     SwitchSpace_PanelSettings,
     SwitchSpace_ScreenFlip,
     SwitchSpace_Volume,
@@ -51,6 +52,7 @@ uint8_t *Switch_space[] = {
     &OptionStripFixedLength_Flag,
 
     &PIDMode,
+    &Use_KFP,
     &PanelSettings,
     &ScreenFlip,
     &Volume,
@@ -96,6 +98,14 @@ enum Slide_space_Obj{
     Slide_space_PID_CI,
     Slide_space_PID_CD,
 
+    Slide_space_KFP_Q,
+    Slide_space_KFP_R,
+
+    Slide_space_SamplingRatioWork,
+    Slide_space_ADC_PID_Cycle_List_0,
+    Slide_space_ADC_PID_Cycle_List_1,
+    Slide_space_ADC_PID_Cycle_List_2,
+
 };
 struct Slide_Bar Slide_space[] = {
     {(float*)&ScreenBrightness,0,255,16}, //亮度调整
@@ -117,6 +127,14 @@ struct Slide_Bar Slide_space[] = {
     {(float*)&consKp,0,50,0.1},
     {(float*)&consKi,0,50,0.1},
     {(float*)&consKd,0,50,0.1},
+
+    {(float*)&KFP_Temp.Q,0,5,0.01},
+    {(float*)&KFP_Temp.R,0,25,0.1},
+
+    {(float*)&SamplingRatioWork,1,100,1},
+    {(float*)&ADC_PID_Cycle_List[0],25,2000,25},
+    {(float*)&ADC_PID_Cycle_List[1],25,2000,25},
+    {(float*)&ADC_PID_Cycle_List[2],25,2000,25},
 };
 
 /*
@@ -158,7 +176,7 @@ struct Smooth_Animation Menu_Smooth_Animation[] = {
 #define Menu_HAVE_IMG 1
 
 struct Menu_Level_System MenuLevel[] = {
-    {0,0,0,3,Menu_NULL_IMG},
+    {0,0,0,4,Menu_NULL_IMG},
     {1,0,0,5,Menu_HAVE_IMG},
     {2,0,0,8,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
@@ -179,6 +197,9 @@ struct Menu_Level_System MenuLevel[] = {
     {16,0,0, 3 ,Menu_NULL_IMG},
     {17,0,0, 4 ,Menu_NULL_IMG},
     {18,0,0, 4 ,Menu_NULL_IMG},
+    {19,0,0, 5 ,Menu_NULL_IMG},
+    {20,0,0, 4 ,Menu_NULL_IMG},
+    {21,0,0, 4 ,Menu_NULL_IMG},
 };
 
 /*
@@ -211,12 +232,13 @@ struct Menu_System Menu[] = {
     { 0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
     { 0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
     { 0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
+    { 0,4,       F_Menu_Op,          "重启",               Menu_NULL_IMG,                0,                                  0,          *(SYS_Reboot)},
  
     { 1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
     { 1,1,       Jump_Menu_Op,          "烙铁头",               IMG_Tip,              2,                                  0,          Menu_NULL_F},
     { 1,2,       Jump_Menu_Op,          "温度场景",             Set1,              3,                                  0,          Menu_NULL_F},
     { 1,3,       Jump_Menu_Op,          "定时场景",             Set2,              4,                                  0,          Menu_NULL_F},
-    { 1,4,       Jump_Menu_Op,          "温控模式",                 Set3,              12,                                  0,          Menu_NULL_F},
+    { 1,4,       Jump_Menu_Op,          "温控设置",             Set3,              19,                                  0,          Menu_NULL_F},
     { 1,5,       Jump_Menu_Op,          "返回",                Set7,              0,                                  1,          Menu_NULL_F},
  
     { 2,0,       Title_Menu_Op,         "烙铁头管理",               Menu_NULL_IMG,              1,                                  1,          Menu_NULL_F},
@@ -287,7 +309,7 @@ struct Menu_System Menu[] = {
     { 11,1,       SingleBox_Menu_Op,     "开启",               IMG_Animation,                  SwitchSpace_SmoothAnimation,        true,          *JumpWithTitle},
     { 11,2,       SingleBox_Menu_Op,     "关闭",               IMG_Animation_DISABLE,          SwitchSpace_SmoothAnimation,        false,          *JumpWithTitle},
  
-    { 12,0,       Title_Menu_Op,         "温控模式",               Menu_NULL_IMG,              1,                                  4,          Menu_NULL_F},
+    { 12,0,       Title_Menu_Op,         "温控模式",               Menu_NULL_IMG,              19,                                  2,          Menu_NULL_F},
     { 12,1,       SingleBox_Menu_Op,     "PID控制",               Set16,               SwitchSpace_PIDMode,                        true,          *JumpWithTitle},
     { 12,2,       SingleBox_Menu_Op,     "模糊控制",              Set15,      SwitchSpace_PIDMode,                                 false,          *JumpWithTitle},
  
@@ -326,6 +348,25 @@ struct Menu_System Menu[] = {
     { 18,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_CI,                 0,          Menu_NULL_F },
     { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
     { 18,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
+
+    { 19,0,       Title_Menu_Op,         "温控设置",             Menu_NULL_IMG,            1,                                 4,          Menu_NULL_F },
+    { 19,1,       Switch_Menu_Op,        "PID状态",               Menu_NULL_IMG,           SwitchSpace_PIDMode,                                0,          Menu_NULL_F },
+    { 19,2,       Progress_Bar_Menu_Op,  "采样/加热 %",               Menu_NULL_IMG,        Slide_space_SamplingRatioWork,                 0,          Menu_NULL_F },
+    { 19,3,       Jump_Menu_Op,          "采样周期(ms)",               Menu_NULL_IMG,           21,                 0,          Menu_NULL_F },
+    { 19,4,       Jump_Menu_Op,          "卡尔曼滤波器",               Menu_NULL_IMG,      20,                 0,          Menu_NULL_F },
+    { 19,5,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,          1,                                 4,          Menu_NULL_F },
+
+    { 20,0,       Title_Menu_Op,         "卡尔曼滤波器",             Menu_NULL_IMG,            19,                                 4,          Menu_NULL_F },
+    { 20,1,       Switch_Menu_Op,        "启用状态",               Menu_NULL_IMG,              SwitchSpace_KFP,                 0,          Menu_NULL_F },
+    { 20,2,       Progress_Bar_Menu_Op,  "过程噪声协方差",               Menu_NULL_IMG,         Slide_space_KFP_Q,               0,          Menu_NULL_F },
+    { 20,3,       Progress_Bar_Menu_Op,  "观察噪声协方差",               Menu_NULL_IMG,         Slide_space_KFP_R,                 0,          Menu_NULL_F },
+    { 20,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,          19,                                 4,          Menu_NULL_F },
+
+    { 21,0,       Title_Menu_Op,         "采样周期",             Menu_NULL_IMG,            19,                                 3,          Menu_NULL_F },
+    { 21,1,       Progress_Bar_Menu_Op,  "温差>150",               Menu_NULL_IMG,          Slide_space_ADC_PID_Cycle_List_0,   0,          Menu_NULL_F },
+    { 21,2,       Progress_Bar_Menu_Op,  "温差>50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_1,   0,          Menu_NULL_F },
+    { 21,3,       Progress_Bar_Menu_Op,  "温差≤50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_2,   0,          Menu_NULL_F },
+    { 21,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,          19,                                 3,          Menu_NULL_F },
 };
 /***
  * @description: 初始化烙铁列表
@@ -435,7 +476,7 @@ void System_UI(void) {
             ///////////////////////////////////////////////////////////////////////////////////
 
             //右上角运行指示角标
-            if (POWER>0) {
+            if (POWER > 0 && PWM_WORKY) {
                 uint8_t TriangleSize = map(POWER,0,255,6,0);
                 Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
                 //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
@@ -941,8 +982,8 @@ void Menu_Control() {
 
                     //滑动条
                 case 4:
-                    char buffer[5];
-                    sprintf(buffer,"%.1f", *Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x);
+                    char buffer[20];
+                    sprintf(buffer,"%.2f", *Slide_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a].x);
                     Draw_Utf(SCREEN_COLUMN - 9 - Disp.getUTF8Width(buffer), \
                         (int)((i + Menu_Smooth_Animation[0].x) * 16), \
                         buffer);
