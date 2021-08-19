@@ -176,7 +176,7 @@ struct Smooth_Animation Menu_Smooth_Animation[] = {
 #define Menu_HAVE_IMG 1
 
 struct Menu_Level_System MenuLevel[] = {
-    {0,0,0,4,Menu_NULL_IMG},
+    {0,0,0,3,Menu_NULL_IMG},
     {1,0,0,5,Menu_HAVE_IMG},
     {2,0,0,8,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
@@ -232,7 +232,7 @@ struct Menu_System Menu[] = {
     { 0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
     { 0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
     { 0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
-    { 0,4,       F_Menu_Op,          "重启",               Menu_NULL_IMG,                0,                                  0,          *(SYS_Reboot)},
+   // { 0,4,       F_Menu_Op,          "重启",               Menu_NULL_IMG,                0,                                  0,          *(SYS_Reboot)},
  
     { 1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
     { 1,1,       Jump_Menu_Op,          "烙铁头",               IMG_Tip,              2,                                  0,          Menu_NULL_F},
