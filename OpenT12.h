@@ -77,6 +77,7 @@ enum MESSAGETYPE {
 };
 
 void Log(MESSAGETYPE type, char* s);
+void SYS_Reboot(void);
 
 extern const char* SYS_SVAE_PATH;
 extern uint64_t ChipMAC;
@@ -112,7 +113,11 @@ extern bool SleepEvent;
 extern bool BoostEvent;
 extern bool UnderVoltageEvent;
 
+extern bool PWM_WORKY;
+
+
 extern uint8_t PIDMode;
+extern uint8_t Use_KFP;
 
 extern uint8_t PanelSettings;
 extern uint8_t ScreenFlip;

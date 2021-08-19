@@ -120,7 +120,7 @@ void Draw_Scale(int x, int y, int w, int h, int s, int v) {
 */
 void Draw_Num_Bar(float i, float a, float b, int x, int y, int w, int h, int c) {
     char buffer[20];
-    sprintf(buffer, "%.1f", i);
+    sprintf(buffer, "%.2f", i);
     uint8_t textWidth = Disp.getUTF8Width(buffer) + 3;
 
     Disp.setDrawColor(c);

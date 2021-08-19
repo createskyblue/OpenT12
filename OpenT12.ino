@@ -41,10 +41,13 @@ bool ShutdownEvent     = false;
 bool SleepEvent        = false;
 bool BoostEvent        = false;
 bool UnderVoltageEvent = false;
+//PWM控制状态
+bool PWM_WORKY         = false;
 
 uint8_t DEBUG_MODE = true;
 
 uint8_t PIDMode                     = true;
+uint8_t Use_KFP                     = true;
 uint8_t PanelSettings               = PANELSET_Detailed;
 uint8_t ScreenFlip                  = false;
 uint8_t SmoothAnimation_Flag        = true;
@@ -60,7 +63,7 @@ float   UndervoltageAlert = 3;
 char    BootPasswd[20] = { 0 };
 uint8_t Language = LANG_Chinese;
 
-float ADC_PID_Cycle = 50;
+float ADC_PID_Cycle = 100;
 
 //面板状态条
 uint8_t TempCTRL_Status = TEMP_STATUS_OFF;
@@ -188,4 +191,8 @@ double Get_MainPowerVoltage(void) {
 
     SYS_Voltage = TipADC_V_R1 + TipADC_V_R2;
     return SYS_Voltage;
+}
+
+void SYS_Reboot(void) {
+    ESP.restart();
 }
