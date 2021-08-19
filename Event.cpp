@@ -139,13 +139,15 @@ void SYS_StateCode_Update(void) {
     //到温声效播放事件
     static uint32_t TempToneStabilitytimer = 0; //到温稳定状态计时器，确保真正播放到温音效
     //到达预定温度 并且足够稳定才能播放到温音效
-    if (TipTemperature > PID_Setpoint - 10 && TempCTRL_Status != TEMP_STATUS_ERROR && millis() - TempToneStabilitytimer > TempToneStabilitytime) {
+    if (TipTemperature > PID_Setpoint - 10 && TempCTRL_Status != TEMP_STATUS_ERROR ) {
         //温差接近目标值：正常
-        if (!TempToneFlag) {
+        if (!TempToneFlag && millis() - TempToneStabilitytimer > TempToneStabilitytime) {
+            //printf("尝试播放到温音效");
             SetSound(Beep3);
             TempToneFlag = true;
         }
     }else {
+        //printf("音效失败 温度:%d 状态:%d 稳定:%d\n", TipTemperature > PID_Setpoint - 10, TempCTRL_Status != TEMP_STATUS_ERROR, millis() - TempToneStabilitytimer > TempToneStabilitytime);
         TempToneStabilitytimer = millis();
         if (TempGap >= 50) TempToneFlag = false;
     }
