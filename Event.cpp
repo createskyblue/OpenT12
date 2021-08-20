@@ -1,7 +1,9 @@
 #include "OpenT12.h"
 
+//事件计时器
 uint32_t EventTimerUpdate = 0;
-
+//屏保事件计时器
+static uint32_t ScreenProtectorTimer = 0;
 /*** 
  * @description: 用户有动作时将会触发此函数
  * @param {*}
@@ -10,6 +12,7 @@ uint32_t EventTimerUpdate = 0;
 void TimerUpdateEvent(void) {
     //printf("重置时间计时器\n");
     EventTimerUpdate = millis();
+    ScreenProtectorTimer = millis();
     pages_Tip_Display_timer = EventTimerUpdate;
 }
 /*** 
@@ -41,6 +44,7 @@ void TimerEventLoop(void) {
     //事件事件距离计时器
     uint32_t TimerEventTimer = millis() - EventTimerUpdate;
     
+    
     //更新BOOST提温事件
     BoostButton_EventLoop();
 
@@ -52,25 +56,27 @@ void TimerEventLoop(void) {
         //系统停机
         ShutdownEvent = true;
         SleepEvent = false;
-        SleepScreenProtectFlag = false;
     }else if (TipCallSleepEvent || SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) {
         //进入休眠
         SleepEvent = true;
         //锁定编码器，因为休眠模式中不允许修改设定温度
         Counter_LOCK_Flag = true;
-
-        //休眠一段时间后进入屏保程序
-        if (ScreenProtectorTime != 0 
-            && TimerEventTimer > Minute2Millis(SleepTime) + ScreenProtectorTime * 1000)
-            SleepScreenProtectFlag = true;  //开启屏保程序
     }else{
         if (SleepEvent) {
             SleepEvent = false;
             Counter_LOCK_Flag = false;
         }
         ShutdownEvent = false;
-        SleepScreenProtectFlag = false;
+        //不休眠\不停机 则重置屏保计时器，确保不会进入屏保
+        ScreenProtectorTimer = millis();
     }
+
+    //休眠超过一段时间后进入屏保程序
+    if (ScreenProtectorTime != 0
+        && millis() - ScreenProtectorTimer > ScreenProtectorTime * 1000)
+        SleepScreenProtectFlag = true;  //开启屏保程序
+    else SleepScreenProtectFlag = false;
+
     printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
     
 }
@@ -260,5 +266,5 @@ void SW_WakeLOOP(void) {
         //默认上拉，当磁力开关触发时引脚状态应该为低电平
         if (state == 0) TipCallSleepEvent = true;
         else TipCallSleepEvent = false;
-    }
+    }else TipCallSleepEvent = false;
 }

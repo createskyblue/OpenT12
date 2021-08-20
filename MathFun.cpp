@@ -135,7 +135,7 @@ double ESP32_ADC2Vol(uint16_t adc) {
  * @param {uint32_t} min
  * @return {*}
  */
-uint32_t Minute2Millis(uint32_t min) {
+uint32_t Minute2Millis(float min) {
     return min * 60 * 1000;
 }
 /*** 

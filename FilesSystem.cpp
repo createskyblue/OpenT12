@@ -27,6 +27,7 @@ void SYS_Save(void) {
 
     file.write((uint8_t*)&ShutdownTime, sizeof(ShutdownTime));
     file.write((uint8_t*)&SleepTime   , sizeof(SleepTime   ));
+    file.write((uint8_t*)&ScreenProtectorTime, sizeof(ScreenProtectorTime));
     file.write((uint8_t*)&BoostTime   , sizeof(BoostTime   ));
 
     file.write((uint8_t*)&PIDMode, sizeof(PIDMode));
@@ -97,6 +98,7 @@ void SYS_Load(void) {
 
     file.read((uint8_t*)&ShutdownTime, sizeof(ShutdownTime));
     file.read((uint8_t*)&SleepTime, sizeof(SleepTime));
+    file.read((uint8_t*)&ScreenProtectorTime, sizeof(ScreenProtectorTime));
     file.read((uint8_t*)&BoostTime, sizeof(BoostTime));
 
     file.read((uint8_t*)&PIDMode, sizeof(PIDMode));
