@@ -19,22 +19,28 @@ OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
+uint8_t DEBUG_MODE = true;
+
 //存档路径
 const char* SYS_SVAE_PATH = "/OpenT12.sav";
 char* TipName = "文件系统错误：请上报";
 
-float BootTemp  = 300;
-float SleepTemp = 250;
-float BoostTemp = 50;
+float BootTemp = 300;      //开机温度          (°C)
+float SleepTemp = 150;     //休眠温度          (°C)
+float BoostTemp = 50;      //爆发模式升温幅度   (°C)
 
-float ShutdownTime = 0;
-float SleepTime    = 5;
-float BoostTime    = 30;
+float ShutdownTime        = 0;      //关机提醒              (分)
+float SleepTime           = 5;      //休眠触发时间          (分)
+float ScreenProtectorTime = 60;     //屏保在休眠后的触发时间(秒)
+float BoostTime           = 30;     //爆发模式持续时间      (秒)
 
 //烙铁头事件
 bool TipInstallEvent   = true;
+bool TipCallSleepEvent    = false;
 //到温提示音播放完成
 bool TempToneFlag = false;
+//休眠后屏保延迟显示标志
+bool SleepScreenProtectFlag = false;
 //温控系统状态
 bool ERROREvent        = false;
 bool ShutdownEvent     = false;
@@ -44,7 +50,6 @@ bool UnderVoltageEvent = false;
 //PWM控制状态
 bool PWM_WORKY         = false;
 
-uint8_t DEBUG_MODE = true;
 
 uint8_t PIDMode                     = true;
 uint8_t Use_KFP                     = true;
@@ -88,7 +93,8 @@ hw_timer_t* SoundTimer = NULL;
 
 //先初始化硬件->显示LOGO->初始化软件
 void setup() {
-
+    //关闭中断
+    noInterrupts();
     ////////////////////////////初始化硬件/////////////////////////////
     //获取系统信息
     ChipMAC = ESP.getEfuseMac();
@@ -100,8 +106,8 @@ void setup() {
     SerialBT.begin("OpenT12");
 
     //初始化GPIO
-    BeepInit();
-    pinMode(POWER_ADC_PIN, INPUT);
+    BeepInit();                     //蜂鸣器
+    pinMode(POWER_ADC_PIN, INPUT);  //主电压分压检测ADC
 
     //初始化烙铁头
     TipControlInit();
@@ -123,6 +129,11 @@ void setup() {
     //显示启动信息
     ShowBootMsg();
 
+    //启动文件系统，并读取存档
+    FilesSystemInit();
+
+    SetSound(BootSound); //播放音效
+
     //显示Logo
     EnterLogo();
 
@@ -134,9 +145,6 @@ void setup() {
     // timerAttachInterrupt(SoundTimer, &PlaySoundLoop, true);
     // timerAlarmWrite(SoundTimer, 10000, true);
     // timerAlarmEnable(SoundTimer);
-
-    //启动文件系统，并读取存档
-    FilesSystemInit();
 
     //开机密码
     while (!EnterPasswd()) {
@@ -163,8 +171,6 @@ void loop() {
     if (!Menu_System_State) {
         //温度闭环控制
         TemperatureControlLoop();
-        //更新BOOST提温事件
-        BoostButton_EventLoop();
         //更新系统事件：：系统事件可能会改变功率输出
         TimerEventLoop();
     }

@@ -401,6 +401,9 @@ void System_Menu_Init(void) {
     MenuLevelId = 0;       //设定跳转目标
     *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
     Next_Menu();
+
+    //解除编码器锁定（如果有）
+    Counter_LOCK_Flag = false;
 }
 /*** 
  * @description: 初始化主界面
@@ -421,7 +424,7 @@ void System_UI(void) {
     }else{
 
         //睡眠模式屏保入口
-        if (SleepEvent) RunSleepLoop();
+        if (SleepEvent && SleepScreenProtectFlag) RunSleepLoop();
         else {
             // char buffer[50];
             // for (uint8_t i = 0;i < 5;i++) {

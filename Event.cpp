@@ -1,6 +1,7 @@
 #include "OpenT12.h"
 
 uint32_t EventTimerUpdate = 0;
+
 /*** 
  * @description: 用户有动作时将会触发此函数
  * @param {*}
@@ -40,20 +41,37 @@ void TimerEventLoop(void) {
     //事件事件距离计时器
     uint32_t TimerEventTimer = millis() - EventTimerUpdate;
     
-    //更新休眠和停机时间
+    //更新BOOST提温事件
+    BoostButton_EventLoop();
+
+    //刷新手柄触发开关事件：可引发手柄休眠事件
+    SW_WakeLOOP();
+    
+    //更新休眠和停机时间    停机优先级 > 休眠优先级
     if (ShutdownTime != 0 && TimerEventTimer > Minute2Millis(ShutdownTime)) {
         //系统停机
-        SleepEvent = false;
         ShutdownEvent = true;
-    }else if (SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) {
+        SleepEvent = false;
+        SleepScreenProtectFlag = false;
+    }else if (TipCallSleepEvent || SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) {
         //进入休眠
         SleepEvent = true;
-        ShutdownEvent = false;
+        //锁定编码器，因为休眠模式中不允许修改设定温度
+        Counter_LOCK_Flag = true;
+
+        //休眠一段时间后进入屏保程序
+        if (ScreenProtectorTime != 0 
+            && TimerEventTimer > Minute2Millis(SleepTime) + ScreenProtectorTime * 1000)
+            SleepScreenProtectFlag = true;  //开启屏保程序
     }else{
-        SleepEvent = false;
+        if (SleepEvent) {
+            SleepEvent = false;
+            Counter_LOCK_Flag = false;
+        }
         ShutdownEvent = false;
+        SleepScreenProtectFlag = false;
     }
-    //printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
+    printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
     
 }
 
@@ -209,4 +227,38 @@ void SetPasswd(void) {
 
     strcpy(BootPasswd, passwdBuffer[0]);
     Pop_Windows("密码已更新");
+}
+
+/*** 
+ * @description: 手柄休眠中断引脚
+ * @param {*}
+ * @return {*}
+ */
+void ICACHE_RAM_ATTR SW_IRQHandler(void) {
+    //printf("休眠中断 GPIO:%d\n", digitalRead(SW_PIN));
+    //重置事件计时器
+    TimerUpdateEvent();
+}
+
+/***
+ * @description: 手柄休眠引脚循环检测
+ * @param {*}
+ * @return {*}
+ */
+void SW_WakeLOOP(void) {
+    static bool lastState = 1;  //默认上拉
+    bool state = digitalRead(SW_PIN);
+
+    if (state != lastState) {
+        lastState = state;
+        //重置无动作计时器
+        TimerUpdateEvent();
+    }
+
+    //如果手柄触发模式是干簧管（磁力触发）则进入休眠模式
+    if (HandleTrigger == HANDLETRIGGER_ReedSwitch) {
+        //默认上拉，当磁力开关触发时引脚状态应该为低电平
+        if (state == 0) TipCallSleepEvent = true;
+        else TipCallSleepEvent = false;
+    }
 }

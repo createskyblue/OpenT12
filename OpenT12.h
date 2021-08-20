@@ -105,6 +105,7 @@ extern char* TipName;
 
 extern float BootTemp;
 extern float SleepTemp;
+extern float ScreenProtectorTime;
 extern float BoostTemp;
 
 extern float ShutdownTime;
@@ -112,7 +113,9 @@ extern float SleepTime;
 extern float BoostTime;
 
 extern bool TipInstallEvent;
+extern bool TipCallSleepEvent;
 extern bool TempToneFlag;
+extern bool SleepScreenProtectFlag;
 
 extern bool ERROREvent;
 extern bool ShutdownEvent;
