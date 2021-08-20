@@ -33,6 +33,9 @@
         "serstream": "cpp",
         "sstream": "cpp",
         "map": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "ios": "cpp",
+        "functional": "cpp",
+        "memory": "cpp"
     }
 }

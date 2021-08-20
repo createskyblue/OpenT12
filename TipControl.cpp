@@ -27,16 +27,21 @@ float consKp = 20.0, consKi = 1, consKd = 0.5;
 
 //初始化烙铁头温控系统
 void TipControlInit(void) {
-
-    MyPID.SetOutputLimits(0, 255); //PID输出限幅
-    MyPID.SetMode(AUTOMATIC); //PID控制模式
-    MyPID.SetSampleTime(10); //PID采样时间
-
-    pinMode(TIP_ADC_PIN, INPUT); //ADC
+    //初始化ADC输入GPIO
+    pinMode(TIP_ADC_PIN, INPUT_PULLUP); //ADC
     ledcAttachPin(PWM_PIN, PWM_Channel);  // 将通道与对应的引脚连接
     ledcSetup(PWM_Channel, PWM_Freq, PWM_Resolution); // 设置通道
     SetPOWER(0); //关闭功率管输出
-        
+
+    //初始化SW-PIN休眠检测引脚
+    pinMode(SW_PIN, INPUT_PULLUP);
+    //初始化SW-PIN休眠检测引脚中断 (尽可能减少中断的使用)
+    //attachInterrupt(SW_PIN, SW_IRQHandler, CHANGE);
+    
+    //初始化烙铁头PID
+    MyPID.SetOutputLimits(0, 255); //PID输出限幅
+    MyPID.SetMode(AUTOMATIC); //PID控制模式
+    MyPID.SetSampleTime(10); //PID采样时间
 }
 
 //计算实际温度

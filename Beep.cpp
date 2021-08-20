@@ -139,7 +139,10 @@ void SetSound(TONE sound[]) {
 
 void ICACHE_RAM_ATTR PlaySoundLoop(void) {
 
-    if (!Volume) MySound = NULL;
+    if (!Volume) {
+        MySound = NULL;
+        SetTone(0);
+    }
     if (MySound==NULL) return;
     
     PlayTones(MySound, &PlayTones_Schedule);

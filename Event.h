@@ -15,4 +15,7 @@ void SetPasswd(void);
 
 void TimerEventLoop(void);
 void SYS_StateCode_Update(void);
+
+void SW_IRQHandler(void);
+void SW_WakeLOOP(void);
 #endif
