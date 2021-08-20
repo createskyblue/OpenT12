@@ -88,6 +88,7 @@ enum Slide_space_Obj{
     Slide_space_ShutdownTime,
     Slide_space_SleepTime,
     Slide_space_BoostTime,
+    Slide_space_ScreenProtectorTime,
 
     Slide_space_UndervoltageAlert,
 
@@ -118,6 +119,7 @@ struct Slide_Bar Slide_space[] = {
     {(float*)&ShutdownTime,0,60,1},
     {(float*)&SleepTime,0,60,1},
     {(float*)&BoostTime,0,600,1},
+    {(float*)&ScreenProtectorTime,0,600,1},
 
     {(float*)&UndervoltageAlert,0,36,0.25},
 
@@ -180,7 +182,7 @@ struct Menu_Level_System MenuLevel[] = {
     {1,0,0,5,Menu_HAVE_IMG},
     {2,0,0,8,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
-    {4,0,0,4,Menu_HAVE_IMG},
+    {4,0,0,5,Menu_HAVE_IMG},
     {5,0,0,6,Menu_HAVE_IMG},
     {6,0,0,5,Menu_HAVE_IMG},
     {7,0,0,6,Menu_HAVE_IMG},
@@ -253,15 +255,16 @@ struct Menu_System Menu[] = {
  
     { 3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
     { 3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},
-    { 3,2,       Progress_Bar_Menu_Op,  "休眠温度",         Set11,              Slide_space_SleepTemp,                                  0,          Menu_NULL_F},
-    { 3,3,       Progress_Bar_Menu_Op,  "提温温度",         Set14,              Slide_space_BoostTemp,                                  0,          Menu_NULL_F},
+    { 3,2,       Progress_Bar_Menu_Op,  "提温温度",         Set14,              Slide_space_BoostTemp,                                  0,          Menu_NULL_F},
+    { 3,3,       Progress_Bar_Menu_Op,  "休眠温度",         Set11,              Slide_space_SleepTemp,                                  0,          Menu_NULL_F},
     { 3,4,       Jump_Menu_Op,          "缓存",                  Save,              1,                                  2,          Menu_NULL_F},
  
     { 4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
-    { 4,1,       Progress_Bar_Menu_Op,  "停机时间(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
-    { 4,2,       Progress_Bar_Menu_Op,  "休眠时间(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
-    { 4,3,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
-    { 4,4,       Jump_Menu_Op,          "缓存",                  Save,              1,                                  3,          Menu_NULL_F},
+    { 4,1,       Progress_Bar_Menu_Op,  "停机触发(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
+    { 4,2,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
+    { 4,3,       Progress_Bar_Menu_Op,  "休眠触发(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
+    { 4,4,       Progress_Bar_Menu_Op,  "屏保触发(秒)",         Set4,              Slide_space_ScreenProtectorTime,                0,          Menu_NULL_F},
+    { 4,5,       Jump_Menu_Op,          "缓存",                  Save,              1,                                  3,          Menu_NULL_F},
  
     { 5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
     { 5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},

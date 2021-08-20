@@ -30,7 +30,7 @@ float SleepTemp = 150;     //休眠温度          (°C)
 float BoostTemp = 50;      //爆发模式升温幅度   (°C)
 
 float ShutdownTime        = 0;      //关机提醒              (分)
-float SleepTime           = 5;      //休眠触发时间          (分)
+float SleepTime           = 4;      //休眠触发时间          (分)
 float ScreenProtectorTime = 60;     //屏保在休眠后的触发时间(秒)
 float BoostTime           = 30;     //爆发模式持续时间      (秒)
 
