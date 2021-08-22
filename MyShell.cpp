@@ -40,7 +40,15 @@ void SetEasyCursor(int argc, char** argv) {
     EasyCursor[id][0] = atof(argv[2]);
     EasyCursor[id][1] = atof(argv[3]);
 }
+//////////////////////////////////////////////////////////////////////////
+//Shell模拟旋转编码器输入
+void RotaryUp(void) {
+    sys_Counter_SetVal(sys_Counter_Get() + 1);
+}
 
+void RotaryDown(void) {
+    sys_Counter_SetVal(sys_Counter_Get() - 1);
+}
 //////////////////////////////////////////////////////////////////////////
 //截图工具
 uint8_t OLED_ScreenshotFlag = 0;
@@ -59,6 +67,11 @@ void OLED_ScreenshotPrint(void) {
     OLED_ScreenshotFlag = 0;
 }
 //////////////////////////////////////////////////////////////////////////
+//远程温度控制
+void ShellGetTipTemp(void){
+    shell_SendDatas((uint8_t*)&TipTemperature, sizeof(TipTemperature));
+}
+//////////////////////////////////////////////////////////////////////////
 
 void shellInit(void) {
     shell_init(shell_reader, shell_writer, 0);
@@ -75,12 +88,23 @@ void shellInit(void) {
 
     shell_register(SetEasyCursor, PSTR("SetEasyCursor"));
     shell_register(OLED_ScreenshotInit, PSTR("OLED_ScreenshotInit"));
+
+    //模拟控制输入
+    shell_register(RotaryUp, PSTR("RotaryUp"));
+    shell_register(RotaryDown, PSTR("RotaryDown"));
+    shell_register(sys_Counter_click, PSTR("sys_Counter_click"));
+    shell_register(sys_Counter_doubleclick, PSTR("sys_Counter_doubleclick"));
+    shell_register(sys_Counter_longclick, PSTR("sys_Counter_longclick"));
+
+    shell_register(ShellGetTipTemp, PSTR("ShellGetTipTemp"));
+
+
     // shell_register(SetEventTimer, PSTR("SetEventTimer"));
 
 }
 void ICACHE_RAM_ATTR ShellLoop(void) {
     //命令解析器
-    while (Serial.available()) shell_task();
+    while (Serial.available() || SerialBT.available()) shell_task();
 }
 
 /**
@@ -94,10 +118,10 @@ int shell_reader(char* data)
         *data = Serial.read();
         return 1;
     }
-    // if (SerialBT.available()) {
-    //     *data = SerialBT.read();
-    //     return 1;
-    // }
+    if (SerialBT.available()) {
+        *data = SerialBT.read();
+        return 1;
+    }
     return 0;
 }
 
@@ -108,9 +132,27 @@ int shell_reader(char* data)
  */
 void shell_writer(char data)
 {
-    return; //阻止不干净的输出
+    //return; //阻止不干净的输出
     Serial.write(data);
     SerialBT.write(data);
+}
+
+void shell_SendDatas(uint8_t buf[],uint32_t size) {
+    /*
+        包头：0xA5
+        原数据：buf
+        校验和：原数据所有字节和的低八位
+        包尾：0x5A
+    */
+   uint8_t CHECK = 0;
+   //计算校验和
+   for (uint32_t i=0;i<size;i++)
+    CHECK += buf[i];
+
+   SerialBT.write(0xA5);
+   SerialBT.write(buf, size);
+   SerialBT.write(CHECK);
+   SerialBT.write(0x5A);
 }
 
 int command_test(int argc, char** argv)

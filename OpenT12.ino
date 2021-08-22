@@ -50,7 +50,6 @@ bool UnderVoltageEvent = false;
 //PWM控制状态
 bool PWM_WORKY         = false;
 
-
 uint8_t PIDMode                     = true;
 uint8_t Use_KFP                     = true;
 uint8_t PanelSettings               = PANELSET_Detailed;
@@ -59,7 +58,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = true;
+uint8_t Volume = false;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -103,7 +102,6 @@ void setup() {
 
     //初始化串口
     Serial.begin(921600);
-    SerialBT.begin("OpenT12");
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器
@@ -117,7 +115,7 @@ void setup() {
 
     //初始化OLED
     Disp.begin();
-    Disp.setBusClock(1000000);
+    Disp.setBusClock(921600);
     Disp.enableUTF8Print();
     Disp.setFontDirection(0);
     Disp.setFontPosTop();
@@ -140,11 +138,8 @@ void setup() {
     //初始化命令解析器
     shellInit();
 
-    //初始化定时器
-    // SoundTimer = timerBegin(0, 240, true);
-    // timerAttachInterrupt(SoundTimer, &PlaySoundLoop, true);
-    // timerAlarmWrite(SoundTimer, 10000, true);
-    // timerAlarmEnable(SoundTimer);
+    //初始化蓝牙（可选）
+    BLE_Init();
 
     //开机密码
     while (!EnterPasswd()) {

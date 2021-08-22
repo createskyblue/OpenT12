@@ -7,10 +7,6 @@ static double Count_max=0;
 static double Count_step=0;
 static uint8_t CounterChanged = 0;
 
-static void sys_Counter_click(void);
-static void sys_Counter_doubleclick(void);
-static void sys_Counter_longclick(void);
-
 void sys_RotaryInit(void) {
     //初始化GPIO
     pinMode(ROTARY_PIN1, INPUT_PULLUP);

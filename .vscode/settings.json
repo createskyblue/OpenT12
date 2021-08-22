@@ -36,6 +36,7 @@
         "fstream": "cpp",
         "ios": "cpp",
         "functional": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "shell.h": "c"
     }
 }

@@ -57,8 +57,8 @@ void PWMOutput(uint8_t pwm) {
     //PWM锁
     if (PWMOutput_Lock || ShutdownEvent || Menu_System_State || ERROREvent) {
         PWM_WORKY = false;
-        Log(LOG_INFO,"输出被限制");
-        printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
+        // Log(LOG_INFO,"输出被限制");
+        // printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
     }

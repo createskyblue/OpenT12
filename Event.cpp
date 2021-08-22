@@ -77,7 +77,7 @@ void TimerEventLoop(void) {
         SleepScreenProtectFlag = true;  //开启屏保程序
     else SleepScreenProtectFlag = false;
 
-    printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
+    //printf("无动作时间%ld，停机计时%ld，休眠计时%ld\n", TimerEventTimer, Minute2Millis(ShutdownTime), Minute2Millis(SleepTime));
     
 }
 
@@ -88,7 +88,7 @@ void TimerEventLoop(void) {
  */
 void SYS_StateCode_Update(void) {
     static uint32_t TipEventTimer = 0;  //烙铁安装移除事件计时器：防止事件临界抖动
-    if (LastADC > 3500) {
+    if (CalculateTemp((double)LastADC,PTemp) > 500) {
 
         if (millis() - TipEventTimer > TipEvent_CoolTime) {
 
