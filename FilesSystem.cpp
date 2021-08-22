@@ -55,6 +55,9 @@ void SYS_Save(void) {
     file.write((uint8_t*)&TipID, sizeof(TipID));
     file.write((uint8_t*)&TipTotal, sizeof(TipTotal));
 
+    file.write((uint8_t*)&BLE_State, sizeof(BLE_State));
+    file.write((uint8_t*)&BLE_name, sizeof(BLE_name));
+
     file.close();
     Log(LOG_OK, "存档保存成功!");
  
@@ -125,6 +128,9 @@ void SYS_Load(void) {
     file.read((uint8_t*)&MyTip, sizeof(MyTip));
     file.read((uint8_t*)&TipID, sizeof(TipID));
     file.read((uint8_t*)&TipTotal, sizeof(TipTotal));
+
+    file.read((uint8_t*)&BLE_State, sizeof(BLE_State));
+    file.read((uint8_t*)&BLE_name, sizeof(BLE_name));
 
     file.close();
     

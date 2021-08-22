@@ -44,8 +44,9 @@ enum Switch_space_Obj{
     SwitchSpace_RotaryDirection,
     SwitchSpace_HandleTrigger,
     SwitchSpace_Language,
-
     SwitchSpace_TipID,
+
+    SwitchSpace_BLE_State,
 };
 uint8_t *Switch_space[] = {
     &SmoothAnimation_Flag,
@@ -59,8 +60,9 @@ uint8_t *Switch_space[] = {
     &RotaryDirection,
     &HandleTrigger,
     &Language,
-
     &TipID,
+
+    &BLE_State,
 };
 
 /*
@@ -183,7 +185,7 @@ struct Menu_Level_System MenuLevel[] = {
     {2,0,0,8,Menu_HAVE_IMG},
     {3,0,0,4,Menu_HAVE_IMG},
     {4,0,0,5,Menu_HAVE_IMG},
-    {5,0,0,6,Menu_HAVE_IMG},
+    {5,0,0,7,Menu_HAVE_IMG},
     {6,0,0,5,Menu_HAVE_IMG},
     {7,0,0,6,Menu_HAVE_IMG},
     {8,0,0,2,Menu_HAVE_IMG},
@@ -202,6 +204,7 @@ struct Menu_Level_System MenuLevel[] = {
     {19,0,0, 5 ,Menu_NULL_IMG},
     {20,0,0, 4 ,Menu_NULL_IMG},
     {21,0,0, 4 ,Menu_NULL_IMG},
+    {22,0,0, 3 ,Menu_NULL_IMG},
 };
 
 /*
@@ -268,11 +271,12 @@ struct Menu_System Menu[] = {
  
     { 5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
     { 5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
-    { 5,2,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
-    { 5,3,       F_Menu_Op,             "开机密码",             Lock,              0,              0,                   *SetPasswd},
-    { 5,4,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
-    { 5,5,       Jump_Menu_Op,          "关于朱雀",             QRC,              5,                                  5,          *About},
-    { 5,6,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
+    { 5,2,       Jump_Menu_Op,          "蓝牙",                 IMG_BLE,              22,                                  0,          Menu_NULL_F},
+    { 5,3,       Progress_Bar_Menu_Op,  "欠压提醒",             Set6,              Slide_space_UndervoltageAlert,                    0,          Menu_NULL_F},
+    { 5,4,       F_Menu_Op,             "开机密码",             Lock,              0,              0,                   *SetPasswd},
+    { 5,5,       Jump_Menu_Op,          "语言设置",             Set_LANG,              13,                                  0,          Menu_NULL_F},
+    { 5,6,       F_Menu_Op,             "关于朱雀",             QRC,              5,                                  5,          *About},
+    { 5,7,       Jump_Menu_Op,          "返回",                 Set7,              0,                                  2,          Menu_NULL_F},
  
     { 6,0,       Title_Menu_Op,         "个性化",               Menu_NULL_IMG,              5,                                  1,          Menu_NULL_F},
     { 6,1,       Jump_Menu_Op,          "显示效果",             Set4,              7,                                  0,          Menu_NULL_F},
@@ -316,7 +320,7 @@ struct Menu_System Menu[] = {
     { 12,1,       SingleBox_Menu_Op,     "PID控制",               Set16,               SwitchSpace_PIDMode,                        true,          *JumpWithTitle},
     { 12,2,       SingleBox_Menu_Op,     "模糊控制",              Set15,      SwitchSpace_PIDMode,                                 false,          *JumpWithTitle},
  
-    { 13,0,       Title_Menu_Op,         "语言设置",               Menu_NULL_IMG,              5,                                  4,          Menu_NULL_F},
+    { 13,0,       Title_Menu_Op,         "语言设置",               Menu_NULL_IMG,              5,                                  5,          Menu_NULL_F},
     { 13,1,       SingleBox_Menu_Op,     "简体中文",               Lang_CN,               SwitchSpace_Language,                    LANG_Chinese,          *JumpWithTitle},
 
     { 14,0,       Title_Menu_Op,         "手柄触发",               Menu_NULL_IMG,              6,                                  4,          Menu_NULL_F},
@@ -369,7 +373,12 @@ struct Menu_System Menu[] = {
     { 21,1,       Progress_Bar_Menu_Op,  "温差>150",               Menu_NULL_IMG,          Slide_space_ADC_PID_Cycle_List_0,   0,          Menu_NULL_F },
     { 21,2,       Progress_Bar_Menu_Op,  "温差>50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_1,   0,          Menu_NULL_F },
     { 21,3,       Progress_Bar_Menu_Op,  "温差≤50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_2,   0,          Menu_NULL_F },
-    { 21,4,       Jump_Menu_Op,          "保存",                   Menu_NULL_IMG,          19,                                 3,          Menu_NULL_F },
+    { 21,4,       Jump_Menu_Op,          "缓存",                   Menu_NULL_IMG,          19,                                 3,          Menu_NULL_F },
+
+    { 22,0,       Title_Menu_Op,         "蓝牙",             Menu_NULL_IMG,            5,                                 2,          Menu_NULL_F },
+    { 22,1,       Switch_Menu_Op,        "状态",               Menu_NULL_IMG,         SwitchSpace_BLE_State,   0,          *BLE_Restart },
+    { 22,2,       F_Menu_Op,             "设备名称",          Menu_NULL_IMG,          22,   2,          *BLE_Rename },
+    { 22,3,       Jump_Menu_Op,          "缓存",               Menu_NULL_IMG,          5,                                 2,          Menu_NULL_F },
 };
 /***
  * @description: 初始化烙铁列表
