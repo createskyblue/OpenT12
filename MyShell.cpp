@@ -41,15 +41,7 @@ void SetEasyCursor(int argc, char** argv) {
     EasyCursor[id][1] = atof(argv[3]);
 }
 //////////////////////////////////////////////////////////////////////////
-//Shell模拟旋转编码器输入
-void RotaryUp(void) {
-    sys_Counter_SetVal(sys_Counter_Get() + 1);
-}
 
-void RotaryDown(void) {
-    sys_Counter_SetVal(sys_Counter_Get() - 1);
-}
-//////////////////////////////////////////////////////////////////////////
 //截图工具
 uint8_t OLED_ScreenshotFlag = 0;
 void OLED_ScreenshotInit(void) {

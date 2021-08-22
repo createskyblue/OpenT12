@@ -155,8 +155,6 @@ void setup() {
     //载入烙铁头配置
     LoadTipConfig();
 
-    
-    
 }
 
 void loop() {

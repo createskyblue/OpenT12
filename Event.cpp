@@ -36,6 +36,15 @@ void BoostButton_EventLoop(void) {
     }
 }
 /*** 
+ * @description: 双击快速召唤PID设置
+ * @param {*}
+ * @return {*}
+ */
+void FastPID_MenuSummon_EventLoop(void){
+    //若发现双击，则快速打开PID菜单
+    if (SYSKey == 3) System_PIDMenu_Init();
+}
+/*** 
  * @description: 计时器事件Loop
  * @param {*}
  * @return {*}
@@ -47,6 +56,8 @@ void TimerEventLoop(void) {
     
     //更新BOOST提温事件
     BoostButton_EventLoop();
+    //更新PID菜单快速召唤事件
+    FastPID_MenuSummon_EventLoop();
 
     //刷新手柄触发开关事件：可引发手柄休眠事件
     SW_WakeLOOP();

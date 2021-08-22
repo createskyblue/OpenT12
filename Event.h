@@ -8,6 +8,7 @@ extern uint32_t EventTimerUpdate;
 void TimerUpdateEvent(void);
 
 void BoostButton_EventLoop(void);
+void FastPID_MenuSummon_EventLoop(void);
 void ShutdownEventLoop(void);
 
 bool EnterPasswd(void);
