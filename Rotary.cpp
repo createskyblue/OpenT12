@@ -59,6 +59,14 @@ void sys_Counter_SetVal(double c) {
     Count = constrain(c * ROTARY_TYPE, Count_min, Count_max);
 }
 
+void RotaryUp(void) {
+    sys_Counter_SetVal(sys_Counter_Get() + Count_step);
+}
+
+void RotaryDown(void) {
+    sys_Counter_SetVal(sys_Counter_Get() - Count_step);
+}
+
 bool Counter_LOCK_Flag = false;
 void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
     //重置事件计时器

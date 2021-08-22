@@ -15,6 +15,9 @@ extern bool Counter_LOCK_Flag;
 void sys_RotaryInit(void);
 void sys_Counter_Set(double min, double max, double step, double c);
 void sys_Counter_SetVal(double c);
+void RotaryUp(void);
+void RotaryDown(void);
+
 void sys_Counter_click(void);
 void sys_Counter_doubleclick(void);
 void sys_Counter_longclick(void);

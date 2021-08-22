@@ -1,7 +1,10 @@
 #include "OpenT12.h"
 
 //菜单系统状态 0:自动退出 1:运行菜单系统
-uint8_t Menu_System_State = 0;
+uint8_t Menu_System_State = false;
+//跳转即退出菜单，该标志位适用于快速打开菜单设置，当遇到跳转操作时将保存设置并退出菜单
+uint8_t Menu_JumpAndExit  = false;
+uint8_t Menu_JumpAndExit_Level = 255;   //当跳转完成后 的 菜单层级 等于“跳转即退出层级”时，“跳转即退出”立马生效
 
 //菜单层id 菜单项目id
 uint8_t MenuLevelId = 0, LastMenuLevelId =0, MenuId = 0; //标注值
@@ -381,20 +384,45 @@ struct Menu_System Menu[] = {
     { 22,3,       Jump_Menu_Op,          "缓存",               Menu_NULL_IMG,          5,                                 2,          Menu_NULL_F },
 };
 /***
- * @description: 初始化烙铁列表
+ * @description: 快速打开烙铁列表
  * @param {*}
  * @return {*}
  */
 void System_TipMenu_Init(void) {
+    printf("尝试打开烙铁头列表\n");
     //关闭功率管输出
     SetPOWER(0);
     //初始化菜单
     FlashTipMenu();                 //刷新菜单系统烙铁列表
-    TipManagerAction_flag = true;   //将会在烙铁头选择完成后被设置为false届时可以结束菜单循环
+
+    Menu_JumpAndExit = true;   //菜单标志：“跳转即退出” 在设置完Tip后自动退出菜单
+    Menu_JumpAndExit_Level = 2; //当菜单进行跳转操作，跳转到该 Menu_JumpAndExit_Level 层后检查“跳转即退出” 标志
+
     MenuLevel[15].x = 0;  //复位第一层菜单的位置
     MenuLevelId = 15;       //设定跳转目标
     *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
     Next_Menu();
+}
+/*** 
+ * @description: 快速打开PID菜单
+ * @param {*}
+ * @return {*}
+ */
+void System_PIDMenu_Init(void) {
+    printf("尝试打开PID菜单\n");
+    //关闭功率管输出
+    SetPOWER(0);
+    //初始化菜单
+    FlashTipMenu();                 //刷新菜单系统烙铁列表
+
+    Menu_JumpAndExit = true;   //菜单标志：“跳转即退出” 在设置完Tip后自动退出菜单
+    Menu_JumpAndExit_Level = 2; //当菜单进行跳转操作，跳转到该 Menu_JumpAndExit_Level 层后检查“跳转即退出” 标志
+
+    MenuLevel[16].x = 0;  //复位第一层菜单的位置
+    MenuLevelId = 16;       //设定跳转目标
+    *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
+    Next_Menu();
+    printf("菜单状态:%d\n", Menu_System_State);
 }
 
 /*** 
@@ -585,7 +613,10 @@ void Save_Exit_Menu_System(void) {
 }
 
 void Exit_Menu_System(void) {
+    printf("退出菜单系统\n");
     Menu_System_State = 0;
+    Menu_JumpAndExit = false;
+    Menu_JumpAndExit_Level = 255;
     //过渡离开
     Disp.setDrawColor(0);
     Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 66 * *Switch_space[SwitchSpace_SmoothAnimation]);
@@ -768,6 +799,9 @@ void MenuSYS_SetCounter() {
 */
 void Next_Menu() {
     printf("Next_Menu\n");
+    //清除按键缓存
+    SYSKey = NULL;
+    //设置菜单标志位
     Menu_System_State = 1;
 
     real_Level_Id = Get_Real_Menu_Level_Id(MenuLevelId);
@@ -844,6 +878,7 @@ void Pop_Windows(char* s) {
     @param uint8_t id菜单对象id
 */
 void Run_Menu_Id(uint8_t lid, uint8_t id) {
+    printf("运行菜单控件\n");
     // Serial.print("菜单系统:");
     // Serial.print(lid);
     // Serial.print(" + ");
@@ -881,6 +916,9 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
         }
         //按需求跳转完成后执行函数
         if (Menu[Id].function) Menu[Id].function();
+        //检查“跳转即退出”标志
+        if (Menu_JumpAndExit && MenuLevelId == Menu_JumpAndExit_Level) Save_Exit_Menu_System();
+        //再次确认菜单状态
         if (Menu_System_State) Next_Menu();         //由于执行函数可能会导致菜单状态被更改，所以这里需要确定菜单状态
         break;
     case 1:
