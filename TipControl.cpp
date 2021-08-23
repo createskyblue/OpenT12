@@ -89,18 +89,22 @@ int GetADC0(void) {
     static uint32_t ADCSamplingTime = 0; //上次采样时间
     static uint32_t ADCReadCoolTimer = 0;
 
-    ADCSamplingInterval = millis() - ADCSamplingTime;
-    if (ADCSamplingInterval < ADC_PID_Cycle * (9/10.0)) return LastADC; //9/10周期ADC不应该工作，应该把时间留给加热
+    if (SYS_Ready) {
     
-    //若原输出非关闭，则在关闭输出后等待一段时间，因为电热偶和加热丝是串在一起的，只有不加热的时候才能安全访问热偶温度
-    if (PWMOutput_Lock == false) {
-        ADCReadCoolTimer = millis();
-        //锁定功率管输出：必须要关闭MOS管才能成功读取电热偶
-        PWMOutput_Lock = true;
-    }
+        ADCSamplingInterval = millis() - ADCSamplingTime;
+        if (ADCSamplingInterval < ADC_PID_Cycle * (9/10.0)) return LastADC; //9/10周期ADC不应该工作，应该把时间留给加热
 
-    if (millis() - ADCReadCoolTimer <= ADC_PID_Cycle / 10) {
-        return -1; //数据未准备好
+        //若原输出非关闭，则在关闭输出后等待一段时间，因为电热偶和加热丝是串在一起的，只有不加热的时候才能安全访问热偶温度
+        if (PWMOutput_Lock == false) {
+            ADCReadCoolTimer = millis();
+            //锁定功率管输出：必须要关闭MOS管才能成功读取电热偶
+            PWMOutput_Lock = true;
+        }
+
+        if (millis() - ADCReadCoolTimer <= ADC_PID_Cycle / 10) {
+            return -1; //数据未准备好
+        }
+
     }
 
     //读取并平滑滤波经过运算放大器放大后的热偶ADC数据

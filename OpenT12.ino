@@ -34,6 +34,8 @@ float SleepTime           = 4;      //休眠触发时间          (分)
 float ScreenProtectorTime = 60;     //屏保在休眠后的触发时间(秒)
 float BoostTime           = 30;     //爆发模式持续时间      (秒)
 
+
+bool SYS_Ready = false;
 //烙铁头事件
 bool TipInstallEvent   = true;
 bool TipCallSleepEvent    = false;
@@ -58,7 +60,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = false;
+uint8_t Volume = true;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -132,21 +134,13 @@ void setup() {
     //启动文件系统，并读取存档
     FilesSystemInit();
 
-    SetSound(BootSound); //播放音效
-
-    //显示Logo
-    EnterLogo();
-
     //初始化命令解析器
     shellInit();
 
     //初始化蓝牙（可选）
     BLE_Init();
 
-    //开机密码
-    while (!EnterPasswd()) {
-        Pop_Windows("身份验证失败");
-    }
+    SetSound(BootSound); //播放音效
 
     //初始化UI
     System_UI_Init();
@@ -156,6 +150,15 @@ void setup() {
 
     //载入烙铁头配置
     LoadTipConfig();
+
+    //显示Logo
+    EnterLogo();
+
+    //开机密码
+    while (!EnterPasswd()) {
+        Pop_Windows("身份验证失败");
+    }
+    SYS_Ready = true;
 
 }
 

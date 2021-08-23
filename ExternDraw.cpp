@@ -18,31 +18,39 @@ void EnterLogo(void) {
     // }
     // Disp.setDrawColor(1);
 
-    float rate ,i;
+    float rate ,i=1;
     int x, y, w;
-    for (i=1;i<=80;) {
-        Clear();
-        i += 0.3*i;
-        rate = i / 128.0;
-        w = 170 * rate;
-        x = (128 - w)/2;
-        y = (64 - i -1)/2;
-        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
-        Display();
-    }
+    uint8_t flag = 0;
 
-    for (i;i > 64;) {
+    while(flag!=2) {
+
+        GetADC0();  //播放动画是可以同时初始化软件滤波
+
         Clear();
-        i -= 0.05 * i;
+        
+        switch (flag) {
+        case 0:
+            if (i < 80) i += 0.3 * i;
+            else flag++;
+            break;
+        case 1:
+            if (i > 64) i -= 0.05 * i;
+            else flag++;
+            break;
+        }
+
         rate = i / 128.0;
         w = 170 * rate;
         x = (128 - w) / 2;
         y = (64 - i - 1) / 2;
         Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
+
         Display();
     }
 
     for (int16_t xx=-128;xx<128;xx+=12) {
+        GetADC0();  //播放动画是可以同时初始化软件滤波
+        
         Clear();
         //绘制Logo
         Disp.setDrawColor(1);

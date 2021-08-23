@@ -6,6 +6,7 @@ void SYS_Save(void) {
     //Pop_Windows("保存中 请勿切断电源");
 
     //软盘图标
+    DrawMsgBox("保存中");
     Draw_Slow_Bitmap_Resize(128 - 28 - 4, 64 - 28 - 4, Save + 1, Save[0], Save[0], 28, 28);
     Display();
     
@@ -70,7 +71,8 @@ void SYS_Load(void) {
     noInterrupts();
 
     //软盘图标
-    Draw_Slow_Bitmap_Resize(128 - 28 - 4, 64 - 28 - 4, Save + 1, Save[0], Save[0], 28, 28);
+    DrawMsgBox("加载中");
+    Draw_Slow_Bitmap_Resize(128 - 28 - 4, 64 - 28 - 4, Load + 1, Load[0], Load[0], 28, 28);
     Display();
 
     File file = SPIFFS.open(SYS_SVAE_PATH);
