@@ -2,21 +2,63 @@
 
 void EnterLogo(void) {
     
-    for (int16_t x=-128;x<128;x+=12) {
+    // for (int16_t x=-128;x<128;x+=12) {
+    //     //绘制Logo
+    //     Disp.setDrawColor(1);
+    //     Draw_Slow_Bitmap(0, 0, Logo, 128, 64);
+    //     //转场特效
+    //     Disp.setBitmapMode(1);
+    //     Disp.setDrawColor(0);
+
+    //     Disp.drawXBM(x, 0, 128, 64, TranAnimation);
+    //     if (x < 0) Disp.drawBox(128 + x, 0, -x, 64);
+
+    //     Disp.setBitmapMode(0);
+    //     Display();
+    // }
+    // Disp.setDrawColor(1);
+
+    float rate ,i;
+    int x, y, w;
+    for (i=1;i<=80;) {
+        Clear();
+        i += 0.3*i;
+        rate = i / 128.0;
+        w = 170 * rate;
+        x = (128 - w)/2;
+        y = (64 - i -1)/2;
+        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
+        Display();
+    }
+
+    for (i;i > 64;) {
+        Clear();
+        i -= 0.05 * i;
+        rate = i / 128.0;
+        w = 170 * rate;
+        x = (128 - w) / 2;
+        y = (64 - i - 1) / 2;
+        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
+        Display();
+    }
+
+    for (int16_t xx=-128;xx<128;xx+=12) {
+        Clear();
         //绘制Logo
         Disp.setDrawColor(1);
-        Draw_Slow_Bitmap(0, 0, Logo, 128, 64);
+        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
         //转场特效
         Disp.setBitmapMode(1);
         Disp.setDrawColor(0);
 
-        Disp.drawXBM(x, 0, 128, 64, TranAnimation);
-        if (x < 0) Disp.drawBox(128 + x, 0, -x, 64);
+        Disp.drawXBM(xx, 0, 128, 64, TranAnimation2);
+        if (xx > 0) Disp.drawBox(0, 0, xx, 64);
 
         Disp.setBitmapMode(0);
         Display();
     }
     Disp.setDrawColor(1);
+
 }
 
 void ShowBootMsg(void) {

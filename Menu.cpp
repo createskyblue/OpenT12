@@ -240,6 +240,7 @@ struct Menu_System Menu[] = {
     { 0,1,       Jump_Menu_Op,          "此焊台",               Menu_NULL_IMG,              1,                                  0,          Menu_NULL_F},
     { 0,2,       Jump_Menu_Op,          "此系统",               Menu_NULL_IMG,              5,                                  0,          Menu_NULL_F},
     { 0,3,       F_Menu_Op,          "返回",               Menu_NULL_IMG,                0,                                  0,          *Save_Exit_Menu_System},
+    // { 0,4,       F_Menu_Op,          "测试",               Menu_NULL_IMG,                0,                                  0,          *(EnterLogo)},
    // { 0,4,       F_Menu_Op,          "重启",               Menu_NULL_IMG,                0,                                  0,          *(SYS_Reboot)},
  
     { 1,0,       Title_Menu_Op,         "此焊台",               Menu_NULL_IMG,              0,                                  1,          Menu_NULL_F},
@@ -500,6 +501,11 @@ void System_UI(void) {
                     Disp.setCursor(74, 24);
                     Disp.printf("%.1fV", Get_MainPowerVoltage());
                 }
+            }else{
+                //显示蓝牙图标
+                if (BLE_State && DisplayFlashTick % 2) {
+                    Draw_Slow_Bitmap(74, 0, IMG_BLE_S, 9, 11);
+                }
             }
 
             ///////////////////////////////////////////////////////////////////////////////////
@@ -520,18 +526,17 @@ void System_UI(void) {
 
             //右上角运行指示角标
             if (POWER > 0 && PWM_WORKY) {
-                uint8_t TriangleSize = map(POWER,0,255,6,0);
-                Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
+                uint8_t TriangleSize = map(POWER,0,255,16,0);
+                //Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
+                Disp.drawTriangle((119 - 12) + TriangleSize, 12, 125, 12, 125, (18 +12) - TriangleSize);
+                // Draw_Slow_Bitmap(114, 15, PositioningCursor, 8, 8);
                 //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
             }
 
 
-            Disp.setDrawColor(2);
-            //烙铁头配置序号角标
-            Disp.setCursor(115,2);
-            Disp.printf("%02d",TipID);
             
             /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
+            Disp.setDrawColor(2);
             //几何图形切割
             Disp.drawBox(0, 12, 96, 40);
             Disp.drawTriangle(96,12,96,52,125,42);
@@ -577,7 +582,7 @@ void Update_OLED_Light_Level(void) {
 
 void Update_OLED_Flip(void) {
     Disp.setFlipMode(ScreenFlip);
-    PopMsg_ScreenFlip();
+    if (Menu_System_State) PopMsg_ScreenFlip();
 }
 
 void PopMsg_RotaryDirection(void) {
@@ -605,7 +610,11 @@ void PopMsg_ScreenFlip(void) {
 uint8_t CheckBoxSelection[] = { 0xff,0xc0,0x80,0x40,0x80,0xc0,0x81,0xc0,0x81,0xc0,0x83,0x40,0x9b,0x40,0x8e,0x40,0x86,0x40,0xff,0xc0 };
 
 void Save_Exit_Menu_System(void) {
-    
+    //过渡离开
+    Disp.setDrawColor(0);
+    Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 66 * *Switch_space[SwitchSpace_SmoothAnimation]);
+    Disp.setDrawColor(1);
+
     //保存配置
     SYS_Save();
 
@@ -617,10 +626,7 @@ void Exit_Menu_System(void) {
     Menu_System_State = 0;
     Menu_JumpAndExit = false;
     Menu_JumpAndExit_Level = 255;
-    //过渡离开
-    Disp.setDrawColor(0);
-    Blur(0, 0, SCREEN_COLUMN, SCREEN_ROW, 4, 66 * *Switch_space[SwitchSpace_SmoothAnimation]);
-    Disp.setDrawColor(1);
+    
     //退出菜单后重新初始化主界面
     System_UI_Init();
 }
@@ -979,8 +985,6 @@ void Draw_APP(int x, int y, char* bitmap) {
 }
 
 
-int DEBUG_3=15;
-int DEBUG_4=123;
 static int Menu_Smooth_Animation_Y = 0;
 static int Menu_Smooth_Animation_Last_choose = 0;
 /*
@@ -1038,19 +1042,19 @@ void Menu_Control() {
                     //单选框
                 case 5:
                     if ((*Switch_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a] == Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].b)) {
-                        Draw_Slow_Bitmap(SCREEN_COLUMN - 32 - 1 + DEBUG_3, \
+                        Draw_Slow_Bitmap(SCREEN_COLUMN - 32 - 1 + 15, \
                             (i + Menu_Smooth_Animation[0].x) * 16 + 2, \
                             CheckBoxSelection, \
                             10, 10);
                     } else {
-                        Disp.drawFrame(SCREEN_COLUMN - 32 - 1 + DEBUG_3, \
+                        Disp.drawFrame(SCREEN_COLUMN - 32 - 1 + 15, \
                             (i + Menu_Smooth_Animation[0].x) * 16 + 2, \
                             10, 10);
                     }
                     //当前项高亮
                     if ((int)*Slide_space[Slide_space_Scroll].x == i) {
                         Disp.setDrawColor(2);
-                        Disp.drawBox(SCREEN_COLUMN - 32 - 2 + DEBUG_3, \
+                        Disp.drawBox(SCREEN_COLUMN - 32 - 2 + 15, \
                             (i + Menu_Smooth_Animation[0].x) * 16 + 1, \
                             12, 12);
                         Disp.setDrawColor(1);
@@ -1074,7 +1078,7 @@ void Menu_Control() {
         Disp.setDrawColor(2);
         Disp.drawRBox(0, \
                             ((int)*Slide_space[Slide_space_Scroll].x - Menu_Smooth_Animation[1].x) * 16, \
-                            *Switch_space[SwitchSpace_OptionStripFixedLength]?DEBUG_4:(Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name) - Menu_Smooth_Animation[2].x + 12 * (Menu[Pos_Id].x != 2) + 1), \
+                            *Switch_space[SwitchSpace_OptionStripFixedLength]?123:(Get_UTF8_Ascii_Pix_Len(1,Menu[Pos_Id].name) - Menu_Smooth_Animation[2].x + 12 * (Menu[Pos_Id].x != 2) + 1), \
                             CNSize + 2 , \
                             0);
         Disp.setDrawColor(1);
