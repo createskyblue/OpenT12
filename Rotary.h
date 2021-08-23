@@ -3,10 +3,6 @@
 #include <stdint.h>
 #include "Type.h"
 
-#define ROTARY_PIN1	16
-#define ROTARY_PIN2	17
-#define BUTTON_PIN	5
-
 #define ROTARY_TYPE 2
 
 extern uint8_t SYSKey;

@@ -19,7 +19,7 @@ OneButton RButton(BUTTON_PIN, true);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
-uint8_t DEBUG_MODE = true;
+uint8_t _MODE = true;
 
 //存档路径
 const char* SYS_SVAE_PATH = "/OpenT12.sav";
@@ -105,7 +105,9 @@ void setup() {
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器
+    // pinMode(LED_Pin, OUTPUT);       //软件运行指示LED
     pinMode(POWER_ADC_PIN, INPUT);  //主电压分压检测ADC
+
 
     //初始化烙铁头
     TipControlInit();
@@ -125,7 +127,7 @@ void setup() {
 
     ////////////////////////////初始化软件/////////////////////////////
     //显示启动信息
-    ShowBootMsg();
+    //ShowBootMsg();
 
     //启动文件系统，并读取存档
     FilesSystemInit();
@@ -197,7 +199,9 @@ void SYS_Reboot(void) {
 }
 
 void About(void) {
-
+    //播放Logo动画
+    EnterLogo();
+    //生成项目QRCode
     QRCode qrcode;
     uint8_t qrcodeData[qrcode_getBufferSize(3)];
 

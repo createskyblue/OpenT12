@@ -8,7 +8,8 @@ enum MOS_Type{
 };
 //PWM
 uint8_t PWM_Freq = 2000;    // 频率
-uint8_t PWM_Channel = 0;    // 通道
+uint8_t PWM1_Channel = 0;    // 通道
+uint8_t PWM2_Channel = 0;    // 通道
 uint8_t PWM_Resolution = 8;   // 分辨率
 //基础温控
 uint8_t MyMOS = PMOS;
@@ -29,8 +30,11 @@ float consKp = 20.0, consKi = 1, consKd = 0.5;
 void TipControlInit(void) {
     //初始化ADC输入GPIO
     pinMode(TIP_ADC_PIN, INPUT_PULLUP); //ADC
-    ledcAttachPin(PWM_PIN, PWM_Channel);  // 将通道与对应的引脚连接
-    ledcSetup(PWM_Channel, PWM_Freq, PWM_Resolution); // 设置通道
+
+    ledcAttachPin(PWM1_PIN, PWM1_Channel);  // 绑定PWM1通道
+    ledcAttachPin(PWM2_PIN, PWM2_Channel);  // 绑定PWM2通道
+    ledcSetup(PWM1_Channel, PWM_Freq, PWM_Resolution); // 设置PWM1通道
+    ledcSetup(PWM2_Channel, PWM_Freq, PWM_Resolution); // 设置PWM2通道
     SetPOWER(0); //关闭功率管输出
 
     //初始化SW-PIN休眠检测引脚
@@ -61,11 +65,14 @@ void PWMOutput(uint8_t pwm) {
         // printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
+
+        // //软件指示灯
+        // digitalWrite(LED_Pin ,LOW);
     }
     //printf("PWM:%d\n",pwm);
     if (LastPWM != pwm) {
-        if (pwm == 255) ledcWrite(PWM_Channel, 256);
-        else ledcWrite(PWM_Channel, pwm);
+        if (pwm == 255) ledcWrite(PWM1_Channel, 256);
+        else ledcWrite(PWM1_Channel, pwm);
 
         LastPWM = pwm;
     }
