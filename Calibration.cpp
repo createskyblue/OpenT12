@@ -63,9 +63,14 @@ void DrawTempCurve(void) {
 
 //校准界面
 void CalibrationTemperature(void) {
+    Pop_Windows("长按取消校准");
+    delay(1000);
+    
     //暂时解除菜单flag，安全机制在菜单开启的时候不允许加热
     Menu_System_State = 0;
-    Clear();
+
+    bool ExitCalibration_Flag = false;
+    uint8_t key=0;
     char buffer[20];
     uint16_t SetADC = 0;
     int ADC,LastADC;
@@ -110,20 +115,39 @@ void CalibrationTemperature(void) {
         Display();
 
         //处理按键
-        if (sys_KeyProcess()) {
-            delay(50);
-            Calibration_Input[i] = SetADC;
-            polyfit(i + 1, Calibration_Input, Calibration_Base, 3, TmpP);
-            i++;
+        key = sys_KeyProcess();
+        switch(key) {
+            case 1:
+            case 3:
+                delay(50);
+                Calibration_Input[i] = SetADC;
+                polyfit(i + 1, Calibration_Input, Calibration_Base, 3, TmpP);
+                i++;
+            break;
+
+            case 2:
+                ExitCalibration_Flag = true;
+                i = 255;
+            break;
+
+            default:break;
         }
     }
     //关闭功率管输出
     SetPOWER(0);
-    //进行曲线拟合
-    polyfit(FixNum, Calibration_Input, Calibration_Base, 3, PTemp);
-    Pop_Windows("曲线拟合完成!");
-    delay(800);
-    ShowCurveCoefficient();
+
+    //若中途退出，则不保存
+    if (!ExitCalibration_Flag) {
+        //进行曲线拟合
+        polyfit(FixNum, Calibration_Input, Calibration_Base, 3, PTemp);
+        Pop_Windows("曲线拟合完成!");
+        delay(800);
+        ShowCurveCoefficient();
+    }else{
+        Pop_Windows("取消校准");
+        delay(1000);
+    }
+    
 
     Menu_System_State = 1;
 }

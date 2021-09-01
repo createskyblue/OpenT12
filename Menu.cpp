@@ -928,7 +928,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
         if (Menu_System_State) Next_Menu();         //由于执行函数可能会导致菜单状态被更改，所以这里需要确定菜单状态
         break;
     case 1:
-        Pop_Windows("正在处理");
+        //Pop_Windows("正在处理");
         if (Menu[Id].function) Menu[Id].function();
         MenuSYS_SetCounter();
         break;
