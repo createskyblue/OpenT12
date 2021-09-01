@@ -73,7 +73,7 @@ float ADC_PID_Cycle = 100;
 
 //面板状态条
 uint8_t TempCTRL_Status = TEMP_STATUS_OFF;
-const unsigned char* C_table[] = { c1, c2, c3, Lightning, c5, c6, c7 };
+uint8_t* C_table[] = { c1, c2, c3, Lightning, c5, c6, c7 };
 char* TempCTRL_Status_Mes[]={
     "错误",
     "停机",
