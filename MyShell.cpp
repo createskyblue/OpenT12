@@ -67,28 +67,28 @@ void ShellGetTipTemp(void){
 
 void shellInit(void) {
     shell_init(shell_reader, shell_writer, 0);
-    shell_register(command_test, PSTR("test"));
+    shell_register((shell_program_t)command_test, PSTR("test"));
 
-    shell_register(SetPIDSampleTime, PSTR("SetPID_ST"));
-    shell_register(SetTargetTemperature, PSTR("SetTemp"));
-    shell_register(SetPID_P, PSTR("SetPID_P"));
-    shell_register(SetPID_I, PSTR("SetPID_I"));
-    shell_register(SetPID_D, PSTR("SetPID_D"));
+    shell_register((shell_program_t)SetPIDSampleTime, PSTR("SetPID_ST"));
+    shell_register((shell_program_t)SetTargetTemperature, PSTR("SetTemp"));
+    shell_register((shell_program_t)SetPID_P, PSTR("SetPID_P"));
+    shell_register((shell_program_t)SetPID_I, PSTR("SetPID_I"));
+    shell_register((shell_program_t)SetPID_D, PSTR("SetPID_D"));
 
-    shell_register(SetK_Q, PSTR("SetK_Q"));
-    shell_register(SetK_R, PSTR("SetK_R"));
+    shell_register((shell_program_t)SetK_Q, PSTR("SetK_Q"));
+    shell_register((shell_program_t)SetK_R, PSTR("SetK_R"));
 
-    shell_register(SetEasyCursor, PSTR("SetEasyCursor"));
-    shell_register(OLED_ScreenshotInit, PSTR("OLED_ScreenshotInit"));
+    shell_register((shell_program_t)SetEasyCursor, PSTR("SetEasyCursor"));
+    shell_register((shell_program_t)OLED_ScreenshotInit, PSTR("OLED_ScreenshotInit"));
 
     //模拟控制输入
-    shell_register(RotaryUp, PSTR("RotaryUp"));
-    shell_register(RotaryDown, PSTR("RotaryDown"));
-    shell_register(sys_Counter_click, PSTR("sys_Counter_click"));
-    shell_register(sys_Counter_doubleclick, PSTR("sys_Counter_doubleclick"));
-    shell_register(sys_Counter_longclick, PSTR("sys_Counter_longclick"));
+    shell_register((shell_program_t)RotaryUp, PSTR("RotaryUp"));
+    shell_register((shell_program_t)RotaryDown, PSTR("RotaryDown"));
+    shell_register((shell_program_t)sys_Counter_click, PSTR("sys_Counter_click"));
+    shell_register((shell_program_t)sys_Counter_doubleclick, PSTR("sys_Counter_doubleclick"));
+    shell_register((shell_program_t)sys_Counter_longclick, PSTR("sys_Counter_longclick"));
 
-    shell_register(ShellGetTipTemp, PSTR("ShellGetTipTemp"));
+    shell_register((shell_program_t)ShellGetTipTemp, PSTR("ShellGetTipTemp"));
 
 
     // shell_register(SetEventTimer, PSTR("SetEventTimer"));

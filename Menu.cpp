@@ -975,7 +975,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     }
 }
 
-void Draw_APP(int x, int y, char* bitmap) {
+void Draw_APP(int x, int y, uint8_t* bitmap) {
     Disp.setDrawColor(1);
     Disp.drawRBox(x - 3, y - 3, 42 + 6, 42 + 6, 4);
     Disp.setDrawColor(0);
@@ -1027,7 +1027,7 @@ void Menu_Control() {
 
                     //开关控件
                 case 3:
-                    Draw_Utf(SCREEN_COLUMN - 32 - 1, (i + Menu_Smooth_Animation[0].x) * 16 + 1, *Switch_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a] ? "开启" : "关闭");
+                    Draw_Utf(SCREEN_COLUMN - 32 - 1, (i + Menu_Smooth_Animation[0].x) * 16 + 1, *Switch_space[Menu[Get_Menu_Id(real_Level_Id, MenuLevel[real_Level_Id].x + i)].a] ? (char*)"开启" : (char*)"关闭");
                     break;
 
                     //滑动条

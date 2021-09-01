@@ -85,7 +85,7 @@ struct Menu_System {
 	uint8_t id;      //选项id
 	uint8_t x;       //执行操作 0-跳转到菜单 1-执行函数 2-菜单名 3-开关控件 4-滑动条控件
 	char* name;  //选项名称
-	char* icon;
+	uint8_t* icon;
 	uint8_t a; //附加参数_1 (0-jump_Level_id) (3-开关id) (4-滑动条id)
 	uint8_t b; //附加参数_2 (0-jump_id) (4-滑动条：true?执行函数:无操作)
 	void (*function)();
