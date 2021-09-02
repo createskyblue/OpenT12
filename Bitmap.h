@@ -54,7 +54,9 @@ extern uint8_t IMG_Trigger[];
 extern uint8_t IMG_VibrationSwitch[];  
 extern uint8_t IMG_ReedSwitch[];       
 extern uint8_t IMG_BLE[];              
+extern uint8_t IMG_ListMode[];
 
+extern uint8_t IMG_Load[];
 extern uint8_t PositioningCursor[];
 extern uint8_t Pointer[];          
 extern uint8_t Lightning[];        

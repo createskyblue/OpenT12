@@ -37,6 +37,7 @@ void Update_OLED_Flip(void);
 
 void PopMsg_RotaryDirection(void);
 void PopMsg_ScreenFlip(void);
+void PopMsg_ListMode(void);
 void SYS_About(void);
 
 /*

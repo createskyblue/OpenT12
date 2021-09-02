@@ -50,6 +50,7 @@ enum Switch_space_Obj{
     SwitchSpace_TipID,
 
     SwitchSpace_BLE_State,
+    SwitchSpace_MenuListMode,
 };
 uint8_t *Switch_space[] = {
     &SmoothAnimation_Flag,
@@ -66,6 +67,7 @@ uint8_t *Switch_space[] = {
     &TipID,
 
     &BLE_State,
+    &MenuListMode,
 };
 
 /*
@@ -190,7 +192,7 @@ struct Menu_Level_System MenuLevel[] = {
     {4,0,0,5,Menu_HAVE_IMG},
     {5,0,0,7,Menu_HAVE_IMG},
     {6,0,0,5,Menu_HAVE_IMG},
-    {7,0,0,6,Menu_HAVE_IMG},
+    {7,0,0,7,Menu_HAVE_IMG},
     {8,0,0,2,Menu_HAVE_IMG},
     {9,0,0,9,Menu_NULL_IMG},
     {10,0,0,2,Menu_HAVE_IMG},
@@ -258,20 +260,20 @@ struct Menu_System Menu[] = {
     { 2,5,     F_Menu_Op,             "新建",               IMG_Files,              0,                                  0,     *NewTipConfig},
     { 2,6,     F_Menu_Op,             "重命名",             IMG_Pen2,              0,                                  0,      *TipRename},
     { 2,7,     F_Menu_Op,             "删除",               Set10,              0,                                  0,         *TipDel},
-    { 2,8,       Jump_Menu_Op,          "缓存",               Save,              1,                                  1,          *SaveTipConfig},
+    { 2,8,       Jump_Menu_Op,          "返回",               Save,              1,                                  1,          *SaveTipConfig},
  
     { 3,0,       Title_Menu_Op,         "温度场景",               Menu_NULL_IMG,              1,                                  2,          Menu_NULL_F},
     { 3,1,       Progress_Bar_Menu_Op,  "启动温度",         Set13,              Slide_space_BootTemp,                                  0,          Menu_NULL_F},
     { 3,2,       Progress_Bar_Menu_Op,  "提温温度",         Set14,              Slide_space_BoostTemp,                                  0,          Menu_NULL_F},
     { 3,3,       Progress_Bar_Menu_Op,  "休眠温度",         Set11,              Slide_space_SleepTemp,                                  0,          Menu_NULL_F},
-    { 3,4,       Jump_Menu_Op,          "缓存",                  Save,              1,                                  2,          Menu_NULL_F},
+    { 3,4,       Jump_Menu_Op,          "返回",                  Save,              1,                                  2,          Menu_NULL_F},
  
     { 4,0,       Title_Menu_Op,         "定时场景",               Menu_NULL_IMG,              1,                                  3,          Menu_NULL_F},
     { 4,1,       Progress_Bar_Menu_Op,  "停机触发(分)",         Set13,              Slide_space_ShutdownTime,                                               0,          Menu_NULL_F},
     { 4,2,       Progress_Bar_Menu_Op,  "提温时长(秒)",         Set14,              Slide_space_BoostTime,                                                0,          Menu_NULL_F},
     { 4,3,       Progress_Bar_Menu_Op,  "休眠触发(分)",         Set11,              Slide_space_SleepTime,                                                0,          Menu_NULL_F},
     { 4,4,       Progress_Bar_Menu_Op,  "屏保触发(秒)",         Set4,              Slide_space_ScreenProtectorTime,                0,          Menu_NULL_F},
-    { 4,5,       Jump_Menu_Op,          "缓存",                  Save,              1,                                  3,          Menu_NULL_F},
+    { 4,5,       Jump_Menu_Op,          "返回",                  Save,              1,                                  3,          Menu_NULL_F},
  
     { 5,0,       Title_Menu_Op,         "此系统",               Menu_NULL_IMG,              0,                                  2,          Menu_NULL_F},
     { 5,1,       Jump_Menu_Op,          "个性化",               IMG_Pen,              6,                                  0,          Menu_NULL_F},
@@ -295,7 +297,8 @@ struct Menu_System Menu[] = {
     { 7,3,       Jump_Menu_Op,          "过渡动画",               IMG_Animation,    11,                                  0,          Menu_NULL_F},
     { 7,4,       Progress_Bar_Menu_Op,  "屏幕亮度",               IMG_Sun,          Slide_space_ScreenBrightness,        1,          *Update_OLED_Light_Level},
     { 7,5,       Jump_Menu_Op,          "选项条定宽",             IMG_Size,              9,                                  0,          Menu_NULL_F},
-    { 7,6,       Jump_Menu_Op,          "返回",                  Set7,              6,                                  1,          Menu_NULL_F},
+    { 7,6,       Switch_Menu_Op,        "列表模式",             IMG_ListMode,       SwitchSpace_MenuListMode,                                  0,          *PopMsg_ListMode},
+    { 7,7,       Jump_Menu_Op,          "返回",                  Set7,              6,                                  1,          Menu_NULL_F},
  
     { 8,0,       Title_Menu_Op,         "面板设置",               Menu_NULL_IMG,              7,                                  1,          Menu_NULL_F},
     { 8,1,       SingleBox_Menu_Op,     "简约",               Set17,              SwitchSpace_PanelSettings,                     0,          *JumpWithTitle},
@@ -352,13 +355,13 @@ struct Menu_System Menu[] = {
     { 17,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_AP,                 0,          Menu_NULL_F },
     { 17,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_AI,                 0,          Menu_NULL_F },
     { 17,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_AD,                 0,          Menu_NULL_F },
-    { 17,4,       Jump_Menu_Op,          "缓存",                   Menu_NULL_IMG,           16,                                 1,          *SaveTipConfig },
+    { 17,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 1,          *SaveTipConfig },
 
     { 18,0,       Title_Menu_Op,         "PID接近期",             Menu_NULL_IMG,            16,                                 2,          *SaveTipConfig },
     { 18,1,       Progress_Bar_Menu_Op,  "比例P",               Menu_NULL_IMG,              Slide_space_PID_CP,                 0,          Menu_NULL_F },
     { 18,2,       Progress_Bar_Menu_Op,  "积分I",               Menu_NULL_IMG,              Slide_space_PID_CI,                 0,          Menu_NULL_F },
     { 18,3,       Progress_Bar_Menu_Op,  "微分D",               Menu_NULL_IMG,              Slide_space_PID_CD,                 0,          Menu_NULL_F },
-    { 18,4,       Jump_Menu_Op,          "缓存",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
+    { 18,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,           16,                                 2,          *SaveTipConfig },
 
     { 19,0,       Title_Menu_Op,         "温控设置",             Menu_NULL_IMG,            1,                                 4,          Menu_NULL_F },
     { 19,1,       Switch_Menu_Op,        "PID状态",               Menu_NULL_IMG,           SwitchSpace_PIDMode,                                0,          Menu_NULL_F },
@@ -377,12 +380,12 @@ struct Menu_System Menu[] = {
     { 21,1,       Progress_Bar_Menu_Op,  "温差>150",               Menu_NULL_IMG,          Slide_space_ADC_PID_Cycle_List_0,   0,          Menu_NULL_F },
     { 21,2,       Progress_Bar_Menu_Op,  "温差>50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_1,   0,          Menu_NULL_F },
     { 21,3,       Progress_Bar_Menu_Op,  "温差≤50",               Menu_NULL_IMG,           Slide_space_ADC_PID_Cycle_List_2,   0,          Menu_NULL_F },
-    { 21,4,       Jump_Menu_Op,          "缓存",                   Menu_NULL_IMG,          19,                                 3,          Menu_NULL_F },
+    { 21,4,       Jump_Menu_Op,          "返回",                   Menu_NULL_IMG,          19,                                 3,          Menu_NULL_F },
 
     { 22,0,       Title_Menu_Op,         "蓝牙",             Menu_NULL_IMG,            5,                                 2,          Menu_NULL_F },
     { 22,1,       Switch_Menu_Op,        "状态",               Menu_NULL_IMG,         SwitchSpace_BLE_State,   0,          *BLE_Restart },
     { 22,2,       F_Menu_Op,             "设备名称",          Menu_NULL_IMG,          22,   2,          *BLE_Rename },
-    { 22,3,       Jump_Menu_Op,          "缓存",               Menu_NULL_IMG,          5,                                 2,          Menu_NULL_F },
+    { 22,3,       Jump_Menu_Op,          "返回",               Menu_NULL_IMG,          5,                                 2,          Menu_NULL_F },
 };
 /***
  * @description: 快速打开烙铁列表
@@ -503,9 +506,7 @@ void System_UI(void) {
                 }
             }else{
                 //显示蓝牙图标
-                if (BLE_State && DisplayFlashTick % 2) {
-                    Draw_Slow_Bitmap(74, 0, IMG_BLE_S, 9, 11);
-                }
+                if (BLE_State) Draw_Slow_Bitmap(92, 25, IMG_BLE_S, 9, 11);
             }
 
             ///////////////////////////////////////////////////////////////////////////////////
@@ -587,17 +588,26 @@ void Update_OLED_Flip(void) {
 
 void PopMsg_RotaryDirection(void) {
     char buffer[20];
-    sprintf(buffer, "编码器:%s", (RotaryDirection==1)?"顺时针":"逆时针");
+    sprintf(buffer, "编码器:%s", (RotaryDirection == true) ? "顺时针" : "逆时针");
     Pop_Windows(buffer);
     delay(500);
 }
 
 void PopMsg_ScreenFlip(void) {
     char buffer[20];
-    sprintf(buffer, "%s", (ScreenFlip == 1) ? "翻转显示" : "正常显示");
+    sprintf(buffer, "%s", (ScreenFlip == true) ? "翻转显示" : "正常显示");
     Pop_Windows(buffer);
     delay(500);
 }
+
+void PopMsg_ListMode(void) {
+    char buffer[20];
+    sprintf(buffer, "%s", (MenuListMode == true) ? "列表模式" : "图标模式");
+    Pop_Windows(buffer);
+    delay(500);
+    Next_Menu();
+}
+
 
 /*/////////////////////////////////////////////////////////////////////
 
@@ -787,8 +797,9 @@ int Get_Menu_Id(uint8_t lid, uint8_t id) {
 void MenuSYS_SetCounter() {
     if (!Menu_System_State) return;
     printf("菜单系统设置编码器\n");
-    if (!MenuLevel[real_Level_Id].a || SCREEN_ROW <= 32) {
+    if (!MenuLevel[real_Level_Id].a || MenuListMode || SCREEN_ROW <= 32) {
         //设置编码器滚动范围
+        MenuLevel[real_Level_Id].min = 0;   //重置选项最小值：从图标模式切换到列表模式会改变该值
         uint8_t MinimumScrolling = min((int)Slide_space[Slide_space_Scroll].max, (int)MenuLevel[real_Level_Id].max);
         sys_Counter_Set((int)Slide_space[Slide_space_Scroll].min, MinimumScrolling + 1, 1, (int)*Slide_space[Slide_space_Scroll].x + (1)); //+(1) 是因为实际上计算会-1 ,这里要补回来
         
@@ -897,7 +908,7 @@ void Run_Menu_Id(uint8_t lid, uint8_t id) {
     case 2:
         LastMenuLevelId = MenuLevelId; //决定是否播放转场动画
         MenuLevelId = Menu[Id].a;
-        if (!MenuLevel[Menu[Id].a].a) { //如果当前菜单层没有开启了图表化显示则对子菜单选项定向跳转执行配置
+        if (!MenuLevel[Menu[Id].a].a || MenuListMode) { //如果当前菜单层没有开启了图表化显示则对子菜单选项定向跳转执行配置
 
             uint8_t ExcellentLimit = (MenuLevel[MenuLevelId].max + 1) - SCREEN_FONT_ROW; //(MenuLevel[MenuLevelId].max + 1)是为了从1开始计算
             uint8_t ExcellentMedian = (SCREEN_FONT_ROW/2); //注意：这里从1开始计数
@@ -1005,7 +1016,7 @@ void Menu_Control() {
     Pos_Id = Get_Menu_Id(MenuLevel[real_Level_Id].id, MenuLevel[real_Level_Id].x + (int)*Slide_space[Slide_space_Scroll].x);
 
     //若当前菜单层级没有开题图标化则使用普通文本菜单的模式进行渲染显示 若屏幕分辨率低于128*32 则强制启用文本菜单模式
-    if (!MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].a || SCREEN_ROW <= 32) {
+    if (!MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].a || MenuListMode || SCREEN_ROW <= 32) {
 
         //分别获取 菜单层、菜单项 索引值
         //int id = Get_Menu_Id(MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].id, MenuLevel[Get_Real_Menu_Level_Id(MenuLevelId)].x);
@@ -1086,9 +1097,11 @@ void Menu_Control() {
         //项目滚动处理
         *Slide_space[Slide_space_Scroll].x = sys_Counter_Get() - 1;
         if ((int)*Slide_space[Slide_space_Scroll].x >= Slide_space[Slide_space_Scroll].max) {
+            Log(LOG_INFO, "尝试往下滚动");
             MenuLevel[real_Level_Id].x++;
             sys_Counter_SetVal(Slide_space[Slide_space_Scroll].max);
         }else if ((int)*Slide_space[Slide_space_Scroll].x <= -1) {
+            Log(LOG_INFO,"尝试往上滚动");
             MenuLevel[real_Level_Id].x--;
             sys_Counter_SetVal(1);
         }

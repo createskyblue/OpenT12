@@ -155,6 +155,7 @@ extern double SYS_Voltage;
 extern float  UndervoltageAlert;
 extern char BootPasswd[20];
 extern uint8_t Language;
+extern uint8_t MenuListMode;
 
 extern float ADC_PID_Cycle;
 
