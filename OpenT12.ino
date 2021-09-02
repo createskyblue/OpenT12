@@ -21,8 +21,6 @@ PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRE
 /////////////////////////////////////////////////////////////////
 uint8_t _MODE = true;
 
-//存档路径
-const char* SYS_SVAE_PATH = "/OpenT12.sav";
 char* TipName = "文件系统错误：请上报";
 
 float BootTemp = 300;      //开机温度          (°C)

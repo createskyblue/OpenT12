@@ -96,7 +96,7 @@ void Log(MESSAGETYPE type, char* s);
 void SYS_Reboot(void);
 void About(void);
 
-extern const char* SYS_SVAE_PATH;
+
 extern uint64_t ChipMAC;
 extern char ChipMAC_S[19];
 extern char CompileTime[20];

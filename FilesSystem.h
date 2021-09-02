@@ -4,6 +4,8 @@
 #include "FS.h"
 #include "SPIFFS.h"
 
+extern char SYS_SVAE_PATH[];
+
 void FilesSystemInit(void);
 
 void SYS_Save(void);

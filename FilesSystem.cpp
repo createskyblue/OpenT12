@@ -1,4 +1,6 @@
 #include "OpenT12.h"
+//存档路径
+char SYS_SVAE_PATH[50] = "/OpenT12.sav";
 
 void SYS_Save(void) {
     //关闭中断

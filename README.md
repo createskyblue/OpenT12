@@ -34,7 +34,7 @@ https://www.bilibili.com/video/BV1s64y1v7mY/
 - [x] 可通过菜单设置独立ADC/PID采样周期，卡尔曼滤波器参数
 - [x] 9段烙铁头温度拟合校准
 - [ ] 温度自校准电路（未实现）
-- [x] 自定义显示效果：亮度、翻转平面、过渡动画、显示样式
+- [x] 自定义显示效果：亮度、翻转平面、过渡动画、显示样式、列表模式
 - [x] 个性化自定义：提示音、编码器旋转方向、手柄触发模式、系统语言(暂时只支持简体中文)
 - [x] 安全保护设置：自定义开机密码、欠压警报、强制关机提示警告
 - [x] 蓝牙远程命令行控制
@@ -83,26 +83,60 @@ https://www.bilibili.com/video/BV1s64y1v7mY/
 - 添加新烙铁配置时，默认参数为空，需要自行校准温度以及设置参数
 - 主菜单中 **长按** 可以返回上一级
 
-##  展示
+## 编译安装
+安装ArduinoIDE
+
+### 安装ESP32开发板
+ArduinoIDE-文件-首选项-附加开发板管理网址->添加:
+
+https://dl.espressif.com/dl/package_esp32_index.json
+
+![](img/readme/ArduinoIDE_1.jpg)
+![](img/readme/ArduinoIDE_2.jpg)
+
+ArduinoIDE-工具-开发板-开发板管理器->搜索并安装:ESP32
+
+![](img/readme/ArduinoIDE_3.jpg)
+
+### 选择ESP32并配置编译选项
+
+选择开发板ESP32 Dev Module
+![](img/readme/ArduinoIDE_4.jpg)
+
+最低配置需要4MB的Flash空间(Minimal SPIFFS 1.9MB APP with OTA/190KB SPIFFS)
+![](img/readme/Esp32_IDE_Set.jpg)
+
+### 编译并上传到开发板
+
+![](img/readme/ArduinoIDE_5.jpg)
+![](img/readme/ArduinoIDE_6.jpg)
+
+## 展示
+<center>👇主页面</center>
+
 ![](img/OLED_ScreenshotInit/加热.png)
 ![](img/OLED_ScreenshotInit/错误.png)
-<center>👆主页面</center>
+
+<center>👇支持保存多组不同的独立烙铁头配置（PID与温度系数统统独立）</center>
 
 ![](img/OLED_ScreenshotInit/配置列表.png)
-<center>👆支持保存多组不同的独立烙铁头配置（PID与温度系数统统独立）</center>
+
+<center>👇9阶温度系数校准</center>
 
 ![](img/OLED_ScreenshotInit/温度系数.png)
 ![](img/OLED_ScreenshotInit/校准页面.png)
-<center>👆9阶温度系数校准</center>
+
+<center>👇支持中文输入</center>
 
 ![](img/OLED_ScreenshotInit/重命名.png)
-<center>👆支持中文输入</center>
+
+<center>👇每个烙铁头可以设置两组PID</center>
 
 ![](img/OLED_ScreenshotInit/PID.png)
 ![](img/OLED_ScreenshotInit/修改PID.png)
-<center>👆每个烙铁头可以设置两组PID</center>
+
+<center>👇个性化设置</center>
 
 ![](img/OLED_ScreenshotInit/温度场景.png)
 ![](img/OLED_ScreenshotInit/翻转屏幕.png)
 ![](img/OLED_ScreenshotInit/密码输入.png)
-<center>👆个性化设置</center>
