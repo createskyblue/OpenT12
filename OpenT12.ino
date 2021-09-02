@@ -68,6 +68,7 @@ double  SYS_Voltage = 3.3;
 float   UndervoltageAlert = 3;
 char    BootPasswd[20] = { 0 };
 uint8_t Language = LANG_Chinese;
+uint8_t MenuListMode = false;
 
 float ADC_PID_Cycle = 100;
 

@@ -59,6 +59,8 @@ void SYS_Save(void) {
     file.write((uint8_t*)&BLE_State, sizeof(BLE_State));
     file.write((uint8_t*)&BLE_name, sizeof(BLE_name));
 
+    file.write((uint8_t*)&MenuListMode, sizeof(MenuListMode));
+
     file.close();
     Log(LOG_OK, "存档保存成功!");
  
@@ -72,7 +74,7 @@ void SYS_Load(void) {
 
     //软盘图标
     DrawMsgBox("加载中");
-    Draw_Slow_Bitmap_Resize(128 - 28 - 4, 64 - 28 - 4, Load + 1, Load[0], Load[0], 28, 28);
+    Draw_Slow_Bitmap(128 - 28 - 4, 64 - 28 - 4, IMG_Load, 28, 28);
     Display();
 
     File file = SPIFFS.open(SYS_SVAE_PATH);
@@ -133,6 +135,8 @@ void SYS_Load(void) {
 
     file.read((uint8_t*)&BLE_State, sizeof(BLE_State));
     file.read((uint8_t*)&BLE_name, sizeof(BLE_name));
+
+    file.read((uint8_t*)&MenuListMode, sizeof(MenuListMode));
 
     file.close();
     
