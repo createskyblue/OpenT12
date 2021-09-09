@@ -209,7 +209,8 @@ void About(void) {
 
     switch (Language) {
         case LANG_Chinese:
-            qrcode_initText(&qrcode, qrcodeData, 3, 0, "https://gitee.com/createskyblue/OpenT12");
+            // qrcode_initText(&qrcode, qrcodeData, 3, 0, "https://gitee.com/createskyblue/OpenT12");   //禁用Gitee源:注册不方便
+            qrcode_initText(&qrcode, qrcodeData, 3, 0, "https://github.com/createskyblue/OpenT12");
         break;
 
         default:
