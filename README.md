@@ -4,6 +4,16 @@
 
 本控制器除了控制普通焊台以外，只需通过稍作修改，还可以控制其他非焊台的自动化设备
 
+## 硬件
+
+[LCEDA/EasyEDA]https://oshwhub.com/createskyblue/opent12-jing-jian-ban  
+[核心驱动电路参考]https://oshwhub.com/47415Y/gong-cheng
+
+**注意：电路板未经验证**  
+**Note: the circuit board is not verified**
+
+![PCB_V1.0](img/readme/Pcb_V1.0.png)
+
 ## 视频
 ![](img/OLED_ScreenshotInit/爆发.png)
 https://www.bilibili.com/video/BV1s64y1v7mY/
