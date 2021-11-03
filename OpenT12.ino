@@ -142,9 +142,6 @@ void setup() {
     //初始化蓝牙（可选）
     BLE_Init();
 
-    //初始化UI
-    System_UI_Init();
-
     //首次启动的时候根据启动温度配置，重新设定目标温度
     sys_Counter_SetVal(BootTemp);
 
@@ -160,6 +157,11 @@ void setup() {
     while (!EnterPasswd()) {
         Pop_Windows("身份验证失败");
     }
+
+    //初始化UI
+    System_UI_Init();
+
+
     SYS_Ready = true;
     
     // ShutdownEventLoop();
