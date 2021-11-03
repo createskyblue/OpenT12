@@ -9,7 +9,7 @@ void shellInit(void);
 void ShellLoop(void);
 int shell_reader(char* data);
 void shell_writer(char data);
-void shell_SendDatas(uint8_t buf[], uint32_t size); //发送协议包数据
+void shell_SendDatas(uint8_t buf[], uint32_t size); //鍙戦�佸崗璁寘鏁版嵁
 int command_test(int argc, char** argv);
 
 void OLED_ScreenshotInit(void);

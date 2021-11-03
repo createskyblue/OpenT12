@@ -37,12 +37,14 @@ extern uint32_t PlayTonesTimer;
 extern uint16_t PlayTonesDelayTime;
 extern uint16_t PlayTones_Schedule;
 extern TONE*    MySound;
-//µ×²ãº¯Êý
+
+extern bool PlaySoundLoopState;
+//åº•å±‚å‡½æ•°
 void BeepInit(void);
 void SetTone(double freq);
 double GetNote(note_t note, uint8_t rp);
 void SetNote(note_t note, uint8_t rp);
-//¸ß²ãÓ¦ÓÃ
+//é«˜å±‚åº”ç”¨
 void SetSound(TONE sound[]);
 void PlaySoundLoop(void);
 uint8_t PlayTones(TONE sound[], uint16_t* Schedule);
