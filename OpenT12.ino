@@ -106,6 +106,7 @@ void setup() {
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器
+    
     // pinMode(LED_Pin, OUTPUT);       //软件运行指示LED
     pinMode(POWER_ADC_PIN, INPUT);  //主电压分压检测ADC
 
@@ -126,6 +127,8 @@ void setup() {
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
 
+    
+
     ////////////////////////////初始化软件/////////////////////////////
     //显示启动信息
     //ShowBootMsg();
@@ -139,8 +142,6 @@ void setup() {
     //初始化蓝牙（可选）
     BLE_Init();
 
-    SetSound(BootSound); //播放音效
-
     //初始化UI
     System_UI_Init();
 
@@ -150,15 +151,18 @@ void setup() {
     //载入烙铁头配置
     LoadTipConfig();
 
+    SetSound(BootSound); //播放音效
+
     //显示Logo
     EnterLogo();
-
+    
     //开机密码
     while (!EnterPasswd()) {
         Pop_Windows("身份验证失败");
     }
     SYS_Ready = true;
-
+    
+    // ShutdownEventLoop();
 }
 
 void loop() {

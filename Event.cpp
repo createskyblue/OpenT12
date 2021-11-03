@@ -202,6 +202,8 @@ void SYS_StateCode_Update(void) {
 void ShutdownEventLoop(void) {
     //尝试关闭功率管输出
     SetPOWER(0);
+    //关闭Display()中的PlaySoundLoop
+    PlaySoundLoopState = false;
 
     //屏保以及警示画面
     while(1) {

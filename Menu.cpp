@@ -514,7 +514,7 @@ void System_UI(void) {
             Disp.setFont(u8g2_font_logisoso38_tr);
             Disp.setCursor(0,12);
 
-            if (TempCTRL_Status == TEMP_STATUS_ERROR) {
+            if (TempCTRL_Status == TEMP_STATUS_ERROR || ERROREvent) {
                 if ((millis() / 250) % 2) Disp.print("---");
             }else {
                 //如果温度波动足够小，则显示当前温度为设定温度
