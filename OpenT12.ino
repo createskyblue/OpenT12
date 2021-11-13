@@ -16,7 +16,9 @@ BluetoothSerial SerialBT;
 #endif
 
 OneButton RButton(BUTTON_PIN, true);
-U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI Disp(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
+U8G2_SSD1306_128X64_NONAME_F_4W_HW_SPI Disp(U8G2_R0, /* cs=*/ 5, /* dc=*/ 13, /* reset=*/ 15);
 PID MyPID(&TipTemperature, &PID_Output, &PID_Setpoint, aggKp, aggKi, aggKd, DIRECT);
 /////////////////////////////////////////////////////////////////
 uint8_t _MODE = true;
@@ -58,7 +60,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = true;
+uint8_t Volume = false;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -102,7 +104,7 @@ void setup() {
     for (uint8_t i = 0;i < 6;i++)  sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
 
     //初始化串口
-    Serial.begin(921600);
+    Serial.begin(115200);
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器
@@ -119,7 +121,7 @@ void setup() {
 
     //初始化OLED
     Disp.begin();
-    Disp.setBusClock(921600);
+    // Disp.setBusClock(921600);
     Disp.enableUTF8Print();
     Disp.setFontDirection(0);
     Disp.setFontPosTop();
@@ -197,8 +199,8 @@ double Get_MainPowerVoltage(void) {
     double TipADC_V_R2 = analogReadMilliVolts(POWER_ADC_PIN) / 1000.0;
     //double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
     double   TipADC_V_R1 = (TipADC_V_R2*POWER_ADC_VCC_R1)/POWER_ADC_R2_GND;
-
     SYS_Voltage = TipADC_V_R1 + TipADC_V_R2;
+    // printf("电压:%lf V\n", SYS_Voltage);
     return SYS_Voltage;
 }
 

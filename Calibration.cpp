@@ -72,23 +72,31 @@ void CalibrationTemperature(void) {
     bool ExitCalibration_Flag = false;
     uint8_t key=0;
     char buffer[20];
-    uint16_t SetADC = 0;
+    int SetADC = 0;
     int ADC,LastADC;
     double TmpP[FixNum] = {0.0};
-    sys_Counter_Set(0, 4095, 1, 0);
+
+    //暂时清除烙铁头不存在的错误状态：否则输出上锁
+    ERROREvent = false;
+
+    sys_Counter_Set(0, 4095, 1, GetADC0());
+
     for (uint8_t i = 0;i < FixNum;) {
         Clear();
 
-        SetADC = sys_Counter_Get();
+        SetADC = (int)sys_Counter_Get();
 
         ADC = GetADC0();
         //加热
         if (ADC!=-1) {
             LastADC = ADC;
-            
+            Log(LOG_INFO, "[校准]ADC获取成功");
             if (LastADC < SetADC) SetPOWER(255);
-            else SetPOWER(0);
-        }
+            else {
+                printf("%d >= %d\n", LastADC, SetADC);
+                SetPOWER(0);
+            }
+        }else Log(LOG_INFO,"ADC错误");
         
         //绘制参考文字
 

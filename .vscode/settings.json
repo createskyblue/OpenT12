@@ -37,6 +37,7 @@
         "ios": "cpp",
         "functional": "cpp",
         "memory": "cpp",
-        "shell.h": "c"
+        "shell.h": "c",
+        "numeric": "cpp"
     }
 }

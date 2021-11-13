@@ -50,8 +50,8 @@
 #define SW_PIN        4
 
 //计算主电源电压
-#define POWER_ADC_VCC_R1 47000
-#define POWER_ADC_R2_GND 4700
+#define POWER_ADC_VCC_R1 10
+#define POWER_ADC_R2_GND 1
 
 #define CNSize 12
 #define SCREEN_COLUMN 128
@@ -105,7 +105,8 @@ extern hw_timer_t* SoundTimer;
 
 extern BluetoothSerial SerialBT;
 extern OneButton RButton;
-extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
+// extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp;
+extern U8G2_SSD1306_128X64_NONAME_F_4W_HW_SPI Disp;
 extern PID MyPID;
 extern KFP KFP_Temp;
 
