@@ -9,10 +9,10 @@ enum MOS_Type{
 //PWM
 uint8_t PWM_Freq = 2000;    // 频率
 uint8_t PWM1_Channel = 0;    // 通道
-uint8_t PWM2_Channel = 0;    // 通道
+// uint8_t PWM2_Channel = 0;    // 通道
 uint8_t PWM_Resolution = 8;   // 分辨率
 //基础温控
-uint8_t MyMOS = PMOS;
+uint8_t MyMOS = NMOS;
 uint8_t POWER = 0;
 uint8_t PWM = 0;
 uint8_t LastPWM = 0;
@@ -32,9 +32,9 @@ void TipControlInit(void) {
     pinMode(TIP_ADC_PIN, INPUT_PULLUP); //ADC
 
     ledcAttachPin(PWM1_PIN, PWM1_Channel);  // 绑定PWM1通道
-    ledcAttachPin(PWM2_PIN, PWM2_Channel);  // 绑定PWM2通道
+    // ledcAttachPin(PWM2_PIN, PWM2_Channel);  // 绑定PWM2通道
     ledcSetup(PWM1_Channel, PWM_Freq, PWM_Resolution); // 设置PWM1通道
-    ledcSetup(PWM2_Channel, PWM_Freq, PWM_Resolution); // 设置PWM2通道
+    // ledcSetup(PWM2_Channel, PWM_Freq, PWM_Resolution); // 设置PWM2通道
     SetPOWER(0); //关闭功率管输出
 
     //初始化SW-PIN休眠检测引脚
@@ -57,25 +57,27 @@ double CalculateTemp(double ADC,double P[]) {
 //PWM输出模块
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
+    printf("1 PWMOutput设置输出功率 %d\n", pwm);
     PWM_WORKY = true;
     //PWM锁
     if (PWMOutput_Lock || ShutdownEvent || Menu_System_State || ERROREvent) {
         PWM_WORKY = false;
-        // Log(LOG_INFO,"输出被限制");
-        // printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
+        Log(LOG_INFO,"输出被限制");
+        printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
 
         // //软件指示灯
         // digitalWrite(LED_Pin ,LOW);
     }
-    //printf("PWM:%d\n",pwm);
+    printf("2 PWMOutput设置输出功率 %d\n", pwm);
     if (LastPWM != pwm) {
+        printf("PWM:%d\n",pwm);
         if (pwm == 255) ledcWrite(PWM1_Channel, 256);
         else ledcWrite(PWM1_Channel, pwm);
 
         LastPWM = pwm;
-    }
+    }else printf("PWM:%d LastPWM:%d\n",pwm,LastPWM);
     
 }
 
@@ -117,8 +119,10 @@ int GetADC0(void) {
     //printf("%d,%d\r\n", ADC_RAW,ADC);
 
     //解锁功率管输出：前提是没有打开菜单
-    if (!Menu_System_State)
+    if (!Menu_System_State) {
+        // Log(LOG_INFO, "非菜单模式 解除输出上锁");
         PWMOutput_Lock = false;
+    }
 
     //记录采样间隔时间
     ADCSamplingTime = millis();
@@ -129,13 +133,15 @@ int GetADC0(void) {
 
 //设置输出功率
 void SetPOWER(uint8_t power) {
-    
+    // Log(LOG_INFO, "尝试设置输出功率");
+    printf("尝试设置输出功率 %d\n",power);
     POWER = power;
     //MOS管分类处理
     if (MyMOS==PMOS) {
         //PMOS 低电平触发
         PWM = 255 - power;
-    }
+        Log(LOG_INFO, "PMOS输出转换");
+    }else PWM = power;
     // printf("PWM:%d\n",PWM);
     PWMOutput(PWM);
 }

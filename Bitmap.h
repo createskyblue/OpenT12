@@ -7,6 +7,8 @@ extern uint8_t Logo[];
 // width: 170, height: 128
 extern uint8_t Logo2[];
 
+extern uint8_t Logo_RoboBrave[];
+
 extern uint8_t TranAnimation[];
 extern uint8_t TranAnimation2[];
 
