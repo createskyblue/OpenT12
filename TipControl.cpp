@@ -48,6 +48,38 @@ void TipControlInit(void) {
     MyPID.SetSampleTime(10); //PID采样时间
 }
 
+/**
+ * @description: 计算主电源电压
+ * @param {*}
+ * @return 主电源电压估计值
+ */
+double Get_MainPowerVoltage(void) {
+    static uint32_t CoolTimer = 0;
+    if (millis() - CoolTimer > 1000) {
+        //uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
+        double TipADC_V_R2 = analogReadMilliVolts(POWER_ADC_PIN) / 1000.0;
+        //double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
+        double   TipADC_V_R1 = (TipADC_V_R2 * POWER_ADC_VCC_R1) / POWER_ADC_R2_GND;
+        SYS_Voltage = TipADC_V_R1 + TipADC_V_R2;
+        //重置冷却计时器
+        CoolTimer = millis();
+    }
+    // printf("电压:%lf V\n", SYS_Voltage);
+    return SYS_Voltage;
+}
+
+double GetNTCTemp(void) {
+    static uint32_t CoolTimer = 0;
+    if (millis() - CoolTimer > 1000){
+        double Ert = analogReadMilliVolts(NTC_ADC_PIN) / 1000.0;
+        double Rt = (Ert * NTC_Rs) / (SYS_Voltage - Ert);
+        NTC_Temp = 1 / ((log(Rt / NTC_Rs)) / (NTC_B)+1 / (NTC_Tc + K2C)) - K2C;
+        //重置冷却计时器
+        CoolTimer = millis();
+    }
+    return NTC_Temp;
+}
+
 //计算实际温度
 double CalculateTemp(double ADC,double P[]) {
     TipTemperature = P[0] + ADC * P[1] + ADC * ADC * P[2] + ADC * ADC * ADC * P[3];

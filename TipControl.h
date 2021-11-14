@@ -20,6 +20,9 @@ extern float consKp, consKi, consKd;
 
 extern uint8_t PWMOutput_Lock;
 
+extern double Get_MainPowerVoltage(void);
+extern double GetNTCTemp(void);
+
 void TipControlInit(void);
 void SetPOWER(uint8_t power);
 void PWMOutput(uint8_t pwm);

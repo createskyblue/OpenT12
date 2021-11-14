@@ -41,7 +41,7 @@
 #define BUTTON_PIN	  33
 
 #define TIP_ADC_PIN   39
-#define NTC_ADC       34
+#define NTC_ADC_PIN       34
 #define POWER_ADC_PIN 35
 #define CUR_ADC       32
 
@@ -52,6 +52,12 @@
 //计算主电源电压
 #define POWER_ADC_VCC_R1 10
 #define POWER_ADC_R2_GND 1
+
+//NTC参数
+#define K2C    273.15
+#define NTC_B  3950
+#define NTC_Tc 25
+#define NTC_Rs 10000
 
 #define CNSize 12
 #define SCREEN_COLUMN 128
@@ -153,14 +159,13 @@ extern uint8_t RotaryDirection;
 extern uint8_t HandleTrigger;
 
 extern double SYS_Voltage;
+extern double NTC_Temp;
 extern float  UndervoltageAlert;
 extern char BootPasswd[20];
 extern uint8_t Language;
 extern uint8_t MenuListMode;
 
 extern float ADC_PID_Cycle;
-
-extern double Get_MainPowerVoltage(void);
 
 enum TEMP_CTRL_STATUS_CODE {
     TEMP_STATUS_ERROR = 0,
