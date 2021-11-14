@@ -43,8 +43,8 @@ void EnterLogo(void) {
         w = 170 * rate;
         x = (128 - w) / 2;
         y = (64 - i - 1) / 2;
-        // Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
-        Draw_Slow_Bitmap_Resize(x, y, Logo_RoboBrave, 128, 128, w, i);
+        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
+        // Draw_Slow_Bitmap_Resize(x, y, Logo_RoboBrave, 128, 128, w, i);
         Display();
     }
 
@@ -54,8 +54,8 @@ void EnterLogo(void) {
         Clear();
         //绘制Logo
         Disp.setDrawColor(1);
-        // Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
-        Draw_Slow_Bitmap_Resize(x, y, Logo_RoboBrave, 128, 128, w, i);
+        Draw_Slow_Bitmap_Resize(x, y, Logo2, 170, 128, w, i);
+        // Draw_Slow_Bitmap_Resize(x, y, Logo_RoboBrave, 128, 128, w, i);
         //转场特效
         Disp.setBitmapMode(1);
         Disp.setDrawColor(0);

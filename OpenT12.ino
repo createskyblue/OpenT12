@@ -65,6 +65,7 @@ uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
 double  SYS_Voltage = 3.3;
+double  NTC_Temp    = 27.0;
 float   UndervoltageAlert = 3;
 char    BootPasswd[20] = { 0 };
 uint8_t Language = LANG_Chinese;
@@ -189,20 +190,7 @@ void loop() {
     //刷新UI
     System_UI();
 }
-/**
- * @description: 计算主电源电压
- * @param {*}
- * @return 主电源电压估计值
- */
-double Get_MainPowerVoltage(void) {
-    //uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
-    double TipADC_V_R2 = analogReadMilliVolts(POWER_ADC_PIN) / 1000.0;
-    //double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);
-    double   TipADC_V_R1 = (TipADC_V_R2*POWER_ADC_VCC_R1)/POWER_ADC_R2_GND;
-    SYS_Voltage = TipADC_V_R1 + TipADC_V_R2;
-    // printf("电压:%lf V\n", SYS_Voltage);
-    return SYS_Voltage;
-}
+
 
 void SYS_Reboot(void) {
     ESP.restart();
