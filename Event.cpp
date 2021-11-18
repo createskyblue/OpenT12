@@ -231,7 +231,8 @@ bool EnterPasswd(void) {
 
 void SetPasswd(void) {
     if (!EnterPasswd()) {
-        Pop_Windows("身份验证失败");
+        Pop_Windows("鉴权失败");
+        Pop_Windows("对不起，请重试。");
         return;
     }
 

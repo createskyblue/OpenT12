@@ -100,13 +100,13 @@ void CalibrationTemperature(void) {
         
         //绘制参考文字
 
-        sprintf(buffer, "目标:%ld°C", Calibration_Base[i]);
+        sprintf(buffer, "目标 %ld|%.0lf°C", Calibration_Base[i], Calibration_Base[i] - GetNTCTemp());
         DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 21, buffer);
 
-        sprintf(buffer, "采样ADC %d", LastADC);
+        sprintf(buffer, "设定ADC %d", SetADC);
         DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 36, buffer);
 
-        sprintf(buffer, "设定ADC：%d", SetADC);
+        sprintf(buffer, "采样ADC %d NTC %.0lf", LastADC, GetNTCTemp());
         DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 51, buffer);
 
         Disp.setDrawColor(2);
