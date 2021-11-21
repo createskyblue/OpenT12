@@ -79,7 +79,8 @@ void CalibrationTemperature(void) {
     //暂时清除烙铁头不存在的错误状态：否则输出上锁
     ERROREvent = false;
 
-    sys_Counter_Set(0, 4095, 1, GetADC0());
+    sys_Counter_Set(0, 4095, 1, (double)GetADC0());
+    // sys_Counter_Set(0, 4095, 1, 0);
 
     for (uint8_t i = 0;i < FixNum;) {
         Clear();
@@ -151,6 +152,8 @@ void CalibrationTemperature(void) {
         Pop_Windows("曲线拟合完成!");
         delay(800);
         ShowCurveCoefficient();
+        //注意，这里的保存只是写入运行内存，而不是写入文件系统
+        SaveTipConfig();
     }else{
         Pop_Windows("取消校准");
         delay(1000);
