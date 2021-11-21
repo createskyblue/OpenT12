@@ -36,11 +36,11 @@ void LoadTipConfig(void) {
  * @return {*}
  */
 void SaveTipConfig(void) {
-    //载入温度系数
+    //保存温度系数
     for (uint8_t i = 0;i < 4;i++) {
         MyTip[TipID].PTemp[i] = PTemp[i];
     }
-    //载入PID参数
+    //保存PID参数
     MyTip[TipID].PID[0][0] = aggKp;
     MyTip[TipID].PID[0][1] = aggKi;
     MyTip[TipID].PID[0][2] = aggKd;
