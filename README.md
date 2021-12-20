@@ -9,10 +9,10 @@
 [LCEDA/EasyEDA]https://oshwhub.com/createskyblue/opent12-jing-jian-ban  
 [核心驱动电路参考]https://oshwhub.com/47415Y/gong-cheng
 
-**注意：电路板未经验证**  
-**Note: the circuit board is not verified**
+**注意：电路板未完全验证**  
+**Note: the circuit board is not fully verified**
 
-![PCB_V1.0](img/readme/Pcb_V1.0.png)
+![PCB_V1.0](img/readme/PCB3.0.jpg)
 
 ## 视频
 ![](img/OLED_ScreenshotInit/爆发.png)
@@ -35,6 +35,7 @@ https://www.bilibili.com/video/BV1s64y1v7mY/
 - [x] 可设置 开机温度、爆发温度、休眠温度
 - [x] 可定时 休眠、关机，自定义爆发模式时间
 - [x] 可保存成千上千万组烙铁头配置（默认10组）
+- [ ] 双休眠支持：同时支持震动触发与磁力触发
 
 ***高级功能***
 
@@ -72,16 +73,13 @@ https://www.bilibili.com/video/BV1s64y1v7mY/
 |编码器B|12|
 |编码器按键|33|
 |测温ADC|39|
-|热敏ADC|4 (保留)|
+|热敏ADC|34|
 |电压ADC|35|
-|电流ADC|32 (保留)|
+|电流ADC|32|
 |PWM1|26|
 |PWM2|27(保留)|
-|睡眠|4|
-
-**关于电压ADC的接线方式**
-
-24V电源＋---47K电阻----(电压ADC引线)---4.7K电阻---24V电源地
+|震动开关|4|
+|干簧管|19|
 
 ## 使用说明
 
@@ -107,6 +105,15 @@ https://dl.espressif.com/dl/package_esp32_index.json
 ArduinoIDE-工具-开发板-开发板管理器->搜索并安装:ESP32
 
 ![](img/readme/ArduinoIDE_3.jpg)
+
+### 第三方依赖库
+| 名称 | 链接 |
+| :-----: | :-----: |
+|U8g2                           |<https://github.com/olikraus/u8g2/>|
+|QRCode                         |<https://github.com/ricmoo/qrcode/>|
+|OneButton                      |<https://github.com/mathertel/OneButton>|
+|Arduino-PID-Library            |<http://playground.arduino.cc/Code/PIDLibrary>|
+|GeekFactory_Shell_Library      |<https://github.com/geekfactory/Shell>|
 
 ### 选择ESP32并配置编译选项
 
