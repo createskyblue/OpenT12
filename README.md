@@ -67,18 +67,18 @@ By sndnvaps
 
 ***Advanced features***
 
--[x] PMOS and NMOS (default PMOS, because this option is dangerous, the setting needs to be modified on the source program).
--[x] Shortcut key to quickly adjust PID.
--[x] Two sets of PIDs are allowed for each soldering tip.
--[x] Independent ADC / PID sampling period and Kalman filter parameters can be set through the menu.
--[x] 9-stage soldering tip temperature fitting calibration.
--[ ] Temperature self calibration circuit (not implemented).
--[x] Custom display effects: brightness, flip plane, transition animation, display style, list mode.
--[x] Personalized Customization: prompt tone, encoder rotation direction, handle trigger mode, system language (only simplified Chinese is supported temporarily).
--[x] Security settings: Customize startup password, undervoltage alarm, forced shutdown prompt and warning.
--[x] Bluetooth remote command line control.
--[ ] Voice control (not implemented).
--[ ] Custom boot logo (not implemented).
+- [x] PMOS and NMOS (default PMOS, because this option is dangerous, the setting needs to be modified on the source program).
+- [x] Shortcut key to quickly adjust PID.
+- [x] Two sets of PIDs are allowed for each soldering tip.
+- [x] Independent ADC / PID sampling period and Kalman filter parameters can be set through the menu.
+- [x] 9-stage soldering tip temperature fitting calibration.
+- [ ] Temperature self calibration circuit (not implemented).
+- [x] Custom display effects: brightness, flip plane, transition animation, display style, list mode.
+- [x] Personalized Customization: prompt tone, encoder rotation direction, handle trigger mode, system language (only simplified Chinese is supported temporarily).
+- [x] Security settings: Customize startup password, undervoltage alarm, forced shutdown prompt and warning.
+- [x] Bluetooth remote command line control.
+- [ ] Voice control (not implemented).
+- [ ] Custom boot logo (not implemented).
 
 ## Pin definition
 
