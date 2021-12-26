@@ -1,6 +1,6 @@
 # RoseFinch it is an open source solder controller based on ESP32
 
-[English](.md)
+[English](README.md)
 
 [中文](README_cn.md)
 
