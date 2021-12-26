@@ -1,6 +1,6 @@
 # 朱雀 是基于ESP32的开源焊台控制器
 
-[English](.md)
+[English](README.md)
 
 [中文](README_cn.md)
 
