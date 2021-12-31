@@ -10,7 +10,7 @@ extern uint8_t DisplayFlashTick;
 void Clear(void);
 void Display(void);
 
-void Draw_Utf(int x, int y, char* s);
+void Draw_Utf(int x, int y, const char* s);
 void Blur(int sx, int sy, int ex, int ey, int f, int delay);
 void Draw_Scale(int x, int y, int w, int h, int s, int v);
 void Draw_Num_Bar(float i, float a, float b, int x, int y, int w, int h, int c);
@@ -22,9 +22,9 @@ void DrawStatusBar(bool color);
 void DrawIntensiveComputingLine(void);
 void DrawIntensiveComputing(void);
 
-void DrawMsgBox(char* s);
-void DrawHighLightText(int x, int y, char* s);
+void DrawMsgBox(const char* s);
+void DrawHighLightText(int x, int y, const char* s);
 
 
-void TextEditor(char* title, char* text);
+void TextEditor(const char* title, char* text);
 #endif

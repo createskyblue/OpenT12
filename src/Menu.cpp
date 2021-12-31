@@ -850,7 +850,7 @@ void Next_Menu() {
     @param (char* s):字符串首地址
     
 */
-void Pop_Windows(char* s) {
+void Pop_Windows(const char* s) {
     // Disp.setCursor(0, 0);
     // Disp.print(s);
     // Display();
@@ -995,9 +995,6 @@ void Draw_APP(int x, int y, uint8_t* bitmap) {
     Draw_Slow_Bitmap_Resize(x, y, bitmap + 1, bitmap[0], bitmap[0], 42, 42);
 }
 
-
-static int Menu_Smooth_Animation_Y = 0;
-static int Menu_Smooth_Animation_Last_choose = 0;
 /*
     @函数 Menu_Control
     @brief 渲染主菜单

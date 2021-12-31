@@ -65,7 +65,7 @@ void GetUtf8Length(char const* str, int* cnt) {
     }
 }
 
-uint32_t Get_UTF8_Ascii_Pix_Len(uint8_t size,char *s) {
+uint32_t Get_UTF8_Ascii_Pix_Len(uint8_t size, const char* s) {
   return Disp.getUTF8Width(s);
 }
 
@@ -74,7 +74,7 @@ uint32_t Get_UTF8_Ascii_Pix_Len(uint8_t size,char *s) {
     @输入：UTF8字符串
     @输出：居中位置
 */
-uint32_t UTF8_HMiddle(uint32_t x,uint32_t w,uint8_t size,char *s) {
+uint32_t UTF8_HMiddle(uint32_t x, uint32_t w, uint8_t size, const char* s) {
     return x + ( w - Get_UTF8_Ascii_Pix_Len(size,s)) / 2;
 }
 

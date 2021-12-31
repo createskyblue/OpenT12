@@ -47,7 +47,7 @@ double GetNote(note_t note, uint8_t rp) {
     };
     const uint8_t octave          = 4;
     const double  FreqRatio       = 1.059463094; // pow(2,1/12.0);
-    const double  FreqRatioDouble = 1.122462048; // pow(2,1/6.0);
+    // const double  FreqRatioDouble = 1.122462048; // pow(2,1/6.0);
     double noteFreq = ((double)noteFrequencyBase[note] / (double)(1 << (8 - octave))) * pow(FreqRatio,rp);
     //SetTone(noteFreq);
     return noteFreq;

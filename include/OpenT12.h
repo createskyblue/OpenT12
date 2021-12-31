@@ -98,7 +98,7 @@ enum MESSAGETYPE {
     LOG_ERROR,
 };
 
-void Log(MESSAGETYPE type, char* s);
+void Log(MESSAGETYPE type, const char* s);
 void SYS_Reboot(void);
 void About(void);
 

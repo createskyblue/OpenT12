@@ -116,7 +116,7 @@ void Display(void) {
     //printf("d\n");
 }
 
-void Draw_Utf(int x,int y,char *s){
+void Draw_Utf(int x, int y, const char* s) {
     // Disp.setCursor(x,y + 1);
     // Disp.print(s);
     Disp.drawUTF8(x,y+1,s);
@@ -265,7 +265,7 @@ void DrawIntensiveComputing(void) {
  * @param {*}
  * @return {*}
  */
-void DrawMsgBox(char* s) {
+void DrawMsgBox(const char* s) {
     int w = Get_UTF8_Ascii_Pix_Len(1, s) + 2;
     int h = 12;
     int x = (SCREEN_COLUMN - w) / 2;
@@ -289,7 +289,7 @@ void DrawMsgBox(char* s) {
  * @param {char} *s
  * @return {*}
  */
-void DrawHighLightText(int x,int y,char *s) {
+void DrawHighLightText(int x, int y, const char* s) {
     int TextWidth = Disp.getUTF8Width(s);
     int TextHigh  = Disp.getMaxCharHeight();
     uint8_t color = Disp.getDrawColor();
@@ -305,7 +305,7 @@ void DrawHighLightText(int x,int y,char *s) {
     }
 }
 
-void Log(MESSAGETYPE type, char* s) {
+void Log(MESSAGETYPE type, const char* s) {
     switch (type) {
         case LOG_INFO: printf("[INFO]"); break;
         case LOG_OK: printf("[OK]"); break;
@@ -361,7 +361,7 @@ void DrawStatusBar(bool color) {
  * @param {*}
  * @return {*}
  */
-void TextEditor(char* title, char* text) {
+void TextEditor(const char* title, char* text) {
     // Pop_Windows("双击保存 长按退出");
     // delay(1000);
     char newText[20] = { 0 };
