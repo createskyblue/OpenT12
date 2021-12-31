@@ -7,7 +7,7 @@ enum MOS_Type{
     NMOS
 };
 //PWM
-uint8_t PWM_Freq = 2000;    // 频率
+uint8_t PWM_Freq = 255;    // 频率
 uint8_t PWM1_Channel = 0;    // 通道
 // uint8_t PWM2_Channel = 0;    // 通道
 uint8_t PWM_Resolution = 8;   // 分辨率
@@ -182,7 +182,6 @@ float ADC_PID_Cycle_List[3] = {200,100,50};
 //温度控制循环
 void TemperatureControlLoop(void) {
     Clear();
-    char buffer[50];
     int ADC;
 
     PID_Setpoint = sys_Counter_Get();

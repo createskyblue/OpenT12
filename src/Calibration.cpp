@@ -9,7 +9,7 @@ void ShowCurveCoefficient(void) {
     Clear();
     char buffer[50];
     for (long i = 0;i < 4;i++) {
-        sprintf(buffer, "P[%d]=%.8f\n", i, PTemp[i]);
+        sprintf(buffer, "P[%d]=%.8lf\n", i, PTemp[i]);
         Disp.setCursor(12, i * 12 + 8);
         Disp.print(buffer);
     }
