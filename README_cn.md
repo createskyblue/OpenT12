@@ -110,41 +110,7 @@ By sndnvaps
 |干簧管|19|
 
 ## 编译安装
-安装ArduinoIDE
-
-### 安装ESP32开发板
-ArduinoIDE-文件-首选项-附加开发板管理网址->添加:
-
-https://dl.espressif.com/dl/package_esp32_index.json
-
-![](img/readme/ArduinoIDE_1.jpg)
-![](img/readme/ArduinoIDE_2.jpg)
-
-ArduinoIDE-工具-开发板-开发板管理器->搜索并安装:ESP32
-
-![](img/readme/ArduinoIDE_3.jpg)
-
-### 第三方依赖库
-| 名称 | 链接 |
-| :-----: | :-----: |
-|U8g2                           |<https://github.com/olikraus/u8g2/>|
-|QRCode                         |<https://github.com/ricmoo/qrcode/>|
-|OneButton                      |<https://github.com/mathertel/OneButton>|
-|Arduino-PID-Library            |<http://playground.arduino.cc/Code/PIDLibrary>|
-|GeekFactory_Shell_Library      |<https://github.com/geekfactory/Shell>|
-
-### 选择ESP32并配置编译选项
-
-选择开发板ESP32 Dev Module
-![](img/readme/ArduinoIDE_4.jpg)
-
-最低配置需要4MB的Flash空间(Minimal SPIFFS 1.9MB APP with OTA/190KB SPIFFS)
-![](img/readme/Esp32_IDE_Set.jpg)
-
-### 编译并上传到开发板
-
-![](img/readme/ArduinoIDE_5.jpg)
-![](img/readme/ArduinoIDE_6.jpg)
+参考platformIO的使用
 
 ## 展示
 <center>👇主页面</center>

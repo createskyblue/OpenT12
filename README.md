@@ -113,44 +113,7 @@ At present, the final hardware has not been designed. If you want to use your ow
 |Dry reed pipe|19|
 
 ## Compile
-
-First you need to install the Arduino IDE.
-
-### Install esp32 development board
-
-ArduinoIDE-File-Preferences-附加开发板管理网址->Add:
-
-<https://dl.espressif.com/dl/package_esp32_index.json>
-
-![](img/readme/ArduinoIDE_1.jpg)
-![](img/readme/ArduinoIDE_2.jpg)
-
-ArduinoIDE-Tools-Development board-Development board manager->Search and install:ESP32
-
-![](img/readme/ArduinoIDE_3.jpg)
-
-### Dependency Library
-
-| Library | Link |
-| :-----: | :-----: |
-|U8g2                           |<https://github.com/olikraus/u8g2/>|
-|QRCode                         |<https://github.com/ricmoo/qrcode/>|
-|OneButton                      |<https://github.com/mathertel/OneButton>|
-|Arduino-PID-Library            |<http://playground.arduino.cc/Code/PIDLibrary>|
-|GeekFactory_Shell_Library      |<https://github.com/geekfactory/Shell>|
-
-### Select esp32 and configure compilation options
-
-Select development board "ESP32 Dev Module"
-![](img/readme/ArduinoIDE_4.jpg)
-
-The minimum configuration requires 4 mb of flash space(Minimal SPIFFS 1.9MB APP with OTA/190KB SPIFFS)
-![](img/readme/Esp32_IDE_Set.jpg)
-
-### Compile and upload to the development board
-
-![](img/readme/ArduinoIDE_5.jpg)
-![](img/readme/ArduinoIDE_6.jpg)
+Refer to the use of platformIO.
 
 ## Demo Screenshot
 
