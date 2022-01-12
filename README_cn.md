@@ -17,7 +17,7 @@
 
 稚晖君的智能加热台
 
-**[开源兼容焊台]** <https://oshwhub.com/sndnvaps/opent12-jing-jian-ban>
+**[开源兼容焊台]** <https://oshwhub.com/sndnvaps/opent12-jing-jian-ban_copy>
 
 By sndnvaps
 

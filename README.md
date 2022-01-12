@@ -17,7 +17,7 @@ With a little modification, other automation equipment can be controlled.
 
 Open source smart heating table
 
-**[open source compatible solder]** <https://oshwhub.com/sndnvaps/opent12-jing-jian-ban>
+**[open source compatible solder]** <https://oshwhub.com/sndnvaps/opent12-jing-jian-ban_copy>
 
 By sndnvaps
 
