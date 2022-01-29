@@ -165,6 +165,7 @@ extern uint8_t RotaryDirection;
 extern uint8_t HandleTrigger;
 
 extern double SYS_Voltage;
+extern double SYS_Current;
 extern double NTC_Temp;
 extern float  UndervoltageAlert;
 extern char BootPasswd[20];

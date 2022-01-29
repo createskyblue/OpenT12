@@ -348,7 +348,10 @@ void DrawStatusBar(bool color) {
     Disp.printf("%.0f",PID_Setpoint);
 
     Disp.setCursor(105, 53);
-    Disp.printf("%d%%", map(POWER, 0, 255, 0, 100));
+    //显示输出功率 百分比
+    // Disp.printf("%d%%", map(POWER, 0, 255, 0, 100));
+    //显示真实功率
+    Disp.printf("%.0fW", SYS_Current * GetCurrent());
 
     
 

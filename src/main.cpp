@@ -67,6 +67,7 @@ uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
 double  SYS_Voltage = 3.3;
+double  SYS_Current = 0.0;
 double  NTC_Temp    = 27.0;
 float   UndervoltageAlert = 3;
 char    BootPasswd[20] = { 0 };
