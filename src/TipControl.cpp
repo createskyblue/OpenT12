@@ -69,6 +69,19 @@ double Get_MainPowerVoltage(void) {
 }
 
 /*** 
+ * @description: 检测输出电流
+ * @param {*}
+ * @return 电流（A）
+ */
+double GetCurrent(void) {
+    //放大21倍
+    double Uo = analogReadMilliVolts(CUR_ADC_PIN) / 1000.0;
+    double Ui = Uo / CUR_ADC_Arate;
+    SYS_Current  = Ui / CUR_ADC_R;
+    return SYS_Current;
+}
+
+/*** 
  * @description: 检测NTC温度
  * @param {*}
  * @return 摄氏度
@@ -85,19 +98,6 @@ double GetNTCTemp(void) {
     return NTC_Temp;
 }
 
-/*** 
- * @description: 检测输出电流
- * @param {*}
- * @return 电流（A）
- */
-double GetCurrent(void) {
-    //放大21倍
-    double Uo = analogReadMilliVolts(CUR_ADC_PIN) / 1000.0;
-    double Ui = Uo / CUR_ADC_Arate;
-    double I  = Ui / CUR_ADC_R;
-    return I;
-}
-
 //计算实际温度
 double CalculateTemp(double ADC,double P[]) {
     TipTemperature = P[0] + ADC * P[1] + ADC * ADC * P[2] + ADC * ADC * ADC * P[3];
@@ -107,27 +107,27 @@ double CalculateTemp(double ADC,double P[]) {
 //PWM输出模块
 uint8_t PWMOutput_Lock = true;
 void PWMOutput(uint8_t pwm) {
-    printf("1 PWMOutput设置输出功率 %d\n", pwm);
+    // printf("1 PWMOutput设置输出功率 %d\n", pwm);
     PWM_WORKY = true;
     //PWM锁
     if (PWMOutput_Lock || ShutdownEvent || Menu_System_State || ERROREvent) {
         PWM_WORKY = false;
-        Log(LOG_INFO,"输出被限制");
-        printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
+        // Log(LOG_INFO,"输出被限制");
+        // printf("输出被限制 PWMOutput_Lock=%d ShutdownEvent=%d Menu_System_State=%d ERROREvent=%d\n", PWMOutput_Lock, ShutdownEvent, Menu_System_State, ERROREvent);
         if (MyMOS == PMOS) pwm = 255;
         else pwm = 0;
 
         // //软件指示灯
         // digitalWrite(LED_Pin ,LOW);
     }
-    printf("2 PWMOutput设置输出功率 %d\n", pwm);
+    // printf("2 PWMOutput设置输出功率 %d\n", pwm);
     if (LastPWM != pwm) {
-        printf("PWM:%d\n",pwm);
+        // printf("PWM:%d\n",pwm);
         if (pwm == 255) ledcWrite(PWM1_Channel, 256);
         else ledcWrite(PWM1_Channel, pwm);
 
         LastPWM = pwm;
-    }else printf("PWM:%d LastPWM:%d\n",pwm,LastPWM);
+    }//else printf("PWM:%d LastPWM:%d\n",pwm,LastPWM);
     
 }
 
@@ -184,13 +184,13 @@ int GetADC0(void) {
 //设置输出功率
 void SetPOWER(uint8_t power) {
     // Log(LOG_INFO, "尝试设置输出功率");
-    printf("尝试设置输出功率 %d\n",power);
+    // printf("尝试设置输出功率 %d\n",power);
     POWER = power;
     //MOS管分类处理
     if (MyMOS==PMOS) {
         //PMOS 低电平触发
         PWM = 255 - power;
-        Log(LOG_INFO, "PMOS输出转换");
+        // Log(LOG_INFO, "PMOS输出转换");
     }else PWM = power;
     // printf("PWM:%d\n",PWM);
     PWMOutput(PWM);
