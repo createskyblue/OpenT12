@@ -3,8 +3,6 @@
 #include "Type.h"
 
 void EnterLogo(void);
-void ShowBootMsg(void);
-
 
 extern uint8_t DisplayFlashTick;
 void Clear(void);

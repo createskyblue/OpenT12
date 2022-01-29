@@ -466,92 +466,98 @@ void System_UI(void) {
     if (Menu_System_State) {
         Menu_Control();
     }else{
-
         //睡眠模式屏保入口
         if (SleepEvent && SleepScreenProtectFlag) RunSleepLoop();
         else {
-            // char buffer[50];
-            // for (uint8_t i = 0;i < 5;i++) {
-            //     Disp.setCursor(0, 12 * i + 1);
 
-            //     switch (i) {
-            //     case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
-            //     case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
-            //     case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
-            //     case 3: sprintf(buffer, "E:%.2lf V2:%.2lf", Get_MainPowerVoltage(), ESP32_ADC2Vol(analogRead(POWER_ADC_PIN))); break;
-            //     case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
-            //     }
-            //     Disp.print(buffer);
-            // }
-        
-            ///////////////////////////////////////////////////////////////////////////////////
+            if (PanelSettings) {
+                //详细信息
+                /////////////////////////////////////////////////////////////////////////////////
+                char buffer[50];
+                for (uint8_t i = 0;i < 5;i++) {
+                    Disp.setCursor(0, 12 * i + 1);
 
-            //显示烙铁头名称
-            Disp.drawUTF8(0, 1, TipName);
-
-            //温度控制状态图标
-            Draw_Slow_Bitmap(74, 37, C_table[TempCTRL_Status], 14, 14);
-            //显示中文状态信息
-            Disp.drawUTF8(91, 40, TempCTRL_Status_Mes[TempCTRL_Status]);
-
-            //欠压警报
-            if (UnderVoltageEvent) {
-                if ((millis() / 1000) % 2) {
-                    //欠压告警图标
-                    Draw_Slow_Bitmap(74, 21, Battery_NoPower, 14, 14);
-                }else{
-                    //主电源电压
-                    Disp.setCursor(74, 24);
-                    Disp.printf("%.1fV", Get_MainPowerVoltage());
+                    switch (i) {
+                    case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
+                    case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
+                    case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
+                    case 3: sprintf(buffer, "%.2lfV %.2lfA %.2lfW", Get_MainPowerVoltage(), GetCurrent(),SYS_Voltage * SYS_Current); break;
+                    case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
+                    }
+                    Disp.print(buffer);
                 }
+
             }else{
-                //显示蓝牙图标
-                if (BLE_State) Draw_Slow_Bitmap(92, 25, IMG_BLE_S, 9, 11);
-            }
+                //简约模式
+                /////////////////////////////////////////////////////////////////////////////////
 
-            ///////////////////////////////////////////////////////////////////////////////////
-            //显示当前温度
-            Disp.setFont(u8g2_font_logisoso38_tr);
-            Disp.setCursor(0,12);
+                //显示烙铁头名称
+                Disp.drawUTF8(0, 1, TipName);
 
-            if (TempCTRL_Status == TEMP_STATUS_ERROR || ERROREvent) {
-                if ((millis() / 250) % 2) Disp.print("---");
-            }else {
-                //如果温度波动足够小，则显示当前温度为设定温度
-                if (TempGap < 10) Disp.printf("%.0lf", PID_Setpoint);  //显示"假"温度(设定温度)
-                else Disp.printf("%.0lf", TipTemperature);    //显示真实温度
-            }
+                //温度控制状态图标
+                Draw_Slow_Bitmap(74, 37, C_table[TempCTRL_Status], 14, 14);
+                //显示中文状态信息
+                Disp.drawUTF8(91, 40, TempCTRL_Status_Mes[TempCTRL_Status]);
 
-            Disp.setFont(u8g2_font_wqy12_t_gb2312);
-            ///////////////////////////////////////////////////////////////////////////////////
+                //欠压警报
+                if (UnderVoltageEvent) {
+                    if ((millis() / 1000) % 2) {
+                        //欠压告警图标
+                        Draw_Slow_Bitmap(74, 21, Battery_NoPower, 14, 14);
+                    }else{
+                        //主电源电压
+                        Disp.setCursor(74, 24);
+                        Disp.printf("%.1fV", Get_MainPowerVoltage());
+                    }
+                }else{
+                    //显示蓝牙图标
+                    if (BLE_State) Draw_Slow_Bitmap(92, 25, IMG_BLE_S, 9, 11);
+                }
 
-            //右上角运行指示角标
-            if (POWER > 0 && PWM_WORKY) {
-                uint8_t TriangleSize = map(POWER,0,255,16,0);
-                //Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
-                Disp.drawTriangle((119 - 12) + TriangleSize, 12, 125, 12, 125, (18 +12) - TriangleSize);
-                // Draw_Slow_Bitmap(114, 15, PositioningCursor, 8, 8);
-                //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
-            }
+                ///////////////////////////////////////////////////////////////////////////////////
+                //显示当前温度
+                Disp.setFont(u8g2_font_logisoso38_tr);
+                Disp.setCursor(0,12);
+
+                if (TempCTRL_Status == TEMP_STATUS_ERROR || ERROREvent) {
+                    if ((millis() / 250) % 2) Disp.print("---");
+                }else {
+                    //如果温度波动足够小，则显示当前温度为设定温度
+                    if (TempGap < 10) Disp.printf("%.0lf", PID_Setpoint);  //显示"假"温度(设定温度)
+                    else Disp.printf("%.0lf", TipTemperature);    //显示真实温度
+                }
+
+                Disp.setFont(u8g2_font_wqy12_t_gb2312);
+                ///////////////////////////////////////////////////////////////////////////////////
+
+                //右上角运行指示角标
+                if (POWER > 0 && PWM_WORKY) {
+                    uint8_t TriangleSize = map(POWER,0,255,16,0);
+                    //Disp.drawTriangle(100 + TriangleSize, 0, 127, 0, 127, 27 - TriangleSize);
+                    Disp.drawTriangle((119 - 12) + TriangleSize, 12, 125, 12, 125, (18 +12) - TriangleSize);
+                    // Draw_Slow_Bitmap(114, 15, PositioningCursor, 8, 8);
+                    //Disp.drawTriangle(103, 0, 127, 0, 127, 24);
+                }
 
 
-            
-            /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
-            Disp.setDrawColor(2);
-            //几何图形切割
-            Disp.drawBox(0, 12, 96, 40);
-            Disp.drawTriangle(96,12,96,52,125,42);
-            Disp.drawTriangle(125,42,96,52,118,52);
-            Disp.setDrawColor(1);
+                
+                /////////////////////////////////////绘制遮罩层//////////////////////////////////////////////
+                Disp.setDrawColor(2);
+                //几何图形切割
+                Disp.drawBox(0, 12, 96, 40);
+                Disp.drawTriangle(96,12,96,52,125,42);
+                Disp.drawTriangle(125,42,96,52,118,52);
+                Disp.setDrawColor(1);
 
-            //绘制底部状态条
-            DrawStatusBar(1);
+                //绘制底部状态条
+                DrawStatusBar(1);
 
-            //如果当前是处于爆发技能，则显示技能剩余时间进度条
-            if (TempCTRL_Status == TEMP_STATUS_BOOST && DisplayFlashTick % 2) {
-                uint8_t BoostTimeBar = map(millis() - BoostTimer, 0, BoostTime * 1000, 0, 14);
-                Disp.drawBox(74, 37, 14, BoostTimeBar);
+                //如果当前是处于爆发技能，则显示技能剩余时间进度条
+                if (TempCTRL_Status == TEMP_STATUS_BOOST && DisplayFlashTick % 2) {
+                    uint8_t BoostTimeBar = map(millis() - BoostTimer, 0, BoostTime * 1000, 0, 14);
+                    Disp.drawBox(74, 37, 14, BoostTimeBar);
 
+                }
             }
 
         }

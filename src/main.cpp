@@ -108,7 +108,7 @@ void setup() {
     for (uint8_t i = 0;i < 6;i++)  sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
 
     //初始化串口
-    Serial.begin(115200);
+    Serial.begin(916200);
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器
@@ -133,8 +133,6 @@ void setup() {
     Disp.setFontMode(1);
 
     ////////////////////////////初始化软件/////////////////////////////
-    //显示启动信息
-    //ShowBootMsg();
 
     //启动文件系统，并读取存档
     FilesSystemInit();
@@ -227,6 +225,24 @@ void About(void) {
     Disp.drawBox(x_offset - 2 ,y_offset - 2 ,qrcode.size * 2 + 4,qrcode.size * 2 + 4);
     Disp.setDrawColor(1);
 
+    while(!sys_KeyProcess()) {
+        Display();
+    }
+    //显示系统信息
+    Clear();
+    char buffer[50];
+    for (uint8_t i = 0;i < 5;i++) {
+        Disp.setCursor(0, 12 * i + 1);
+
+        switch (i) {
+        case 0: sprintf(buffer, "[系统信息] 编译时间"); break;
+        case 1: sprintf(buffer, "%s %s", __DATE__,__TIME__); break;
+        case 2: sprintf(buffer, "MAC %s", ChipMAC_S); break;
+        case 3: sprintf(buffer, "CPU频率 %uMHZ", ESP.getCpuFreqMHz()); break;
+        case 4: sprintf(buffer, "%s", ESP.getSdkVersion()); break;
+        }
+        Disp.print(buffer);
+    }
     while(!sys_KeyProcess()) {
         Display();
     }

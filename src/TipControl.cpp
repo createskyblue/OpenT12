@@ -55,7 +55,7 @@ void TipControlInit(void) {
  */
 double Get_MainPowerVoltage(void) {
     static uint32_t CoolTimer = 0;
-    if (millis() - CoolTimer > 1000) {
+    if (millis() - CoolTimer > 100) {
         //uint16_t POWER_ADC = analogRead(POWER_ADC_PIN);
         double TipADC_V_R2 = analogReadMilliVolts(POWER_ADC_PIN) / 1000.0;
         //double   TipADC_V_R2 = ESP32_ADC2Vol(POWER_ADC);

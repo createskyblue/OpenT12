@@ -43,7 +43,7 @@
 #define TIP_ADC_PIN   39
 #define NTC_ADC_PIN   34
 #define POWER_ADC_PIN 35
-#define CUR_ADC_PIN       32
+#define CUR_ADC_PIN   32
 
 #define PWM1_PIN      26
 #define PWM2_PIN      27
