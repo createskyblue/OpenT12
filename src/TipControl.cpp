@@ -68,6 +68,11 @@ double Get_MainPowerVoltage(void) {
     return SYS_Voltage;
 }
 
+/*** 
+ * @description: 检测NTC温度
+ * @param {*}
+ * @return 摄氏度
+ */
 double GetNTCTemp(void) {
     static uint32_t CoolTimer = 0;
     if (millis() - CoolTimer > 1000){
@@ -78,6 +83,19 @@ double GetNTCTemp(void) {
         CoolTimer = millis();
     }
     return NTC_Temp;
+}
+
+/*** 
+ * @description: 检测输出电流
+ * @param {*}
+ * @return 电流（A）
+ */
+double GetCurrent(void) {
+    //放大21倍
+    double Uo = analogReadMilliVolts(CUR_ADC_PIN) / 1000.0;
+    double Ui = Uo / CUR_ADC_Arate;
+    double I  = Ui / CUR_ADC_R;
+    return I;
 }
 
 //计算实际温度

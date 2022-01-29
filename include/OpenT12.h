@@ -41,9 +41,9 @@
 #define BUTTON_PIN	  33
 
 #define TIP_ADC_PIN   39
-#define NTC_ADC_PIN       34
+#define NTC_ADC_PIN   34
 #define POWER_ADC_PIN 35
-#define CUR_ADC       32
+#define CUR_ADC_PIN       32
 
 #define PWM1_PIN      26
 #define PWM2_PIN      27
@@ -52,6 +52,10 @@
 //计算主电源电压
 #define POWER_ADC_VCC_R1 10
 #define POWER_ADC_R2_GND 1
+
+//检流电阻参数
+#define CUR_ADC_R 0.02
+#define CUR_ADC_Arate 21.0
 
 //NTC参数
 #define K2C    273.15
