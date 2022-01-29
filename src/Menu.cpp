@@ -481,7 +481,7 @@ void System_UI(void) {
                     case 0: sprintf(buffer, "状态%d:%s 控温:%s", TempCTRL_Status, TempCTRL_Status_Mes[TempCTRL_Status], (PIDMode == 1) ? "PID" : "模糊"); break;
                     case 1: sprintf(buffer, "设定%.0lf°C 当前%.0lf°C", PID_Setpoint, TipTemperature); break;
                     case 2: sprintf(buffer, "ADC:%d PID:%.0lf", LastADC, PID_Output); break;
-                    case 3: sprintf(buffer, "%.2lfV %.2lfA %.2lfW", Get_MainPowerVoltage(), GetCurrent(),SYS_Voltage * SYS_Current); break;
+                    case 3: sprintf(buffer, "%.2lfV %.2lfA %.2lfW", SYS_Voltage, SYS_Current,SYS_Voltage * SYS_Current); break;
                     case 4: sprintf(buffer, "%.3lf %.3lf %.3lf", aggKp, aggKi, aggKd); break;
                     }
                     Disp.print(buffer);
@@ -507,7 +507,7 @@ void System_UI(void) {
                     }else{
                         //主电源电压
                         Disp.setCursor(74, 24);
-                        Disp.printf("%.1fV", Get_MainPowerVoltage());
+                        Disp.printf("%.1fV", SYS_Voltage);
                     }
                 }else{
                     //显示蓝牙图标
