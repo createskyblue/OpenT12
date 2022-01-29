@@ -112,10 +112,9 @@ void setup() {
     //初始化GPIO
     BeepInit();                     //蜂鸣器
     
-    // pinMode(LED_Pin, OUTPUT);       //软件运行指示LED
+    // pinMode(LED_Pin, OUTPUT);    //软件运行指示LED
     pinMode(POWER_ADC_PIN, INPUT);  //主电压分压检测ADC
-
-
+    pinMode(CUR_ADC_PIN, INPUT);    //检流ADC
     //初始化烙铁头
     TipControlInit();
 
@@ -131,8 +130,6 @@ void setup() {
     Disp.setFont(u8g2_font_wqy12_t_gb2312);
     Disp.setDrawColor(1);
     Disp.setFontMode(1);
-
-    
 
     ////////////////////////////初始化软件/////////////////////////////
     //显示启动信息
