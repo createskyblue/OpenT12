@@ -234,11 +234,11 @@ void About(void) {
         Disp.setCursor(0, 12 * i + 1);
 
         switch (i) {
-        case 0: sprintf(buffer, "[系统信息] 编译时间"); break;
-        case 1: sprintf(buffer, "%s %s", __DATE__,__TIME__); break;
-        case 2: sprintf(buffer, "MAC %s", ChipMAC_S); break;
-        case 3: sprintf(buffer, "CPU频率 %uMHZ", ESP.getCpuFreqMHz()); break;
-        case 4: sprintf(buffer, "%s", ESP.getSdkVersion()); break;
+            case 0: sprintf(buffer, "%s Ver-%d",ESP.getChipModel(),(int)ESP.getChipRevision()); break;
+            case 1: sprintf(buffer, "%d@%uMHz %uMb U%.1f%%", (int)ESP.getChipCores(),ESP.getCpuFreqMHz(),ESP.getFlashChipSize()/1024/1024,(float)ESP.getSketchSize()/ESP.getFlashChipSize() * 100.0); break;
+            case 2: sprintf(buffer, "%s %s", __DATE__,__TIME__); break;
+            case 3: sprintf(buffer, "%s", ESP.getSdkVersion()); break;
+            case 4: sprintf(buffer, "MAC %s", ChipMAC_S); break;
         }
         Disp.print(buffer);
     }
