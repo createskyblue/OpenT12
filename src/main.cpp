@@ -56,7 +56,7 @@ bool PWM_WORKY         = false;
 
 uint8_t PIDMode                     = true;
 uint8_t Use_KFP                     = true;
-uint8_t PanelSettings               = PANELSET_Detailed;
+uint8_t PanelSettings               = PANELSET_Simple;
 uint8_t ScreenFlip                  = false;
 uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
@@ -143,13 +143,11 @@ void setup() {
     //初始化蓝牙（可选）
     BLE_Init();
 
-    //首次启动的时候根据启动温度配置，重新设定目标温度
-    sys_Counter_SetVal(BootTemp);
-
     //载入烙铁头配置
     LoadTipConfig();
 
-    SetSound(BootSound); //播放音效
+    //播放音效
+    SetSound(BootSound);
 
     //显示Logo
     EnterLogo();
@@ -162,9 +160,10 @@ void setup() {
     //初始化UI
     System_UI_Init();
 
+    //首次启动的时候根据启动温度配置，重新设定目标温度
+    sys_Counter_SetVal(BootTemp);
 
     SYS_Ready = true;
-    
     // ShutdownEventLoop();
 }
 

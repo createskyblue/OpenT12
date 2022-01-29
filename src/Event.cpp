@@ -187,7 +187,10 @@ void SYS_StateCode_Update(void) {
         if (TempGap >= 20) TempToneFlag = false;
     }
     
-
+    //读取系统输入电压
+    Get_MainPowerVoltage();
+    //读取输出电流
+    GetCurrent();
 
     //欠压警告
     if (UndervoltageAlert!=0 && SYS_Voltage < UndervoltageAlert) UnderVoltageEvent = true;

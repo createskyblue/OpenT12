@@ -74,10 +74,14 @@ double Get_MainPowerVoltage(void) {
  * @return 电流（A）
  */
 double GetCurrent(void) {
-    //放大21倍
-    double Uo = analogReadMilliVolts(CUR_ADC_PIN) / 1000.0;
-    double Ui = Uo / CUR_ADC_Arate;
-    SYS_Current  = Ui / CUR_ADC_R;
+    static uint32_t CoolTimer = 0;
+    if (millis() - CoolTimer > 100) {
+        double Uo = analogReadMilliVolts(CUR_ADC_PIN) / 1000.0;
+        double Ui = Uo / CUR_ADC_Arate;
+        SYS_Current  = Ui / CUR_ADC_R;
+        //重置冷却计时器
+        CoolTimer = millis();
+    }
     return SYS_Current;
 }
 
