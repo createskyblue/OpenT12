@@ -24,7 +24,7 @@ main.py适用于GPL3.0协议
 | :----: | :----:  |
 | bdfconv | <https://github.com/olikraus/u8g2> |
 | otf2bdf | <http://sofia.nmsu.edu/~mleisher/Software/otf2bdf/> |
-| Alibaba-PuHuiTi-Medium | https://ics.alibaba.com/project/Hn8mXx |
+| Alibaba-PuHuiTi-Medium | <https://ics.alibaba.com/project/Hn8mXx> |
 
 ## 演示图片
 ![shell界面](shell.jpg)
