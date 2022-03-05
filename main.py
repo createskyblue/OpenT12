@@ -26,7 +26,7 @@ targetFontName = input("\033[1;30;33m[ASK] 生成字库命名 >\033[0m")
 ttfFontPath = input("\033[1;30;33m[ASK] 输入ttf格式字体路径 >\033[0m")
 tftFontName = os.path.basename(ttfFontPath)
 tftFontNameReal = tftFontName.split('.')[0]
-# ttfFontPath = "font/MFLanSong_Noncommercial-Regular.ttf"
+# ttfFontPath = "font/Alibaba-PuHuiTi-Medium.ttf"
 
 #获取字体pix大小
 fontSize = input("\033[1;30;33m[ASK] 输入生成字库字体大小(pix像素) >\033[0m")
