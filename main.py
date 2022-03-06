@@ -28,14 +28,16 @@ tftFontName = os.path.basename(ttfFontPath)
 tftFontNameReal = tftFontName.split('.')[0]
 # ttfFontPath = "font/Alibaba-PuHuiTi-Medium.ttf"
 
-#获取字体px大小
-fontSizePx = eval(input("\033[1;30;33m[ASK] 输入生成字库字体大小(px) >\033[0m"))
-
 #获取字体DPI解析度
 fontSizeDPI = eval(input("\033[1;30;33m[ASK] 输入生成字库字体DPI >\033[0m"))
+
+#获取字体px大小
+fontSizePx = eval(input("\033[1;30;33m[ASK] 输入生成字库字体大小(px) >\033[0m"))
 #换算成单位pt
 fontSizePt = fontSizePx/(fontSizeDPI/72)
-# fontSize = 14
+
+#获取字体间距大小%
+fontSPSize = eval(input("\033[1;30;33m[ASK] 输入生成字库字体间距大小(%) >\033[0m"))
 
 #询问：输入是否过滤ascii
 del_ASCII_flag  = False
@@ -85,12 +87,13 @@ mapFile_f.close()
 
 #生成bdf字库
 bdfPath = "bdf/{0}_{1}.bdf".format(tftFontNameReal,fontSizePx)
+targetFontName = "{0}_{1}".format(targetFontName,fontSizePx)
 c_codePath = "code/{0}.c".format(targetFontName)
 otf2bdfCMD = "otf2bdf.exe -v -r {3} -p {0} -o {1} {2}".format(fontSizePt,bdfPath,ttfFontPath,fontSizeDPI)
 print(">",otf2bdfCMD)
 os.system(otf2bdfCMD)
 #生成u8g2目标C语言字库文件
-bdfconvCMD = "bdfconv.exe -v -b 2 -f 1 {0} -M {1} -n {2} -o {3} -d {0}".format(bdfPath,mapPath,targetFontName,c_codePath)
+bdfconvCMD = "bdfconv.exe -v -b 0 -f 1 {0} -M {1} -n {2} -o {3} -p {4} -d {0}".format(bdfPath,mapPath,targetFontName,c_codePath,fontSPSize)
 print(">",bdfconvCMD)
 os.system(bdfconvCMD)
 #完成信息
