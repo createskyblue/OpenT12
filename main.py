@@ -10,7 +10,7 @@ def to_unicode(string):
         ret = ret + hex(ord(v)).upper().replace('0X', '$')
     return ret
 
-#启动信息
+#启动信息   
 print('\033[1;31;43m',"{:=^40}".format("U8g2字库生成器 V1.0"),'\033[0m')
 print('\033[1;30;33m',"Email: createskyblue@outlook.com\n",'\033[0m')
 
@@ -28,8 +28,13 @@ tftFontName = os.path.basename(ttfFontPath)
 tftFontNameReal = tftFontName.split('.')[0]
 # ttfFontPath = "font/Alibaba-PuHuiTi-Medium.ttf"
 
-#获取字体pix大小
-fontSize = input("\033[1;30;33m[ASK] 输入生成字库字体大小(pix像素) >\033[0m")
+#获取字体px大小
+fontSizePx = eval(input("\033[1;30;33m[ASK] 输入生成字库字体大小(px) >\033[0m"))
+
+#获取字体DPI解析度
+fontSizeDPI = eval(input("\033[1;30;33m[ASK] 输入生成字库字体DPI >\033[0m"))
+#换算成单位pt
+fontSizePt = fontSizePx/(fontSizeDPI/72)
 # fontSize = 14
 
 #询问：输入是否过滤ascii
@@ -79,9 +84,9 @@ mapFile_f.write(mapFileDatas)
 mapFile_f.close()
 
 #生成bdf字库
-bdfPath = "bdf/{0}_{1}.bdf".format(tftFontNameReal,fontSize)
+bdfPath = "bdf/{0}_{1}.bdf".format(tftFontNameReal,fontSizePx)
 c_codePath = "code/{0}.c".format(targetFontName)
-otf2bdfCMD = "otf2bdf.exe -r 100 -p {0} -o {1} {2}".format(fontSize,bdfPath,ttfFontPath)
+otf2bdfCMD = "otf2bdf.exe -v -r {3} -p {0} -o {1} {2}".format(fontSizePt,bdfPath,ttfFontPath,fontSizeDPI)
 print(">",otf2bdfCMD)
 os.system(otf2bdfCMD)
 #生成u8g2目标C语言字库文件
