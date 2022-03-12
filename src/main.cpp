@@ -14,7 +14,7 @@ BluetoothSerial SerialBT;
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
-
+ 
 OneButton RButton(BUTTON_PIN, true);
 // U8G2_SSD1306_128X64_NONAME_F_HW_I2C Disp(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 // U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI Disp(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
@@ -31,7 +31,7 @@ float BootTemp = 300;      //开机温度          (°C)
 float SleepTemp = 150;     //休眠温度          (°C)
 float BoostTemp = 50;      //爆发模式升温幅度   (°C)
 
-float ShutdownTime        = 0;      //关机提醒              (分)
+float ShutdownTime        = 15;      //关机提醒              (分)
 float SleepTime           = 4;      //休眠触发时间          (分)
 float ScreenProtectorTime = 60;     //屏保在休眠后的触发时间(秒)
 float BoostTime           = 30;     //爆发模式持续时间      (秒)
@@ -62,7 +62,7 @@ uint8_t SmoothAnimation_Flag        = true;
 float   ScreenBrightness            = 128;
 uint8_t OptionStripFixedLength_Flag = false;
 
-uint8_t Volume = false;
+uint8_t Volume = 100;
 uint8_t RotaryDirection = false;
 uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
 
@@ -108,7 +108,7 @@ void setup() {
     for (uint8_t i = 0;i < 6;i++)  sprintf(ChipMAC_S + i * 3, "%02X%s", ((uint8_t*)&ChipMAC)[i], (i != 5) ? ":" : "");
 
     //初始化串口
-    Serial.begin(916200);
+    Serial.begin(115200);
 
     //初始化GPIO
     BeepInit();                     //蜂鸣器

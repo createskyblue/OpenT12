@@ -8,7 +8,7 @@ long     Calibration_Input[FixNum] = { 0 };
 void ShowCurveCoefficient(void) {
     Clear();
     char buffer[50];
-    for (long i = 0;i < 4;i++) {
+    for (uint8_t i = 0;i < 4;i++) {
         sprintf(buffer, "P[%d]=%.8lf\n", i, PTemp[i]);
         Disp.setCursor(12, i * 12 + 8);
         Disp.print(buffer);
@@ -71,9 +71,9 @@ void CalibrationTemperature(void) {
 
     bool ExitCalibration_Flag = false;
     uint8_t key=0;
-    char buffer[20];
+    char buffer[50];
     int SetADC = 0;
-    int ADC,LastADC;
+    uint16_t ADC;
     double TmpP[FixNum] = {0.0};
 
     //暂时清除烙铁头不存在的错误状态：否则输出上锁
@@ -107,12 +107,12 @@ void CalibrationTemperature(void) {
         sprintf(buffer, "设定ADC %d", SetADC);
         DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 36, buffer);
 
-        sprintf(buffer, "采样ADC %d NTC %.0lf", LastADC, GetNTCTemp());
+        sprintf(buffer, "采样ADC %d NTC %.0lf", (int)LastADC, GetNTCTemp());
         DrawHighLightText(128 - Disp.getUTF8Width(buffer) - 2, 51, buffer);
 
         Disp.setDrawColor(2);
         //绘制进度条
-        Disp.drawBox(0, 0, map(i, 0, FixNum-1,0,128),4);
+        Disp.drawBox(0, 0, map(i, 0, FixNum - 1,0,128),4);
         //绘制曲线
         uint8_t x;
         for (int y = 0; y < 64; y++) {
@@ -129,7 +129,7 @@ void CalibrationTemperature(void) {
             case 1:
             case 3:
                 delay(50);
-                Calibration_Input[i] = SetADC;
+                Calibration_Input[i] = (long)SetADC;
                 polyfit(i + 1, Calibration_Input, Calibration_Base, 3, TmpP);
                 i++;
             break;

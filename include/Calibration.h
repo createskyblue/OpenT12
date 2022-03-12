@@ -15,9 +15,9 @@
 */
 
 //温度拟合经验常数：按照实际情况通过拟合得到
-#define TempP1 12.5017728806
-#define TempP2 0.2805875540
-#define TempP3 0.0000000199 
+#define TempP1 12.41663913
+#define TempP2 0.17561473
+#define TempP3 -0.00004794
 #define TempP4 0.0000000199
 
 #define FixNum 10
