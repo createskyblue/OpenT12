@@ -27,7 +27,7 @@ extern double GetNTCTemp(void);
 void TipControlInit(void);
 void SetPOWER(uint8_t power);
 void PWMOutput(uint8_t pwm);
-int GetADC0(void);
+uint16_t GetADC0(void);
 double CalculateTemp(double ADC, double P[]);
 
 void TemperatureControlLoop(void);

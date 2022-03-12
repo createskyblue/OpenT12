@@ -99,7 +99,9 @@ double GetNTCTemp(void) {
         //重置冷却计时器
         CoolTimer = millis();
     }
-    return NTC_Temp;
+    if (!isnan(NTC_Temp))
+        return NTC_Temp;
+    else return (double)0;
 }
 
 //计算实际温度
@@ -141,7 +143,7 @@ void PWMOutput(uint8_t pwm) {
 KFP KFP_Temp = { 0.02,0,0,0,0.01,4.5};
 float SamplingRatioWork = 10;           //采样/加热 比率
 //获取ADC读数
-int GetADC0(void) {
+uint16_t GetADC0(void) {
     static uint32_t ADCSamplingTime = 0; //上次采样时间
     static uint32_t ADCReadCoolTimer = 0;
 
