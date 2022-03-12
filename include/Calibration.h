@@ -18,7 +18,7 @@
 #define TempP1 12.41663913
 #define TempP2 0.17561473
 #define TempP3 -0.00004794
-#define TempP4 0.0000000199
+#define TempP4 0.00000001
 
 #define FixNum 10
 extern double   PTemp[FixNum]; //温度拟合系数
