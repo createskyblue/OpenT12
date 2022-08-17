@@ -81,17 +81,19 @@ void NewTipConfig(void) {
         // char NewName = "---未命名---";
         strcpy(MyTip[TipTotal].name, "NewTip");
 
-        for (uint8_t i = 0;i < 4;i++) {
-            MyTip[TipID].PTemp[i] = 0;
-        }
+        //校准曲线载入默认配置
+        MyTip[TipID].PTemp[0] = TempP1;
+        MyTip[TipID].PTemp[1] = TempP2;
+        MyTip[TipID].PTemp[2] = TempP3;
+        MyTip[TipID].PTemp[3] = TempP4;
 
-        MyTip[TipID].PID[0][0] = 0;
-        MyTip[TipID].PID[0][1] = 0;
-        MyTip[TipID].PID[0][2] = 0;
-        MyTip[TipID].PID[1][0] = 0;
-        MyTip[TipID].PID[1][1] = 0;
-        MyTip[TipID].PID[1][2] = 0;
-
+        //初始化两组PID
+        MyTip[TipID].PID[0][0] = 30.0;
+        MyTip[TipID].PID[0][1] = 0.0;
+        MyTip[TipID].PID[0][2] = 0.5;
+        MyTip[TipID].PID[1][0] = 20.0;
+        MyTip[TipID].PID[1][1] = 1.0;
+        MyTip[TipID].PID[1][2] = 0.5;
         
         TipTotal++;
         Pop_Windows("新建成功");
