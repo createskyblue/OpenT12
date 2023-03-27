@@ -156,10 +156,7 @@ void FilesSystemInit(void) {
     //关闭中断
     noInterrupts();
 
-    if (!SPIFFS.begin(false)) {
-        Log(LOG_ERROR, "文件系统打开失败，自动格式化\n");
-        Log(LOG_INFO,"格式化...");
-        SPIFFS.format();
+    if (!SPIFFS.begin(true)) {
         Log(LOG_OK,"文件系统初始化完成！");
     }
     //启用中断

@@ -68,7 +68,7 @@ void RotaryDown(void) {
 }
 
 bool Counter_LOCK_Flag = false;
-void ICACHE_RAM_ATTR sys_Counter_IRQHandler(void) {
+void IRAM_ATTR sys_Counter_IRQHandler(void) {
     //重置事件计时器
     TimerUpdateEvent();
 

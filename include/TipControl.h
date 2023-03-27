@@ -7,6 +7,7 @@ extern uint8_t POWER;
 extern uint8_t PWM;
 extern uint8_t LastPWM;
 extern uint16_t LastADC;
+extern double UserSetTipTemperature;
 extern double TipTemperature;
 extern double PID_Output;
 extern double PID_Setpoint;

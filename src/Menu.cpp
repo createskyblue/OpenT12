@@ -455,7 +455,7 @@ void System_Menu_Init(void) {
  * @return {*}
  */
 void System_UI_Init(void) {
-    sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, PID_Setpoint);
+    sys_Counter_Set(TipMinTemp, TipMaxTemp, 5, UserSetTipTemperature);
     //输出解锁
     PWMOutput_Lock = false;
 }
@@ -823,7 +823,7 @@ void MenuSYS_SetCounter() {
 void Next_Menu() {
     printf("Next_Menu\n");
     //清除按键缓存
-    SYSKey = NULL;
+    SYSKey = 255;
     //设置菜单标志位
     Menu_System_State = 1;
 
