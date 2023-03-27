@@ -17,6 +17,7 @@ uint8_t POWER = 0;
 uint8_t PWM = 0;
 uint8_t LastPWM = 0;
 uint16_t LastADC = 0;
+double UserSetTipTemperature = 0;
 double TipTemperature = 0;
 double PID_Output = 0;
 double PID_Setpoint = 0;
@@ -208,12 +209,16 @@ void TemperatureControlLoop(void) {
     Clear();
     int ADC;
 
-    PID_Setpoint = sys_Counter_Get();
+    UserSetTipTemperature = sys_Counter_Get();
     if (BoostEvent) {
         //短时功率加成
         PID_Setpoint += BoostTemp;
     }else if (SleepEvent) {
+        //睡眠模式
         PID_Setpoint = SleepTemp;
+    }else{
+        //正常模式:用户控温
+        PID_Setpoint = UserSetTipTemperature;
     }
 
     PID_Setpoint = constrain(PID_Setpoint, TipMinTemp, TipMaxTemp);
