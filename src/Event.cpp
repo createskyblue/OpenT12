@@ -152,14 +152,6 @@ void SYS_StateCode_Update(void) {
             TempCTRL_Status = TEMP_STATUS_HOLD;
         }
     }
-
-    if (ERROREvent==true) {
-        //系统错误
-        TempCTRL_Status = TEMP_STATUS_ERROR;
-    }else if (BoostEvent) {
-        //快速升温事件
-        TempCTRL_Status = TEMP_STATUS_BOOST;
-    }
     
     if (ShutdownEvent) {
         //烙铁进入停机模式
@@ -169,6 +161,14 @@ void SYS_StateCode_Update(void) {
     }else if (SleepEvent) {
         //烙铁进入休眠模式
         TempCTRL_Status = TEMP_STATUS_SLEEP;
+    }
+
+    if (ERROREvent==true) {
+        //系统错误
+        TempCTRL_Status = TEMP_STATUS_ERROR;
+    }else if (BoostEvent) {
+        //快速升温事件
+        TempCTRL_Status = TEMP_STATUS_BOOST;
     }
 
     //到温声效播放事件
