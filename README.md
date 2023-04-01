@@ -84,7 +84,7 @@ By sndnvaps
 
 At present, the final hardware has not been designed. If you want to use your own hardware, you can refer to the following table.
 
-**Screen pin definition (default SPI)**
+**Screen pin definition (default I2C)**
 
 | I2C | PIN | SPI | PIN |
 | :-----: | :----: | :-----: | :----: |
