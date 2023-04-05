@@ -27,6 +27,8 @@ By sndnvaps
 
 ![](img/8277201d88eb4eb19e224e43a7db916e.webp)
 
+![](img/e724a870e61447c9a392fd5c28175ef4.webp)
+
 ## 视频
 
 ![](img/OLED_ScreenshotInit/爆发.png)
