@@ -64,7 +64,7 @@ uint8_t OptionStripFixedLength_Flag = false;
 
 uint8_t Volume = 100;
 uint8_t RotaryDirection = false;
-uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch;
+uint8_t HandleTrigger = HANDLETRIGGER_VibrationSwitch_CHANNEL_1;
 
 double  SYS_Voltage = 3.3;
 double  SYS_Current = 0.0;
