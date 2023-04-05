@@ -50,7 +50,7 @@ By sndnvaps
 - CH1-Vibration Switch(CH1-震动开关): The hardware vibration switch is connected to sleep channel 1.
 - CH1-Reed switch(CH1-干簧管): The hardware reed switch is connected to sleep channel 1.
 - CH2-Reed switch(CH2-干簧管): The hardware reed switch is connected to sleep channel 2.
-- Multi-channel(多通道:震动,干簧管): Vibration, Reed switch: The hardware vibration switch is connected to sleep channel 1, and the reed switch is connected to sleep channel 2.
+- Multi-channel Vibration, Reed switch(多通道:震动,干簧管): The hardware vibration switch is connected to sleep channel 1, and the reed switch is connected to sleep channel 2.
 
 ## Function
 
