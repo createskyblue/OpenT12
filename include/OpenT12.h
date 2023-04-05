@@ -47,7 +47,8 @@
 
 #define PWM1_PIN      26
 #define PWM2_PIN      27
-#define SW_PIN        4
+#define VIBRATION_SWITCH_PIN        4
+#define REED_SWITCH_PIN       19
 
 //计算主电源电压
 #define POWER_ADC_VCC_R1 10
@@ -92,6 +93,7 @@ enum PANELSET {
 enum HANDLETRIGGER {
     HANDLETRIGGER_VibrationSwitch = 0,
     HANDLETRIGGER_ReedSwitch,
+    HANDLETRIGGER_MIX,
 };
 
 enum MESSAGETYPE {

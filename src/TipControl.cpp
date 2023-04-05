@@ -39,9 +39,10 @@ void TipControlInit(void) {
     SetPOWER(0); //关闭功率管输出
 
     //初始化SW-PIN休眠检测引脚
-    pinMode(SW_PIN, INPUT_PULLUP);
+    pinMode(VIBRATION_SWITCH_PIN, INPUT_PULLUP);
+    pinMode(REED_SWITCH_PIN, INPUT_PULLUP);
     //初始化SW-PIN休眠检测引脚中断 (尽可能减少中断的使用)
-    //attachInterrupt(SW_PIN, SW_IRQHandler, CHANGE);
+    //attachInterrupt(VIBRATION_SWITCH_PIN, SW_IRQHandler, CHANGE);
     
     //初始化烙铁头PID
     MyPID.SetOutputLimits(0, 255); //PID输出限幅
