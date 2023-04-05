@@ -62,7 +62,7 @@ By sndnvaps
 - [x] Start up temperature, burst temperature and sleep temperature can be set.
 - [x] It can sleep and shutdown regularly, and customize the burst mode time.
 - [x] It can save tens of millions of groups of soldering tips configuration (10 groups by default).
-- [ ] Dual sleep modes support: both vibration trigger and magnetic trigger are supported.
+- [x] Dual sleep modes support: both vibration trigger and magnetic trigger are supported.
 - [ ] English support
 
 ***Advanced features***
