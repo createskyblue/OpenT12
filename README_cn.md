@@ -21,15 +21,11 @@
 
 By sndnvaps
 
-## 硬件
+## 硬件(By uploading)
 
-[LCEDA/EasyEDA]https://oshwhub.com/createskyblue/opent12-jing-jian-ban  
-[核心驱动电路参考]https://oshwhub.com/47415Y/gong-cheng
+[LCEDA/EasyEDA]https://oshwhub.com/zanfi1010/2375dc0033704542b2cde9e298ab9e2a
 
-**注意：电路板未完全验证**  
-**Note: the circuit board is not fully verified**
-
-![PCB_V3.0](img/readme/PCB3.0.jpg)
+![](img/8277201d88eb4eb19e224e43a7db916e.webp)
 
 ## 视频
 
