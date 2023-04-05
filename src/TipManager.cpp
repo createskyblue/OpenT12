@@ -1,7 +1,7 @@
 #include "OpenT12.h"
 
 uint8_t TipID = 0;
-uint8_t TipTotal = 1;
+uint8_t TipTotal = 2;
 
 TIPCONFIG MyTip[MaxTipConfig] = {
     {{TempP1,TempP2,TempP3,TempP4},{{30.0,0,0.5},{20.0,0,0.5}},"深圳K-1"},

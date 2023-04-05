@@ -331,9 +331,9 @@ struct Menu_System Menu[] = {
     { 13,1,       SingleBox_Menu_Op,     "简体中文",               Lang_CN,               SwitchSpace_Language,                    LANG_Chinese,          *JumpWithTitle},
 
     { 14,0,       Title_Menu_Op,         "手柄触发",               Menu_NULL_IMG,              6,                                  4,          Menu_NULL_F},
-    { 14,1,       SingleBox_Menu_Op,     "震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
-    { 14,2,       SingleBox_Menu_Op,     "干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
-    { 14,3,       SingleBox_Menu_Op,     "混合模式",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          2,          *JumpWithTitle},
+    { 14,1,       SingleBox_Menu_Op,     "通道1:震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          0,          *JumpWithTitle},
+    { 14,2,       SingleBox_Menu_Op,     "通道1:共享干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          1,          *JumpWithTitle},
+    { 14,3,       SingleBox_Menu_Op,     "多通道:震动,干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          2,          *JumpWithTitle},
  
     { 15,0,       Title_Menu_Op,         "烙铁头列表",             Menu_NULL_IMG,              2,                                  1,          *LoadTipConfig},
     { 15,1,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          0,        *JumpWithTitle},
