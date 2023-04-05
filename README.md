@@ -45,6 +45,12 @@ By sndnvaps
 - When adding a new soldering tip configuration, the default parameter is empty. You need to calibrate the temperature and set the parameters yourself.
 - **Press and hold** in the main menu to return to the previous level.
 
+### Handle Trigger User Manual
+
+- CH1-Vibration Switch(CH1-震动开关): The hardware vibration switch is connected to sleep channel 1.
+- CH1-Reed switch(CH1-干簧管): The hardware reed switch is connected to sleep channel 1.
+- CH2-Reed switch(CH2-干簧管): The hardware reed switch is connected to sleep channel 2.
+- Multi-channel(多通道:震动,干簧管): Vibration, Reed switch: The hardware vibration switch is connected to sleep channel 1, and the reed switch is connected to sleep channel 2.
 
 ## Function
 
