@@ -67,7 +67,12 @@ void TimerEventLoop(void) {
         //系统停机
         ShutdownEvent = true;
         SleepEvent = false;
-    }else if (TipCallSleepEvent || SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) {
+    }
+    else if (TipCallSleepEvent ||
+            (SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) &&
+            HandleTrigger != HANDLETRIGGER_ReedSwitch_CHANNEL_1 &&
+            HandleTrigger != HANDLETRIGGER_ReedSwitch_CHANNEL_2
+            ) {
         //进入休眠
         SleepEvent = true;
         //锁定编码器，因为休眠模式中不允许修改设定温度

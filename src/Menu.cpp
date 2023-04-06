@@ -334,7 +334,7 @@ struct Menu_System Menu[] = {
     { 14,1,       SingleBox_Menu_Op,     "CH1-震动开关",               IMG_VibrationSwitch,        SwitchSpace_HandleTrigger,          HANDLETRIGGER_VibrationSwitch_CHANNEL_1,          *JumpWithTitle},
     { 14,2,       SingleBox_Menu_Op,     "CH1-干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          HANDLETRIGGER_ReedSwitch_CHANNEL_1,          *JumpWithTitle},
     { 14,3,       SingleBox_Menu_Op,     "CH2-干簧管",                 IMG_ReedSwitch,             SwitchSpace_HandleTrigger,          HANDLETRIGGER_ReedSwitch_CHANNEL_2,          *JumpWithTitle},
-    { 14,4,       SingleBox_Menu_Op,     "多通道:震动,干簧管",                 Menu_NULL_IMG,             SwitchSpace_HandleTrigger,          HANDLETRIGGER_MIX_CHANNEL_1_AND_CHANNEL_2,          *JumpWithTitle},
+    { 14,4,       SingleBox_Menu_Op,     "震动 & 干簧管",                 Menu_NULL_IMG,             SwitchSpace_HandleTrigger,          HANDLETRIGGER_MIX_CHANNEL_1_AND_CHANNEL_2,          *JumpWithTitle},
  
     { 15,0,       Title_Menu_Op,         "烙铁头列表",             Menu_NULL_IMG,              2,                                  1,          *LoadTipConfig},
     { 15,1,       SingleBox_Menu_Op,     "",             Menu_NULL_IMG,        SwitchSpace_TipID,          0,        *JumpWithTitle},
