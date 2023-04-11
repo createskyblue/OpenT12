@@ -78,10 +78,8 @@ void TimerEventLoop(void) {
         //锁定编码器，因为休眠模式中不允许修改设定温度
         Counter_LOCK_Flag = true;
     }else{
-        if (SleepEvent) {
-            SleepEvent = false;
-            Counter_LOCK_Flag = false;
-        }
+        SleepEvent = false;
+        Counter_LOCK_Flag = false;
         ShutdownEvent = false;
         //不休眠\不停机 则重置屏保计时器，确保不会进入屏保
         ScreenProtectorTimer = millis();

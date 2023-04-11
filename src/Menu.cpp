@@ -644,7 +644,12 @@ void Exit_Menu_System(void) {
     Menu_System_State = 0;
     Menu_JumpAndExit = false;
     Menu_JumpAndExit_Level = 255;
-    
+
+    //重置休眠计时器
+    TimerUpdateEvent();
+    //先退出休眠
+    TipCallSleepEvent = false;
+
     //退出菜单后重新初始化主界面
     System_UI_Init();
 }
