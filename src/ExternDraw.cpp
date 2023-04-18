@@ -313,10 +313,10 @@ void DrawStatusBar(bool color) {
     Disp.setDrawColor(2);
 
     //画指示针
-    Draw_Slow_Bitmap(map(PID_Setpoint, 0, 500, 2, 103) - 4, 54, PositioningCursor, 8, 8);
+    Draw_Slow_Bitmap(map(UserSetTipTemperature, 0, 500, 2, 103) - 4, 54, PositioningCursor, 8, 8);
 
     Disp.setCursor(2,53);
-    Disp.printf("%.0f",PID_Setpoint);
+    Disp.printf("%.0f",UserSetTipTemperature);
 
     Disp.setCursor(105, 53);
     //显示输出功率 百分比

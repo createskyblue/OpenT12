@@ -40,7 +40,7 @@ float BoostTime           = 30;     //爆发模式持续时间      (秒)
 bool SYS_Ready = false;
 //烙铁头事件
 bool TipInstallEvent   = true;
-bool TipCallSleepEvent    = false;
+bool ReedSwitch_sleepEvent    = false;
 //到温提示音播放完成
 bool TempToneFlag = false;
 //休眠后屏保延迟显示标志

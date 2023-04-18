@@ -213,7 +213,7 @@ void TemperatureControlLoop(void) {
     UserSetTipTemperature = sys_Counter_Get();
     if (BoostEvent) {
         //短时功率加成
-        PID_Setpoint += BoostTemp;
+        PID_Setpoint = UserSetTipTemperature + BoostTemp;
     }else if (SleepEvent) {
         //睡眠模式
         PID_Setpoint = SleepTemp;

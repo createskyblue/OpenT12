@@ -1,6 +1,6 @@
 #include "OpenT12.h"
 char BLE_name[20] = "OPEN-T12";
-uint8_t BLE_State = true;
+uint8_t BLE_State = false;
 
 void BLE_Init(void) {
 

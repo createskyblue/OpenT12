@@ -67,13 +67,9 @@ void RotaryDown(void) {
     sys_Counter_SetVal(sys_Counter_Get() - Count_step);
 }
 
-bool Counter_LOCK_Flag = false;
 void IRAM_ATTR sys_Counter_IRQHandler(void) {
     //重置事件计时器
     TimerUpdateEvent();
-
-    //若编码器被锁定，则不允许数值操作
-    if (Counter_LOCK_Flag == true) return;
 
     //更新编码器方向
     double step = (RotaryDirection == 0) ? Count_step : -Count_step;

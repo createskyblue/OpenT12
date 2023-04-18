@@ -68,18 +68,15 @@ void TimerEventLoop(void) {
         ShutdownEvent = true;
         SleepEvent = false;
     }
-    else if (TipCallSleepEvent ||
+    else if (ReedSwitch_sleepEvent ||
             (SleepTime != 0 && TimerEventTimer > Minute2Millis(SleepTime)) &&
             HandleTrigger != HANDLETRIGGER_ReedSwitch_CHANNEL_1 &&
             HandleTrigger != HANDLETRIGGER_ReedSwitch_CHANNEL_2
             ) {
         //进入休眠
         SleepEvent = true;
-        //锁定编码器，因为休眠模式中不允许修改设定温度
-        Counter_LOCK_Flag = true;
     }else{
         SleepEvent = false;
-        Counter_LOCK_Flag = false;
         ShutdownEvent = false;
         //不休眠\不停机 则重置屏保计时器，确保不会进入屏保
         ScreenProtectorTimer = millis();
@@ -273,44 +270,35 @@ void ICACHE_RAM_ATTR SW_IRQHandler(void) {
  */
 void SW_WakeLOOP(void) {
     static bool lastState_channel_1 = 1;  //默认上拉
-    static bool lastState_channel_2 = 1;  //默认上拉
     //读取休眠控制引脚
     bool state_channel_1 = digitalRead(VIBRATION_SWITCH_PIN);
     bool state_channel_2 = digitalRead(REED_SWITCH_PIN);
     bool change_channel_1 = 0;
-    bool change_channel_2 = 0;
 
     //更新 通道1 休眠引脚状态
     if (state_channel_1 != lastState_channel_1) {
         change_channel_1 = 1;
         lastState_channel_1 = state_channel_1;
     }
-    //更新 通道2 休眠引脚状态
-    if (state_channel_2 != lastState_channel_2) {
-        change_channel_2 = 1;
-        lastState_channel_2 = state_channel_2;
-    }
 
     //判断 外部休眠触发 模式
     switch (HandleTrigger) {
     //震动开关 单独使用通道1
     case HANDLETRIGGER_VibrationSwitch_CHANNEL_1: {
-        if (change_channel_1)
+        if (change_channel_1) {
             TimerUpdateEvent();
+            ReedSwitch_sleepEvent = false;
+        }
     }break;
     //干簧管 单独使用通道1
     case HANDLETRIGGER_ReedSwitch_CHANNEL_1: {
-        if (change_channel_1) {
-            if (state_channel_1 == 0) TipCallSleepEvent = true;
-            else TipCallSleepEvent = false;
-        }
+        if (state_channel_1 == 0) ReedSwitch_sleepEvent = true;
+        else ReedSwitch_sleepEvent = false;
     }break;
     //干簧管 单独使用通道2
     case HANDLETRIGGER_ReedSwitch_CHANNEL_2: {
-        if (change_channel_2) {
-            if (state_channel_2 == 0) TipCallSleepEvent = true;
-            else TipCallSleepEvent = false;
-        }
+        if (state_channel_2 == 0) ReedSwitch_sleepEvent = true;
+        else ReedSwitch_sleepEvent = false;
     }break;
     //混合模式：电路上干簧管和震动开关独立线路
     case HANDLETRIGGER_MIX_CHANNEL_1_AND_CHANNEL_2: {
@@ -318,18 +306,16 @@ void SW_WakeLOOP(void) {
         if (change_channel_1)
             TimerUpdateEvent();
         //检查 干簧管CH2 状态
-        if (change_channel_2) {
-            //引脚状态变更
-            if (!state_channel_2) {
-                //干簧管被磁力触发，开启休眠
-                TipCallSleepEvent = true;
-            }
-            else {
-                //干簧管离开磁力源，关闭休眠
-                TipCallSleepEvent = false;
-                //重置无动作计时器
-                TimerUpdateEvent();
-            }
+        //引脚状态变更
+        if (!state_channel_2) {
+            //干簧管被磁力触发，开启休眠
+            ReedSwitch_sleepEvent = true;
+        }
+        else {
+            //干簧管离开磁力源，关闭休眠
+            ReedSwitch_sleepEvent = false;
+            //重置无动作计时器
+            TimerUpdateEvent();
         }
     }break;
     }

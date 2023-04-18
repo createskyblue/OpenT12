@@ -447,9 +447,6 @@ void System_Menu_Init(void) {
     MenuLevelId = 0;       //设定跳转目标
     *Slide_space[Slide_space_Scroll].x = 0;//复位第一层菜单的位置
     Next_Menu();
-
-    //解除编码器锁定（如果有）
-    Counter_LOCK_Flag = false;
 }
 /*** 
  * @description: 初始化主界面
@@ -647,8 +644,6 @@ void Exit_Menu_System(void) {
 
     //重置休眠计时器
     TimerUpdateEvent();
-    //先退出休眠
-    TipCallSleepEvent = false;
 
     //退出菜单后重新初始化主界面
     System_UI_Init();

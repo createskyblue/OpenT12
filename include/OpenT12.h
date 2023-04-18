@@ -141,7 +141,7 @@ extern float BoostTime;
 extern bool SYS_Ready;
 
 extern bool TipInstallEvent;
-extern bool TipCallSleepEvent;
+extern bool ReedSwitch_sleepEvent;
 extern bool TempToneFlag;
 extern bool SleepScreenProtectFlag;
 
